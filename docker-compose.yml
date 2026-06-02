@@ -1,0 +1,41 @@
+services:
+
+  postgres:
+    image: postgres:17
+
+    environment:
+      POSTGRES_DB: mealplanner
+      POSTGRES_USER: mealplanner
+      POSTGRES_PASSWORD: mealplanner
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./apps/backend
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - postgres
+
+    environment:
+      DATABASE_URL: postgresql://mealplanner:mealplanner@postgres:5432/mealplanner
+
+  frontend:
+    build:
+      context: ./apps/frontend
+
+    ports:
+      - "4200:80"
+
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
