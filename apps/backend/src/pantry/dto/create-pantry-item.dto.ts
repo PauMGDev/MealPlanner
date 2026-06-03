@@ -16,4 +16,8 @@ export class CreatePantryItemDto {
   @IsOptional()
   @IsDateString()
   expiresAt?: string;
+
+  @IsOptional()
+  @IsString()
+  categoryId?: string;
 }

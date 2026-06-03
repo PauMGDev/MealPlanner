@@ -25,6 +25,10 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => import('./shell/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
+      {
+        path: 'pantry',
+        loadComponent: () => import('./shell/pantry/pantry.component').then(m => m.PantryComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: 'dashboard' },
     ],

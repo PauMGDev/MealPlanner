@@ -6,8 +6,32 @@ import { PrismaClient } from '../src/generated/prisma/client.js';
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
+const CATEGORIES = [
+  { name: 'Carne fresca',     defaultDays: 4   },
+  { name: 'Pescado fresco',   defaultDays: 2   },
+  { name: 'Marisco',          defaultDays: 2   },
+  { name: 'Verduras',         defaultDays: 7   },
+  { name: 'Frutas',           defaultDays: 7   },
+  { name: 'Lácteos',          defaultDays: 10  },
+  { name: 'Huevos',           defaultDays: 28  },
+  { name: 'Embutidos',        defaultDays: 14  },
+  { name: 'Pan y bollería',   defaultDays: 5   },
+  { name: 'Legumbres secas',  defaultDays: 730 },
+  { name: 'Conservas',        defaultDays: 1825 },
+  { name: 'Congelados',       defaultDays: 180 },
+  { name: 'Bebidas',          defaultDays: 365 },
+];
+
 async function main() {
   const passwordHash = await bcrypt.hash('password123', 10);
+
+  for (const cat of CATEGORIES) {
+    await prisma.ingredientCategory.upsert({
+      where: { name: cat.name },
+      update: { defaultDays: cat.defaultDays },
+      create: cat,
+    });
+  }
 
   const user = await prisma.user.upsert({
     where: { email: 'demo@mealplanner.com' },

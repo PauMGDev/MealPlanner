@@ -23,6 +23,12 @@ import { PantryService } from './pantry.service.js';
 export class PantryController {
   constructor(private readonly pantry: PantryService) {}
 
+  @Get('categories')
+  @ApiOperation({ summary: 'List all ingredient categories' })
+  findCategories() {
+    return this.pantry.findAllCategories();
+  }
+
   @Get()
   @ApiOperation({ summary: 'List my pantry items' })
   findAll(@Req() req: any) {

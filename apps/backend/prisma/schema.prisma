@@ -117,17 +117,29 @@ model WeeklyPlan {
   @@map("weekly_plans")
 }
 
+model IngredientCategory {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  defaultDays Int          @map("default_days")
+  pantryItems PantryItem[]
+
+  @@map("ingredient_categories")
+}
+
 model PantryItem {
-  id        String    @id @default(cuid())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String    @map("user_id")
-  name      String
-  quantity  Float
-  unit      String
-  expiresAt DateTime? @map("expires_at") @db.Date
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  id         String              @id @default(cuid())
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String              @map("user_id")
+  name       String
+  quantity   Float
+  unit       String
+  expiresAt  DateTime?           @map("expires_at") @db.Date
+  category   IngredientCategory? @relation(fields: [categoryId], references: [id])
+  categoryId String?             @map("category_id")
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
 
   @@index([userId])
+  @@index([categoryId])
   @@map("pantry_items")
 }
