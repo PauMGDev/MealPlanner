@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ScrollRevealDirective } from './scroll-reveal.directive';
 
 @Component({
@@ -40,7 +41,12 @@ import { ScrollRevealDirective } from './scroll-reveal.directive';
   `,
 })
 export class CtaComponent {
+  private readonly router = inject(Router);
+
   onSubmit(e: Event): void {
     e.preventDefault();
+    const input = (e.target as HTMLFormElement).querySelector('input[type=email]') as HTMLInputElement;
+    const email = input?.value?.trim();
+    this.router.navigate(['/register'], email ? { queryParams: { email } } : {});
   }
 }

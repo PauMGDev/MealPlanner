@@ -1,8 +1,10 @@
 import { Component, HostListener, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
+  imports: [RouterLink],
   template: `
     <nav
       class="fixed top-0 inset-x-0 z-50 border-b transition-all duration-300"
@@ -28,7 +30,7 @@ import { Component, HostListener, signal } from '@angular/core';
              class="text-sm font-medium text-mm-text2 hover:text-mm-text1 transition-colors">
             Funcionalidades
           </a>
-          <a href="#cta"
+          <a routerLink="/login"
              class="btn-primary text-sm px-5 py-2.5 rounded-lg">
             Iniciar sesión
           </a>
