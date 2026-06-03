@@ -1,3 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+@theme {
+  --color-mm-base: #070b14;
+  --color-mm-surface: #0f1628;
+  --color-mm-card: #151d33;
+  --color-mm-elevated: #1a2340;
+  --color-mm-text1: #e8ecf4;
+  --color-mm-text2: #8898b5;
+  --color-mm-text3: #4a5875;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --radius-2xl: 20px;
+}
+
+/* MealMap — custom utilities */
+
+.grad-text {
+  background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center font-semibold rounded-[10px]
+         bg-blue-500 text-white transition-all duration-200;
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.25);
+}
+.btn-primary:hover {
+  @apply bg-blue-400 -translate-y-px;
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.35);
+}
+
+.hero-bg {
+  background: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+}
+
+.mockup-glow {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 65%);
+  filter: blur(50px);
+}
+
+.cta-glow {
+  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+}
+
+.meal-enter {
+  opacity: 0;
+  animation: mealIn 0.5s ease forwards;
+}
+
+@keyframes mealIn {
+  to { opacity: var(--meal-opacity, 0.82); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

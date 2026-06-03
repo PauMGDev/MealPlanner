@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +5,129 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+
+  @@map("auth_provider")
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+
+  @@map("meal_type")
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String?      @map("password_hash")
+  name         String
+  authProvider AuthProvider @default(LOCAL) @map("auth_provider")
+  googleId     String?      @unique @map("google_id")
+  meals        Meal[]
+  weeklyPlans  WeeklyPlan[]
+  recipes      Recipe[]
+  pantryItems  PantryItem[]
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Recipe {
+  id                String             @id @default(cuid())
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String             @map("user_id")
+  name              String
+  description       String?
+  prepTime          Int                @map("prep_time")
+  servings          Int
+  steps             Json
+  meals             Meal[]
+  recipeIngredients RecipeIngredient[]
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("recipes")
+}
+
+model Ingredient {
+  id                String             @id @default(cuid())
+  name              String             @unique
+  unit              String
+  caloriesPer100g   Float?             @map("calories_per_100g")
+  recipeIngredients RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipeId     String     @map("recipe_id")
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String     @map("ingredient_id")
+  quantity     Float
+
+  @@unique([recipeId, ingredientId])
+  @@index([recipeId])
+  @@index([ingredientId])
+  @@map("recipe_ingredients")
+}
+
+model Meal {
+  id           String      @id @default(cuid())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String      @map("user_id")
+  recipe       Recipe      @relation(fields: [recipeId], references: [id])
+  recipeId     String      @map("recipe_id")
+  weeklyPlan   WeeklyPlan? @relation(fields: [weeklyPlanId], references: [id])
+  weeklyPlanId String?     @map("weekly_plan_id")
+  date         DateTime    @db.Date
+  mealType     MealType    @map("meal_type")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId, date])
+  @@map("meals")
+}
+
+model WeeklyPlan {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @map("user_id")
+  weekStart DateTime @map("week_start") @db.Date
+  meals     Meal[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, weekStart])
+  @@index([userId])
+  @@map("weekly_plans")
+}
+
+model PantryItem {
+  id        String    @id @default(cuid())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @map("user_id")
+  name      String
+  quantity  Float
+  unit      String
+  expiresAt DateTime? @map("expires_at") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("pantry_items")
 }
