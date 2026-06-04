@@ -2,7 +2,7 @@
 
 ---
 
-## `(pendiente)` — feat: pantry UX polish and app-wide design improvements
+## `c6f81e3` — feat: pantry UX polish and app-wide design improvements
 **Fecha:** 4 jun 2026
 
 **Tecnología:** Angular 21 · Tailwind CSS · CSS Grid animations
