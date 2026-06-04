@@ -1,4 +1,4 @@
-﻿import {
+import {
   Body,
   Controller,
   Delete,
@@ -12,6 +12,7 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { User } from '../generated/prisma/client.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { AddRecipeIngredientDto } from './dto/add-recipe-ingredient.dto.js';
 import { CreateRecipeDto } from './dto/create-recipe.dto.js';
 import { UpdateRecipeDto } from './dto/update-recipe.dto.js';
 import { RecipesService } from './recipes.service.js';
@@ -24,13 +25,13 @@ export class RecipesController {
   constructor(private readonly recipes: RecipesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List my recipes' })
+  @ApiOperation({ summary: 'List my recipes with their ingredients' })
   findAll(@Req() req: any) {
     return this.recipes.findAll((req.user as User).id);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a recipe by id' })
+  @ApiOperation({ summary: 'Get a recipe with ingredients and pantry availability' })
   findOne(@Param('id') id: string, @Req() req: any) {
     return this.recipes.findOne(id, (req.user as User).id);
   }
@@ -43,11 +44,7 @@ export class RecipesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a recipe' })
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateRecipeDto,
-    @Req() req: any,
-  ) {
+  update(@Param('id') id: string, @Body() dto: UpdateRecipeDto, @Req() req: any) {
     return this.recipes.update(id, (req.user as User).id, dto);
   }
 
@@ -55,5 +52,25 @@ export class RecipesController {
   @ApiOperation({ summary: 'Delete a recipe' })
   remove(@Param('id') id: string, @Req() req: any) {
     return this.recipes.remove(id, (req.user as User).id);
+  }
+
+  @Post(':id/ingredients')
+  @ApiOperation({ summary: 'Add an ingredient to a recipe' })
+  addIngredient(
+    @Param('id') id: string,
+    @Body() dto: AddRecipeIngredientDto,
+    @Req() req: any,
+  ) {
+    return this.recipes.addIngredient(id, (req.user as User).id, dto);
+  }
+
+  @Delete(':id/ingredients/:ingredientId')
+  @ApiOperation({ summary: 'Remove an ingredient from a recipe' })
+  removeIngredient(
+    @Param('id') id: string,
+    @Param('ingredientId') ingredientId: string,
+    @Req() req: any,
+  ) {
+    return this.recipes.removeIngredient(id, (req.user as User).id, ingredientId);
   }
 }

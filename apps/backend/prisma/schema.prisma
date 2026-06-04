@@ -68,6 +68,7 @@ model Ingredient {
   unit              String
   caloriesPer100g   Float?             @map("calories_per_100g")
   recipeIngredients RecipeIngredient[]
+  pantryItems       PantryItem[]
 
   @@map("ingredients")
 }
@@ -127,19 +128,22 @@ model IngredientCategory {
 }
 
 model PantryItem {
-  id         String              @id @default(cuid())
-  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String              @map("user_id")
-  name       String
-  quantity   Float
-  unit       String
-  expiresAt  DateTime?           @map("expires_at") @db.Date
-  category   IngredientCategory? @relation(fields: [categoryId], references: [id])
-  categoryId String?             @map("category_id")
-  createdAt  DateTime            @default(now()) @map("created_at")
-  updatedAt  DateTime            @updatedAt @map("updated_at")
+  id           String              @id @default(cuid())
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String              @map("user_id")
+  name         String
+  quantity     Float
+  unit         String
+  expiresAt    DateTime?           @map("expires_at") @db.Date
+  category     IngredientCategory? @relation(fields: [categoryId], references: [id])
+  categoryId   String?             @map("category_id")
+  ingredient   Ingredient?         @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+  ingredientId String?             @map("ingredient_id")
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
 
   @@index([userId])
   @@index([categoryId])
+  @@index([ingredientId])
   @@map("pantry_items")
 }

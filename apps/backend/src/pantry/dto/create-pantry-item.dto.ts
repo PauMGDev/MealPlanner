@@ -1,4 +1,4 @@
-import { IsDateString, IsNumber, IsOptional, IsPositive, IsString, MinLength } from 'class-validator';
+import { IsDateString, IsNumber, IsOptional, IsString, Min, MinLength, ValidateIf } from 'class-validator';
 
 export class CreatePantryItemDto {
   @IsString()
@@ -6,7 +6,7 @@ export class CreatePantryItemDto {
   name: string;
 
   @IsNumber()
-  @IsPositive()
+  @Min(0)
   quantity: number;
 
   @IsString()
@@ -14,10 +14,16 @@ export class CreatePantryItemDto {
   unit: string;
 
   @IsOptional()
+  @ValidateIf((_, v) => v !== null)
   @IsDateString()
-  expiresAt?: string;
+  expiresAt?: string | null;
+
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @IsString()
+  categoryId?: string | null;
 
   @IsOptional()
   @IsString()
-  categoryId?: string;
+  ingredientId?: string;
 }

@@ -1,265 +1,498 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IngredientResult, IngredientsService } from '../../core/services/ingredients.service';
 import { IngredientCategory, PantryItem, PantryService } from '../../core/services/pantry.service';
+
+type DisplayItem = PantryItem & { virtual?: true };
+
+interface PantryGroup {
+  id: string;
+  name: string;
+  items: DisplayItem[];
+  isDepleted: boolean;
+}
+
+const CAT_PALETTE = [
+  '#60a5fa', '#34d399', '#f87171', '#fbbf24',
+  '#a78bfa', '#fb923c', '#38bdf8', '#4ade80',
+];
 
 @Component({
   selector: 'app-pantry',
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    <div class="p-8">
+    <div class="p-6 lg:p-8">
 
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex items-start justify-between mb-8">
         <div>
-          <h1 class="text-2xl font-bold text-mm-text1">Despensa</h1>
-          <p class="text-mm-text2 mt-0.5 text-sm">
-            {{ items().length }} ingrediente{{ items().length !== 1 ? 's' : '' }}
+          <h1 class="text-2xl font-bold text-mm-text1 tracking-tight">Despensa</h1>
+          <p class="text-mm-text3 text-sm mt-1">
+            @if (!loading()) {
+              <span class="text-mm-text2">{{ inStockCount() }}</span> en stock
+              @if (depletedCount() > 0) {
+                <span class="mx-1.5 text-white/20">·</span>
+                <span class="text-yellow-500/80">
+                  {{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }}
+                </span>
+              }
+            } @else { Cargando... }
           </p>
         </div>
-        <button (click)="openModal()"
+        <button (click)="openAddModal()"
                 class="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm">
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
           </svg>
-          Añadir ingrediente
+          Añadir
         </button>
       </div>
 
       <!-- Loading -->
       @if (loading()) {
-        <div class="flex items-center gap-3 text-mm-text2 text-sm py-12 justify-center">
-          <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-          </svg>
-          Cargando...
-        </div>
-      }
-
-      <!-- Empty state -->
-      @else if (items().length === 0) {
-        <div class="flex flex-col items-center justify-center py-20 text-center">
-          <div class="w-16 h-16 rounded-2xl bg-mm-surface border border-white/[0.06]
-                      flex items-center justify-center mb-4">
-            <svg class="w-7 h-7 text-mm-text3" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="1.5">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
-            </svg>
-          </div>
-          <p class="text-mm-text1 font-medium mb-1">Tu despensa está vacía</p>
-          <p class="text-mm-text2 text-sm mb-6">Añade los ingredientes que tienes disponibles</p>
-          <button (click)="openModal()" class="btn-primary px-5 py-2.5 text-sm">
-            Añadir primer ingrediente
-          </button>
-        </div>
-      }
-
-      <!-- Items grid -->
-      @else {
-        <div class="grid gap-2.5" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))">
-          @for (item of items(); track item.id) {
-            <div class="bg-mm-surface border rounded-xl p-3 flex flex-col group transition-colors"
-                 [style.border-color]="expiryInfo(item)?.borderColor ?? 'rgba(255,255,255,0.06)'">
-
-              <!-- Top: name + delete -->
-              <div class="flex items-start justify-between">
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-medium text-mm-text1 truncate">{{ item.name }}</p>
-                  <p class="text-xs text-mm-text2 mt-0.5">{{ item.quantity }} {{ item.unit }}</p>
-                  @if (item.category) {
-                    <span class="inline-block mt-1.5 px-2 py-0.5 rounded-md text-xs font-medium
-                                 bg-blue-500/10 text-blue-400">
-                      {{ item.category.name }}
-                    </span>
-                  }
-                </div>
-                <button (click)="deleteItem(item.id)"
-                        class="flex-shrink-0 ml-2 p-1.5 rounded-lg text-mm-text3
-                               opacity-0 group-hover:opacity-100 transition-all
-                               hover:text-red-400 hover:bg-red-400/10">
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                       stroke="currentColor" stroke-width="1.8">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                  </svg>
-                </button>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          @for (i of [0,1,2,3,4,5]; track i) {
+            <div>
+              <div class="h-4 w-24 bg-mm-surface rounded-md mb-3 animate-pulse"></div>
+              <div class="space-y-2">
+                @for (j of [0,1,2]; track j) {
+                  <div class="h-11 bg-mm-surface rounded-lg animate-pulse"></div>
+                }
               </div>
-
-              <!-- Bottom: expiry date -->
-              @if (expiryInfo(item); as info) {
-                <p class="text-xs text-mm-text3 mt-auto pt-2 border-t border-white/[0.04]">
-                  {{ info.label }}
-                </p>
-              }
-
             </div>
           }
         </div>
       }
 
+      @else if (mergedItems().length === 0) {
+        <div class="flex flex-col items-center justify-center py-24 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-mm-surface border border-white/[0.06]
+                      flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+            </svg>
+          </div>
+          <p class="text-mm-text1 font-semibold mb-1.5">La despensa está vacía</p>
+          <p class="text-mm-text3 text-sm mb-6 max-w-xs">
+            Añade los ingredientes que tienes en casa para saber qué recetas puedes preparar.
+          </p>
+          <button (click)="openAddModal()" class="btn-primary px-5 py-2.5 text-sm">
+            Añadir primer ingrediente
+          </button>
+        </div>
+      }
+
+      @else {
+
+        <!-- ── In-stock categories: responsive grid ──────── -->
+        @if (inStockGroups().length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-start">
+            @for (group of inStockGroups(); track group.id) {
+              <section>
+
+                <!-- Group header -->
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="w-2 h-2 rounded-full flex-shrink-0"
+                        [style.background]="categoryColor(group.id)"></span>
+                  <h2 class="text-xs font-semibold uppercase tracking-widest text-mm-text3">
+                    {{ group.name }}
+                  </h2>
+                  <div class="flex-1 h-px bg-white/[0.05]"></div>
+                  <span class="text-xs text-mm-text3 tabular-nums">{{ group.items.length }}</span>
+                </div>
+
+                <!-- Item rows -->
+                <div class="rounded-xl border border-white/[0.05] overflow-hidden bg-mm-surface">
+                  @for (item of group.items; track item.id; let last = $last) {
+                    <div class="flex items-center gap-2 px-3 py-2.5 group/row transition-colors
+                                hover:bg-white/[0.03] cursor-pointer"
+                         [class.border-b]="!last"
+                         style="border-color: rgba(255,255,255,0.04)"
+                         (click)="handleRowClick(item)">
+
+                      <div class="w-0.5 h-4 rounded-full flex-shrink-0 opacity-60"
+                           [style.background]="categoryColor(group.id)"></div>
+
+                      <span class="flex-1 text-sm text-mm-text1 truncate min-w-0">{{ item.name }}</span>
+
+                      <!-- Expiry badge -->
+                      @if (!item.virtual && expiryBadge(item); as badge) {
+                        <span class="hidden lg:inline text-xs px-1.5 py-0.5 rounded-md font-medium flex-shrink-0"
+                              [class]="badge.cls">
+                          {{ badge.label }}
+                        </span>
+                      }
+
+                      <!-- Quantity -->
+                      <span class="text-xs tabular-nums flex-shrink-0 px-2 py-0.5 rounded-md
+                                   border border-white/[0.06] bg-mm-card text-mm-text2">
+                        {{ item.quantity }} {{ item.unit }}
+                      </span>
+
+                      <!-- Actions -->
+                      <div class="flex items-center gap-0.5 flex-shrink-0
+                                  opacity-0 group-hover/row:opacity-100 transition-opacity"
+                           (click)="$event.stopPropagation()">
+                        @if (!item.virtual && item.quantity > 0) {
+                          <button (click)="setDepleted(item)"
+                                  title="Marcar como agotado"
+                                  class="p-1 rounded-md text-mm-text3 transition-colors
+                                         hover:text-yellow-400 hover:bg-yellow-400/10">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/>
+                            </svg>
+                          </button>
+                        }
+                        <button (click)="deleteItem(item)"
+                                title="Eliminar"
+                                class="p-1 rounded-md text-mm-text3 transition-colors
+                                       hover:text-red-400 hover:bg-red-400/10">
+                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        }
+
+        <!-- ── Agotados: siempre al fondo, ancho completo ── -->
+        @if (depletedGroup(); as depleted) {
+          <div class="mt-8 pt-6 border-t border-white/[0.05]">
+
+            <div class="flex items-center gap-3 mb-4">
+              <span class="w-2 h-2 rounded-full bg-yellow-600/70 flex-shrink-0"></span>
+              <h2 class="text-xs font-semibold uppercase tracking-widest text-yellow-500/60">
+                Agotados
+              </h2>
+              <div class="flex-1 h-px bg-white/[0.05]"></div>
+              <span class="text-xs text-mm-text3 tabular-nums">{{ depleted.items.length }}</span>
+            </div>
+
+            <!-- Chips: compact, horizontal wrap, full width -->
+            <div class="flex flex-wrap gap-2">
+              @for (item of depleted.items; track item.id) {
+                <div class="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-xl
+                            bg-mm-surface border border-white/[0.05]
+                            group/chip cursor-pointer
+                            hover:border-white/10 hover:bg-white/[0.02]
+                            transition-all opacity-60 hover:opacity-90"
+                     (click)="handleRowClick(item)">
+
+                  <div class="w-0.5 h-3.5 rounded-full bg-yellow-600/60 flex-shrink-0"></div>
+
+                  <span class="text-sm text-mm-text2 group-hover/chip:text-mm-text1
+                               transition-colors whitespace-nowrap">
+                    {{ item.name }}
+                  </span>
+
+                  <span class="text-xs text-mm-text3 tabular-nums">
+                    {{ item.unit }}
+                  </span>
+
+                  <!-- Delete on hover -->
+                  <button (click)="$event.stopPropagation(); deleteItem(item)"
+                          title="Eliminar"
+                          class="p-0.5 rounded-md text-mm-text3 transition-colors
+                                 opacity-0 group-hover/chip:opacity-100
+                                 hover:text-red-400 hover:bg-red-400/10 ml-0.5">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+      }
     </div>
 
-    <!-- Modal backdrop -->
+    <!-- ── Modal ──────────────────────────────────────────── -->
     @if (showModal()) {
-      <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50
-                  flex items-center justify-center p-4"
+      <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50
+                  flex items-end sm:items-center justify-center p-0 sm:p-4"
            (click)="closeModal()">
 
-        <div class="bg-mm-surface border border-white/[0.06] rounded-3xl
-                    w-full max-w-md shadow-2xl"
+        <div class="bg-mm-surface border border-white/[0.07] sm:rounded-2xl rounded-t-2xl
+                    w-full sm:max-w-md shadow-2xl max-h-[92vh] flex flex-col"
              (click)="$event.stopPropagation()">
 
-          <!-- Modal header -->
-          <div class="flex items-center justify-between px-8 pt-8 pb-0">
-            <h2 class="text-xl font-bold text-mm-text1">Añadir ingrediente</h2>
+          <div class="flex items-center justify-between px-6 pt-6 pb-0 flex-shrink-0">
+            <h2 class="text-lg font-bold text-mm-text1">
+              {{ editMode() ? 'Editar ingrediente' : 'Añadir ingrediente' }}
+            </h2>
             <button (click)="closeModal()"
-                    class="p-2 rounded-xl text-mm-text3 hover:text-mm-text1
+                    class="p-1.5 rounded-xl text-mm-text3 hover:text-mm-text1
                            hover:bg-white/[0.04] transition-colors">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                   stroke="currentColor" stroke-width="2">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>
           </div>
 
-          <form [formGroup]="form" (ngSubmit)="submit()" class="px-8 pb-8 pt-6">
+          <div class="overflow-y-auto flex-1 px-6 pt-5 pb-6">
+            <form [formGroup]="form" (ngSubmit)="submit()">
 
-            <!-- Name -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-mm-text2 mb-1.5">Nombre</label>
-              <input formControlName="name" type="text" placeholder="Ej: Pechuga de pollo"
-                     class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06]
-                            bg-mm-card text-mm-text1 text-[15px] outline-none
-                            transition-colors focus:border-blue-500
-                            placeholder:text-mm-text3 font-sans" />
-              @if (form.get('name')?.touched && form.get('name')?.invalid) {
-                <p class="text-red-400 text-xs mt-1.5">El nombre es obligatorio</p>
-              }
-            </div>
+              <!-- Name -->
+              <div class="mb-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">
+                  Ingrediente
+                </label>
 
-            <!-- Quantity + Unit -->
-            <div class="flex gap-3 mb-5">
-              <div class="flex-1">
-                <label class="block text-sm font-medium text-mm-text2 mb-1.5">Cantidad</label>
-                <input formControlName="quantity" type="number" placeholder="0" min="0" step="any"
-                       class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06]
-                              bg-mm-card text-mm-text1 text-[15px] outline-none
-                              transition-colors focus:border-blue-500
-                              placeholder:text-mm-text3 font-sans" />
-                @if (form.get('quantity')?.touched && form.get('quantity')?.invalid) {
-                  <p class="text-red-400 text-xs mt-1.5">Cantidad inválida</p>
+                <input
+                  type="text"
+                  [value]="ingredientName()"
+                  (input)="onNameInput($any($event.target).value)"
+                  (focus)="!editMode() && showDropdown.set(true)"
+                  (blur)="onNameBlur()"
+                  placeholder="Buscar o escribir nombre…"
+                  class="w-full px-4 py-3 rounded-xl border bg-mm-card text-mm-text1 text-sm
+                         outline-none transition-colors placeholder:text-mm-text3
+                         border-white/[0.06] focus:border-blue-500" />
+
+                @if (selectedCatalog() && !editMode()) {
+                  <p class="text-[11px] text-blue-400/60 mt-1 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                    Vinculado al catálogo
+                  </p>
+                }
+
+                @if (!editMode() && showDropdown() && catalogResults().length > 0) {
+                  <div class="mt-1 bg-mm-card border border-white/[0.07] rounded-xl
+                              overflow-hidden shadow-xl">
+                    @for (r of catalogResults(); track r.id) {
+                      <button type="button"
+                              (mousedown)="selectCatalog(r)"
+                              class="w-full flex items-center justify-between px-4 py-2.5
+                                     hover:bg-white/[0.04] text-left transition-colors
+                                     border-b border-white/[0.04] last:border-0">
+                        <span class="text-sm text-mm-text1">{{ r.name }}</span>
+                        <span class="text-xs text-mm-text3 ml-3 flex-shrink-0">{{ r.unit }}</span>
+                      </button>
+                    }
+                  </div>
+                }
+
+                @if (nameTouched() && !ingredientName().trim()) {
+                  <p class="text-red-400 text-xs mt-1.5">El nombre es obligatorio</p>
+                }
+
+                @if (!editMode() && existingMatch(); as match) {
+                  <div class="flex items-center gap-1.5 mt-2 px-3 py-2 rounded-lg
+                              bg-blue-500/[0.08] border border-blue-500/20">
+                    <svg class="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                    </svg>
+                    <p class="text-xs text-blue-300">
+                      Se sumará a <span class="font-semibold">{{ match.name }}</span>
+                      <span class="text-blue-400/60 ml-1">({{ match.quantity }} {{ match.unit }} actuales)</span>
+                    </p>
+                  </div>
                 }
               </div>
-              <div class="w-32">
-                <label class="block text-sm font-medium text-mm-text2 mb-1.5">Unidad</label>
-                <input formControlName="unit" type="text" placeholder="g"
-                       list="unit-suggestions"
-                       class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06]
-                              bg-mm-card text-mm-text1 text-[15px] outline-none
-                              transition-colors focus:border-blue-500
-                              placeholder:text-mm-text3 font-sans" />
-                <datalist id="unit-suggestions">
-                  <option value="g"></option>
-                  <option value="kg"></option>
-                  <option value="ml"></option>
-                  <option value="l"></option>
-                  <option value="unidades"></option>
-                  <option value="piezas"></option>
-                  <option value="latas"></option>
-                  <option value="bolsas"></option>
-                </datalist>
+
+              <!-- Quantity + Unit -->
+              <div class="flex gap-3 mb-4">
+                <div class="flex-1">
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">
+                    Cantidad
+                  </label>
+                  <input formControlName="quantity" type="number" placeholder="0" min="0" step="any"
+                         class="w-full px-4 py-3 rounded-xl border border-white/[0.06]
+                                bg-mm-card text-mm-text1 text-sm outline-none
+                                transition-colors focus:border-blue-500 placeholder:text-mm-text3" />
+                  @if (form.get('quantity')?.touched && form.get('quantity')?.invalid) {
+                    <p class="text-red-400 text-xs mt-1">Cantidad inválida</p>
+                  }
+                </div>
+                <div class="w-32">
+                  <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">
+                    Unidad
+                  </label>
+                  <select formControlName="unit"
+                          class="w-full px-3 py-3 rounded-xl border border-white/[0.06]
+                                 bg-mm-card text-mm-text1 text-sm outline-none
+                                 transition-colors focus:border-blue-500">
+                    <option value="" disabled>—</option>
+                    <option value="g">g</option>
+                    <option value="kg">kg</option>
+                    <option value="ml">ml</option>
+                    <option value="l">l</option>
+                    <option value="unidades">unidad(es)</option>
+                    <option value="paquetes">paquete(s)</option>
+                    <option value="latas">lata(s)</option>
+                    <option value="botes">bote(s)</option>
+                    <option value="bolsas">bolsa(s)</option>
+                  </select>
+                </div>
               </div>
-            </div>
 
-            <!-- Divider: caducidad -->
-            <div class="border-t border-white/[0.06] mb-5"></div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-4">
-              Caducidad <span class="font-normal normal-case tracking-normal">(elige una o ambas)</span>
-            </p>
-
-            <!-- Category select -->
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-mm-text2 mb-1.5">
-                Categoría
-                <span class="text-mm-text3 font-normal ml-1">— caducidad estimada</span>
-              </label>
-              <select formControlName="categoryId"
-                      class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06]
-                             bg-mm-card text-mm-text1 text-[15px] outline-none
-                             transition-colors focus:border-blue-500 font-sans">
-                <option value="">Sin categoría</option>
-                @for (cat of categories(); track cat.id) {
-                  <option [value]="cat.id">
-                    {{ cat.name }} — ~{{ cat.defaultDays }} día{{ cat.defaultDays !== 1 ? 's' : '' }}
-                  </option>
+              <!-- Caducidad -->
+              <div class="border-t border-white/[0.05] pt-4 mb-5 space-y-3">
+                <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">
+                  Caducidad <span class="font-normal normal-case tracking-normal opacity-60">(opcional)</span>
+                </p>
+                <select formControlName="categoryId"
+                        class="w-full px-4 py-2.5 rounded-xl border border-white/[0.06]
+                               bg-mm-card text-mm-text1 text-sm outline-none
+                               transition-colors focus:border-blue-500">
+                  <option value="">Sin categoría</option>
+                  @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">
+                      {{ cat.name }} — ~{{ cat.defaultDays }} día{{ cat.defaultDays !== 1 ? 's' : '' }}
+                    </option>
+                  }
+                </select>
+                @if (selectedCategory()) {
+                  <p class="text-blue-400 text-xs">Caduca aprox. el {{ categoryExpiryPreview() }}</p>
                 }
-              </select>
-              @if (selectedCategory()) {
-                <p class="text-blue-400 text-xs mt-1.5">
-                  Caduca aprox. el {{ categoryExpiryPreview() }}
+                <input formControlName="expiresAt" type="date"
+                       class="w-full px-4 py-2.5 rounded-xl border border-white/[0.06]
+                              bg-mm-card text-mm-text1 text-sm outline-none
+                              transition-colors focus:border-blue-500 [color-scheme:dark]" />
+              </div>
+
+              @if (saveError()) {
+                <p class="text-red-400 text-xs mb-4 bg-red-400/10 px-3 py-2 rounded-lg">
+                  {{ saveError() }}
                 </p>
               }
-            </div>
 
-            <!-- Manual date -->
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-mm-text2 mb-1.5">
-                Fecha de caducidad exacta
-                <span class="text-mm-text3 font-normal ml-1">— tiene prioridad sobre la categoría</span>
-              </label>
-              <input formControlName="expiresAt" type="date"
-                     class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06]
-                            bg-mm-card text-mm-text1 text-[15px] outline-none
-                            transition-colors focus:border-blue-500
-                            [color-scheme:dark] font-sans" />
-            </div>
+              <div class="flex gap-2.5">
+                <button type="button" (click)="closeModal()"
+                        class="flex-1 py-2.5 rounded-xl border border-white/[0.07]
+                               text-mm-text2 hover:text-mm-text1 hover:border-white/10
+                               transition-colors text-sm font-medium">
+                  Cancelar
+                </button>
+                <button type="submit" [disabled]="saving()"
+                        class="flex-1 btn-primary py-2.5 text-sm
+                               disabled:opacity-50 disabled:cursor-not-allowed
+                               disabled:translate-y-0 disabled:shadow-none">
+                  {{ saving() ? '…' : submitLabel() }}
+                </button>
+              </div>
 
-            @if (saveError()) {
-              <p class="text-red-400 text-sm mb-4 bg-red-400/10 px-4 py-2.5 rounded-lg">
-                {{ saveError() }}
-              </p>
-            }
-
-            <div class="flex gap-3">
-              <button type="button" (click)="closeModal()"
-                      class="flex-1 py-3 rounded-[10px] border border-white/[0.06]
-                             text-mm-text2 hover:text-mm-text1 hover:border-white/10
-                             transition-colors text-[15px] font-medium">
-                Cancelar
-              </button>
-              <button type="submit" [disabled]="saving()"
-                      class="flex-1 btn-primary py-3 text-[15px]
-                             disabled:opacity-60 disabled:cursor-not-allowed
-                             disabled:translate-y-0 disabled:shadow-none">
-                {{ saving() ? 'Guardando...' : 'Añadir' }}
-              </button>
-            </div>
-
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     }
   `,
 })
-export class PantryComponent implements OnInit {
-  private readonly pantryService = inject(PantryService);
+export class PantryComponent implements OnInit, OnDestroy {
+  private readonly pantryService    = inject(PantryService);
+  private readonly ingredientsService = inject(IngredientsService);
   private readonly fb = inject(FormBuilder);
 
-  items = signal<PantryItem[]>([]);
+  // ── Data ───────────────────────────────────────────────────
+  items      = signal<PantryItem[]>([]);
   categories = signal<IngredientCategory[]>([]);
-  loading = signal(true);
-  showModal = signal(false);
-  saving = signal(false);
-  saveError = signal('');
+  catalog    = signal<IngredientResult[]>([]);
+  loading    = signal(true);
+
+  // ── Modal ──────────────────────────────────────────────────
+  showModal    = signal(false);
+  saving       = signal(false);
+  saveError    = signal('');
+  editMode     = signal(false);
+  editingItem  = signal<DisplayItem | null>(null);
+
+  ingredientName  = signal('');
+  nameTouched     = signal(false);
+  catalogResults  = signal<IngredientResult[]>([]);
+  showDropdown    = signal(false);
+  selectedCatalog = signal<IngredientResult | null>(null);
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
 
   form = this.fb.group({
-    name:       ['', Validators.required],
-    quantity:   [null as number | null, [Validators.required, Validators.min(0.001)]],
+    quantity:   [null as number | null, [Validators.required, Validators.min(0)]],
     unit:       ['', Validators.required],
     categoryId: [''],
     expiresAt:  [''],
+  });
+
+  // ── Computed ───────────────────────────────────────────────
+  mergedItems = computed<DisplayItem[]>(() => {
+    const now = new Date().toISOString();
+    const linkedIds = new Set(
+      this.items().map(i => i.ingredientId).filter((id): id is string => !!id)
+    );
+    const virtuals: DisplayItem[] = this.catalog()
+      .filter(ing => !linkedIds.has(ing.id))
+      .map(ing => ({
+        virtual: true as const,
+        id: ing.id,
+        name: ing.name,
+        quantity: 0,
+        unit: ing.unit,
+        ingredientId: ing.id,
+        categoryId: null,
+        category: null,
+        expiresAt: null,
+        createdAt: now,
+        updatedAt: now,
+      }));
+    return [...this.items(), ...virtuals];
+  });
+
+  inStockCount  = computed(() => this.mergedItems().filter(i => i.quantity > 0).length);
+  depletedCount = computed(() => this.mergedItems().filter(i => i.quantity === 0).length);
+
+  inStockGroups = computed(() => this.groupedItems().filter(g => !g.isDepleted));
+  depletedGroup = computed(() => this.groupedItems().find(g => g.isDepleted) ?? null);
+
+  groupedItems = computed<PantryGroup[]>(() => {
+    const inStock  = this.mergedItems().filter(i => i.quantity > 0);
+    const depleted = this.mergedItems().filter(i => i.quantity === 0);
+
+    const catMap = new Map<string, PantryGroup>();
+    for (const item of inStock) {
+      const key  = item.categoryId ?? '__none__';
+      const name = item.category?.name ?? 'Sin categoría';
+      if (!catMap.has(key)) catMap.set(key, { id: key, name, items: [], isDepleted: false });
+      catMap.get(key)!.items.push(item);
+    }
+
+    const groups = [...catMap.values()].sort((a, b) => {
+      if (a.id === '__none__') return 1;
+      if (b.id === '__none__') return -1;
+      return a.name.localeCompare(b.name, 'es');
+    });
+
+    if (depleted.length > 0) {
+      groups.push({ id: '__depleted__', name: 'Agotados', items: depleted, isDepleted: true });
+    }
+    return groups;
+  });
+
+  catColorMap = computed(() => {
+    const map = new Map<string, string>();
+    this.categories().forEach((cat, i) => map.set(cat.id, CAT_PALETTE[i % CAT_PALETTE.length]));
+    return map;
+  });
+
+  existingMatch = computed<PantryItem | null>(() => {
+    if (this.editMode()) return null;
+    const name = this.ingredientName().trim();
+    const cat  = this.selectedCatalog();
+    if (!name) return null;
+    if (cat) return this.items().find(i => i.ingredientId === cat.id) ?? null;
+    return this.items().find(i => i.name.toLowerCase() === name.toLowerCase()) ?? null;
   });
 
   selectedCategory = computed(() => {
@@ -275,85 +508,200 @@ export class PantryComponent implements OnInit {
     return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
   });
 
+  submitLabel = computed(() => {
+    if (this.saving()) return '…';
+    if (this.editMode()) return 'Guardar';
+    if (this.existingMatch()) return 'Sumar cantidad';
+    return 'Añadir';
+  });
+
+  // ── Lifecycle ──────────────────────────────────────────────
   ngOnInit(): void {
     this.pantryService.getCategories().subscribe(cats => this.categories.set(cats));
+    this.ingredientsService.getAll().subscribe(ings => this.catalog.set(ings));
     this.loadItems();
   }
 
-  openModal(): void {
-    this.form.reset({ name: '', quantity: null, unit: '', categoryId: '', expiresAt: '' });
+  ngOnDestroy(): void {
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+  }
+
+  // ── Row interaction ────────────────────────────────────────
+  handleRowClick(item: DisplayItem): void {
+    if (item.virtual) {
+      // Open add modal pre-filled from catalog ingredient
+      this.openAddModal({ id: item.ingredientId!, name: item.name, unit: item.unit, caloriesPer100g: null });
+    } else {
+      this.openEditModal(item);
+    }
+  }
+
+  setDepleted(item: DisplayItem): void {
+    if (item.virtual) return;
+    this.pantryService.update(item.id, { quantity: 0, categoryId: null, expiresAt: null }).subscribe({
+      next: (u) => this.items.update(l => l.map(i => i.id === u.id ? u : i)),
+    });
+  }
+
+  deleteItem(item: DisplayItem): void {
+    if (item.virtual) {
+      // Delete from global catalog
+      this.ingredientsService.delete(item.id).subscribe({
+        next: () => this.catalog.update(l => l.filter(i => i.id !== item.id)),
+        error: (e) => alert(e.error?.message ?? 'No se puede eliminar este ingrediente'),
+      });
+    } else {
+      this.pantryService.remove(item.id).subscribe({
+        next: () => this.items.update(l => l.filter(i => i.id !== item.id)),
+      });
+    }
+  }
+
+  // ── Modal — Add ────────────────────────────────────────────
+  openAddModal(ing?: IngredientResult | null): void {
+    this.editMode.set(false);
+    this.editingItem.set(null);
+    this.form.reset({ quantity: null, unit: ing?.unit ?? '', categoryId: '', expiresAt: '' });
+    this.ingredientName.set(ing?.name ?? '');
+    this.nameTouched.set(false);
+    this.catalogResults.set([]);
+    this.showDropdown.set(false);
     this.saveError.set('');
+    this.selectedCatalog.set(ing ?? null);
     this.showModal.set(true);
   }
 
-  closeModal(): void {
-    this.showModal.set(false);
+  // ── Modal — Edit ───────────────────────────────────────────
+  openEditModal(item: DisplayItem): void {
+    this.editMode.set(true);
+    this.editingItem.set(item);
+    const expiresAt = item.expiresAt ? item.expiresAt.split('T')[0] : '';
+    this.form.reset({
+      quantity:   item.quantity,
+      unit:       item.unit,
+      categoryId: item.categoryId ?? '',
+      expiresAt,
+    });
+    this.ingredientName.set(item.name);
+    this.nameTouched.set(false);
+    this.catalogResults.set([]);
+    this.showDropdown.set(false);
+    this.saveError.set('');
+    this.selectedCatalog.set(null);
+    this.showModal.set(true);
   }
 
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+  closeModal(): void { this.showModal.set(false); }
+
+  // ── Catalog search (add mode only) ─────────────────────────
+  onNameInput(value: string): void {
+    this.ingredientName.set(value);
+    if (this.selectedCatalog() && value !== this.selectedCatalog()!.name) {
+      this.selectedCatalog.set(null);
     }
+    if (this.editMode()) return; // no catalog search in edit mode
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    if (value.length < 2) { this.catalogResults.set([]); return; }
+    this.searchTimer = setTimeout(() => {
+      this.ingredientsService.search(value).subscribe({
+        next: r  => this.catalogResults.set(r),
+        error: () => this.catalogResults.set([]),
+      });
+    }, 300);
+  }
+
+  onNameBlur(): void {
+    this.nameTouched.set(true);
+    setTimeout(() => this.showDropdown.set(false), 150);
+  }
+
+  selectCatalog(ing: IngredientResult): void {
+    this.selectedCatalog.set(ing);
+    this.ingredientName.set(ing.name);
+    this.form.patchValue({ unit: ing.unit });
+    this.catalogResults.set([]);
+    this.showDropdown.set(false);
+  }
+
+  // ── Submit ─────────────────────────────────────────────────
+  submit(): void {
+    this.nameTouched.set(true);
+    const name = this.ingredientName().trim();
+    if (!name || this.form.invalid) { this.form.markAllAsTouched(); return; }
+
     this.saving.set(true);
     this.saveError.set('');
 
-    const { name, quantity, unit, categoryId, expiresAt } = this.form.value;
-    const dto: Parameters<PantryService['create']>[0] = {
-      name: name!,
-      quantity: quantity!,
-      unit: unit!,
-    };
-    if (categoryId) dto.categoryId = categoryId;
-    if (expiresAt)  dto.expiresAt  = expiresAt;
+    const { quantity: qty, unit, categoryId, expiresAt } = this.form.value;
 
-    this.pantryService.create(dto).subscribe({
-      next: (item) => {
-        this.items.update(list => [...list, item].sort((a, b) => a.name.localeCompare(b.name)));
-        this.saving.set(false);
-        this.closeModal();
-      },
-      error: (err) => {
-        this.saveError.set(err.error?.message ?? 'No se pudo guardar el ingrediente');
-        this.saving.set(false);
-      },
-    });
-  }
+    if (this.editMode()) {
+      const target = this.editingItem()!;
+      const dto: Parameters<PantryService['update']>[1] = {
+        name,
+        quantity: qty!,
+        unit: unit!,
+      };
+      if (categoryId !== undefined) dto.categoryId = categoryId || undefined;
+      if (expiresAt  !== undefined) dto.expiresAt  = expiresAt  || undefined;
 
-  deleteItem(id: string): void {
-    this.pantryService.remove(id).subscribe({
-      next: () => this.items.update(list => list.filter(i => i.id !== id)),
-    });
-  }
-
-  expiryInfo(item: PantryItem): { label: string; borderColor: string } | null {
-    let expiryMs: number | null = null;
-    let source: 'manual' | 'category' = 'manual';
-
-    if (item.expiresAt) {
-      expiryMs = new Date(item.expiresAt).getTime();
-      source = 'manual';
-    } else if (item.category) {
-      expiryMs = new Date(item.createdAt).getTime() + item.category.defaultDays * 86_400_000;
-      source = 'category';
+      this.pantryService.update(target.id, dto).subscribe({
+        next: (u) => {
+          this.items.update(l => l.map(i => i.id === u.id ? u : i));
+          this.saving.set(false); this.closeModal();
+        },
+        error: (e) => { this.saveError.set(e.error?.message ?? 'Error'); this.saving.set(false); },
+      });
+      return;
     }
 
-    if (expiryMs === null) return null;
+    // Add mode
+    const existing = this.existingMatch();
+    if (existing) {
+      this.pantryService.update(existing.id, { quantity: existing.quantity + qty! }).subscribe({
+        next: (u) => {
+          this.items.update(l => l.map(i => i.id === u.id ? u : i));
+          this.saving.set(false); this.closeModal();
+        },
+        error: (e) => { this.saveError.set(e.error?.message ?? 'Error'); this.saving.set(false); },
+      });
+    } else {
+      const dto: Parameters<PantryService['create']>[0] = { name, quantity: qty!, unit: unit! };
+      if (categoryId) dto.categoryId = categoryId;
+      if (expiresAt)  dto.expiresAt  = expiresAt;
+      const cat = this.selectedCatalog();
+      if (cat) dto.ingredientId = cat.id;
 
-    const days = (expiryMs - Date.now()) / 86_400_000;
-    const borderColor = days < 0
-      ? 'rgba(248,113,113,0.55)'    // red-400
-      : days <= 7
-        ? 'rgba(250,204,21,0.55)'   // yellow-400
-        : 'rgba(255,255,255,0.06)'; // neutral
+      this.pantryService.create(dto).subscribe({
+        next: (item) => {
+          this.items.update(l => [...l, item].sort((a, b) => a.name.localeCompare(b.name)));
+          this.saving.set(false); this.closeModal();
+        },
+        error: (e) => { this.saveError.set(e.error?.message ?? 'Error al guardar'); this.saving.set(false); },
+      });
+    }
+  }
 
-    const dateStr = new Date(expiryMs).toLocaleDateString('es-ES', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-    });
+  // ── Visual helpers ─────────────────────────────────────────
+  categoryColor(groupId: string): string {
+    if (groupId === '__depleted__') return '#ca8a04';
+    if (groupId === '__none__')     return '#374151';
+    return this.catColorMap().get(groupId) ?? CAT_PALETTE[0];
+  }
 
-    const label = source === 'manual' ? `Caduca ${dateStr}` : `Caduca aprox. ${dateStr}`;
-
-    return { label, borderColor };
+  expiryBadge(item: PantryItem): { label: string; cls: string } | null {
+    let ms: number | null = null;
+    if (item.expiresAt) {
+      ms = new Date(item.expiresAt).getTime();
+    } else if (item.category) {
+      ms = new Date(item.createdAt).getTime() + item.category.defaultDays * 86_400_000;
+    }
+    if (ms === null) return null;
+    const days = (ms - Date.now()) / 86_400_000;
+    const date = new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+    if (days < 0)  return { label: 'Caducado',      cls: 'bg-red-500/15 text-red-400' };
+    if (days <= 3) return { label: `Caduca ${date}`, cls: 'bg-orange-500/15 text-orange-400' };
+    if (days <= 7) return { label: `Caduca ${date}`, cls: 'bg-yellow-500/15 text-yellow-400' };
+    return null;
   }
 
   private loadItems(): void {

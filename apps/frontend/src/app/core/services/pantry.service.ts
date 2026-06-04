@@ -16,6 +16,7 @@ export interface PantryItem {
   expiresAt: string | null;
   categoryId: string | null;
   category: IngredientCategory | null;
+  ingredientId: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,8 +25,9 @@ export interface CreatePantryItemDto {
   name: string;
   quantity: number;
   unit: string;
-  expiresAt?: string;
-  categoryId?: string;
+  expiresAt?: string | null;
+  categoryId?: string | null;
+  ingredientId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,6 +45,10 @@ export class PantryService {
 
   create(dto: CreatePantryItemDto) {
     return this.http.post<PantryItem>(this.base, dto);
+  }
+
+  update(id: string, dto: Partial<CreatePantryItemDto>) {
+    return this.http.patch<PantryItem>(`${this.base}/${id}`, dto);
   }
 
   remove(id: string) {
