@@ -27,11 +27,13 @@ import { AuthService } from '../core/services/auth.service';
         <!-- Nav items -->
         <nav class="flex-1 px-3 py-4 space-y-0.5">
 
-          <a routerLink="/app/dashboard" routerLinkActive="!text-blue-400 bg-blue-500/10"
+          <a routerLink="/app/dashboard"
+             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
              [routerLinkActiveOptions]="{ exact: true }"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors
-                    text-sm font-medium">
+             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
+                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
+            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
+                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -40,10 +42,12 @@ import { AuthService } from '../core/services/auth.service';
             Dashboard
           </a>
 
-          <a routerLink="/app/recipes" routerLinkActive="!text-blue-400 bg-blue-500/10"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors
-                    text-sm font-medium">
+          <a routerLink="/app/recipes"
+             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
+             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
+                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
+            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
+                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -52,10 +56,12 @@ import { AuthService } from '../core/services/auth.service';
             Recetas
           </a>
 
-          <a routerLink="/app/pantry" routerLinkActive="!text-blue-400 bg-blue-500/10"
-             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors
-                    text-sm font-medium">
+          <a routerLink="/app/pantry"
+             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
+             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
+                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
+            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
+                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
             <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
                  stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -103,7 +109,7 @@ import { AuthService } from '../core/services/auth.service';
 export class AppLayoutComponent {
   private readonly auth = inject(AuthService);
 
-  email = computed(() => this.auth.user()?.email ?? '');
+  email   = computed(() => this.auth.user()?.email ?? '');
   initial = computed(() => (this.auth.user()?.email ?? 'U')[0].toUpperCase());
 
   logout(): void {

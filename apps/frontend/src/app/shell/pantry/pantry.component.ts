@@ -25,17 +25,22 @@ const CAT_PALETTE = [
     <div class="p-6 lg:p-8">
 
       <!-- Header -->
-      <div class="flex items-start justify-between mb-8">
+      <div class="flex items-start justify-between mb-6">
         <div>
           <h1 class="text-2xl font-bold text-mm-text1 tracking-tight">Despensa</h1>
           <p class="text-mm-text3 text-sm mt-1">
             @if (!loading()) {
-              <span class="text-mm-text2">{{ inStockCount() }}</span> en stock
-              @if (depletedCount() > 0) {
-                <span class="mx-1.5 text-white/20">·</span>
-                <span class="text-yellow-500/80">
-                  {{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }}
-                </span>
+              @if (isFiltering()) {
+                <span class="text-mm-text2">{{ filteredInStockCount() }}</span>
+                <span> de {{ inStockCount() }} en stock</span>
+              } @else {
+                <span class="text-mm-text2">{{ inStockCount() }}</span> en stock
+                @if (depletedCount() > 0) {
+                  <span class="mx-1.5 text-white/20">·</span>
+                  <span class="text-yellow-500/80">
+                    {{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }}
+                  </span>
+                }
               }
             } @else { Cargando... }
           </p>
@@ -48,6 +53,93 @@ const CAT_PALETTE = [
           Añadir
         </button>
       </div>
+
+      <!-- Search & Filters — sticky -->
+      @if (!loading() && mergedItems().length > 0) {
+        <div class="sticky top-0 z-10 -mx-6 lg:-mx-8 px-6 lg:px-8 pt-3 pb-4 mb-2
+                    bg-mm-base/90 backdrop-blur-md border-b border-white/[0.04]">
+
+          <!-- Search input -->
+          <div class="relative mb-2.5">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mm-text3 pointer-events-none"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607"/>
+            </svg>
+            <input type="text"
+                   [value]="searchQuery()"
+                   (input)="searchQuery.set($any($event.target).value)"
+                   placeholder="Buscar ingrediente…"
+                   class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/[0.06]
+                          bg-mm-surface text-mm-text1 text-sm outline-none
+                          transition-colors focus:border-blue-500/50 placeholder:text-mm-text3" />
+            @if (searchQuery()) {
+              <button (click)="searchQuery.set('')"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5
+                             text-mm-text3 hover:text-mm-text1 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            }
+          </div>
+
+          <!-- Filter pills + sort -->
+          <div class="flex items-center gap-2 flex-wrap">
+
+            <button (click)="toggleExpiryFilter('soon')"
+                    [class]="expiryFilter() === 'soon'
+                      ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      : 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-mm-surface border border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
+              Caduca pronto
+            </button>
+
+            <button (click)="toggleExpiryFilter('expired')"
+                    [class]="expiryFilter() === 'expired'
+                      ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-red-500/20 text-red-400 border border-red-500/30'
+                      : 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-mm-surface border border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
+              Caducados
+            </button>
+
+            @if (categories().length > 0) {
+              <select [value]="categoryFilter() ?? ''"
+                      (change)="categoryFilter.set($any($event.target).value || null)"
+                      [class]="categoryFilter()
+                        ? 'px-3 py-1.5 rounded-full text-xs font-medium border outline-none transition-colors cursor-pointer [color-scheme:dark] bg-blue-500/20 text-blue-400 border-blue-500/30'
+                        : 'px-3 py-1.5 rounded-full text-xs font-medium border outline-none transition-colors cursor-pointer [color-scheme:dark] bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10'">
+                <option value="">Todas las categorías</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            }
+
+            <!-- Sort -->
+            <select [value]="sortOrder()"
+                    (change)="sortOrder.set($any($event.target).value)"
+                    class="px-3 py-1.5 rounded-full text-xs font-medium border outline-none
+                           transition-colors cursor-pointer [color-scheme:dark] ml-auto
+                           bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10">
+              <option value="name">Nombre A→Z</option>
+              <option value="expiry">Caducidad</option>
+              <option value="quantity">Cantidad</option>
+            </select>
+
+            @if (isFiltering()) {
+              <button (click)="clearFilters()"
+                      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
+                             text-mm-text3 hover:text-mm-text1 transition-colors
+                             border border-white/[0.06] hover:border-white/10">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Limpiar
+              </button>
+            }
+
+          </div>
+        </div>
+      }
 
       <!-- Loading -->
       @if (loading()) {
@@ -86,134 +178,185 @@ const CAT_PALETTE = [
 
       @else {
 
-        <!-- ── In-stock categories: responsive grid ──────── -->
-        @if (inStockGroups().length > 0) {
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-start">
-            @for (group of inStockGroups(); track group.id) {
+        <!-- ── In-stock categories ──────────────────────── -->
+        @if (filteredInStockGroups().length > 0) {
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-4 items-start">
+            @for (group of filteredInStockGroups(); track group.id) {
               <section>
 
-                <!-- Group header -->
-                <div class="flex items-center gap-3 mb-3">
+                <!-- Group header: click to collapse -->
+                <div class="flex items-center gap-2.5 mb-3 cursor-pointer select-none group/header"
+                     (click)="toggleGroup(group.id)">
                   <span class="w-2 h-2 rounded-full flex-shrink-0"
                         [style.background]="categoryColor(group.id)"></span>
-                  <h2 class="text-xs font-semibold uppercase tracking-widest text-mm-text3">
+                  <h2 class="text-xs font-semibold uppercase tracking-widest text-mm-text3
+                             group-hover/header:text-mm-text2 transition-colors whitespace-nowrap flex-shrink-0">
                     {{ group.name }}
                   </h2>
-                  <div class="flex-1 h-px bg-white/[0.05]"></div>
-                  <span class="text-xs text-mm-text3 tabular-nums">{{ group.items.length }}</span>
-                </div>
-
-                <!-- Item rows -->
-                <div class="rounded-xl border border-white/[0.05] overflow-hidden bg-mm-surface">
-                  @for (item of group.items; track item.id; let last = $last) {
-                    <div class="flex items-center gap-2 px-3 py-2.5 group/row transition-colors
-                                hover:bg-white/[0.03] cursor-pointer"
-                         [class.border-b]="!last"
-                         style="border-color: rgba(255,255,255,0.04)"
-                         (click)="handleRowClick(item)">
-
-                      <div class="w-0.5 h-4 rounded-full flex-shrink-0 opacity-60"
-                           [style.background]="categoryColor(group.id)"></div>
-
-                      <span class="flex-1 text-sm text-mm-text1 truncate min-w-0">{{ item.name }}</span>
-
-                      <!-- Expiry badge: fixed-width slot so badges align across rows -->
-                      <div class="hidden lg:flex w-28 flex-shrink-0 justify-end">
-                        @if (!item.virtual && expiryBadge(item); as badge) {
-                          <span class="text-xs px-1.5 py-0.5 rounded-md font-medium" [class]="badge.cls">
-                            {{ badge.label }}
-                          </span>
-                        }
-                      </div>
-
-                      <!-- Quantity: fixed-width slot, chip right-aligned inside -->
-                      <div class="w-24 flex-shrink-0 flex justify-end">
-                        <span class="text-xs tabular-nums px-2 py-0.5 rounded-md
-                                     border border-white/[0.06] bg-mm-card text-mm-text2">
-                          {{ item.quantity }} {{ item.unit }}
-                        </span>
-                      </div>
-
-                      <!-- Actions -->
-                      <div class="flex items-center gap-0.5 flex-shrink-0
-                                  opacity-0 group-hover/row:opacity-100 transition-opacity"
-                           (click)="$event.stopPropagation()">
-                        @if (!item.virtual && item.quantity > 0) {
-                          <button (click)="setDepleted(item)"
-                                  title="Marcar como agotado"
-                                  class="p-1 rounded-md text-mm-text3 transition-colors
-                                         hover:text-yellow-400 hover:bg-yellow-400/10">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/>
-                            </svg>
-                          </button>
-                        }
-                        <button (click)="deleteItem(item)"
-                                title="Eliminar"
-                                class="p-1 rounded-md text-mm-text3 transition-colors
-                                       hover:text-red-400 hover:bg-red-400/10">
-                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
+                  <!-- Collapsed preview: first item names -->
+                  @if (isGroupCollapsed(group.id)) {
+                    <p class="text-[10px] text-mm-text3/50 truncate min-w-0">
+                      {{ collapsedPreview(group.items) }}
+                    </p>
                   }
+                  <div class="flex-1 h-px bg-white/[0.05] min-w-2"></div>
+                  <span class="text-xs text-mm-text3 tabular-nums flex-shrink-0">{{ group.items.length }}</span>
+                  <svg [class]="chevronClass(group.id)"
+                       fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                  </svg>
                 </div>
+
+                <!-- Item rows: animated collapse -->
+                <div [class]="isGroupCollapsed(group.id) ? 'collapsible collapsed' : 'collapsible'">
+                  <div>
+                    <div class="rounded-xl border border-white/[0.05] overflow-hidden bg-mm-surface">
+                      @for (item of group.items; track item.id; let last = $last) {
+                        <div class="flex items-center gap-2 px-3 py-2.5 group/row transition-colors
+                                    hover:bg-white/[0.05] cursor-pointer"
+                             [class.border-b]="!last"
+                             style="border-color: rgba(255,255,255,0.04)"
+                             (click)="handleRowClick(item)">
+
+                          <div class="w-0.5 h-4 rounded-full flex-shrink-0 opacity-60"
+                               [style.background]="categoryColor(group.id)"></div>
+
+                          <span class="flex-1 text-sm text-mm-text1 truncate min-w-0">{{ item.name }}</span>
+
+                          <!-- Expiry: dot on mobile, full badge on lg+ -->
+                          @if (!item.virtual && expiryBadge(item); as badge) {
+                            <span class="lg:hidden w-2 h-2 rounded-full flex-shrink-0"
+                                  [style.background]="badge.cls.includes('red') ? '#f87171' : badge.cls.includes('orange') ? '#fb923c' : '#fbbf24'">
+                            </span>
+                            <span class="hidden lg:inline text-xs px-1.5 py-0.5 rounded-md font-medium
+                                         w-28 text-right flex-shrink-0" [class]="badge.cls">
+                              {{ badge.label }}
+                            </span>
+                          } @else {
+                            <span class="hidden lg:block w-28 flex-shrink-0"></span>
+                          }
+
+                          <div class="w-24 flex-shrink-0 flex justify-end">
+                            <span class="text-xs tabular-nums px-2 py-0.5 rounded-md
+                                         border border-white/[0.06] bg-mm-card text-mm-text2">
+                              {{ item.quantity }} {{ item.unit }}
+                            </span>
+                          </div>
+
+                          <div class="flex items-center gap-0.5 flex-shrink-0
+                                      opacity-0 group-hover/row:opacity-100 transition-opacity"
+                               (click)="$event.stopPropagation()">
+                            @if (!item.virtual && item.quantity > 0) {
+                              <button (click)="setDepleted(item)"
+                                      title="Marcar como agotado"
+                                      class="p-1 rounded-md text-mm-text3 transition-colors
+                                             hover:text-yellow-400 hover:bg-yellow-400/10">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/>
+                                </svg>
+                              </button>
+                            }
+                            <button (click)="deleteItem(item)"
+                                    title="Eliminar"
+                                    class="p-1 rounded-md text-mm-text3 transition-colors
+                                           hover:text-red-400 hover:bg-red-400/10">
+                              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
               </section>
             }
           </div>
+        } @else if (isFiltering()) {
+          <!-- No results -->
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-mm-surface border border-white/[0.06]
+                        flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607"/>
+              </svg>
+            </div>
+            <p class="text-mm-text1 font-semibold mb-1">Sin coincidencias</p>
+            <p class="text-mm-text3 text-sm mb-4">{{ noResultsMessage() }}</p>
+            <button (click)="clearFilters()"
+                    class="px-4 py-2 rounded-full border border-white/[0.07] text-mm-text2
+                           hover:text-mm-text1 hover:border-white/10 transition-colors text-sm">
+              Limpiar filtros
+            </button>
+          </div>
         }
 
-        <!-- ── Agotados: siempre al fondo, ancho completo ── -->
-        @if (depletedGroup(); as depleted) {
+        <!-- ── Agotados ─────────────────────────────────── -->
+        @if (filteredDepletedGroup(); as depleted) {
           <div class="mt-8 pt-6 border-t border-white/[0.05]">
 
-            <div class="flex items-center gap-3 mb-4">
+            <div class="flex items-center gap-2.5 mb-4 cursor-pointer select-none group/header"
+                 (click)="toggleGroup('__depleted__')">
               <span class="w-2 h-2 rounded-full bg-yellow-600/70 flex-shrink-0"></span>
-              <h2 class="text-xs font-semibold uppercase tracking-widest text-yellow-500/60">
+              <h2 class="text-xs font-semibold uppercase tracking-widest text-yellow-500/60
+                         group-hover/header:text-yellow-500/80 transition-colors whitespace-nowrap flex-shrink-0">
                 Agotados
               </h2>
-              <div class="flex-1 h-px bg-white/[0.05]"></div>
-              <span class="text-xs text-mm-text3 tabular-nums">{{ depleted.items.length }}</span>
-            </div>
-
-            <!-- Chips: compact, horizontal wrap, full width -->
-            <div class="flex flex-wrap gap-2">
-              @for (item of depleted.items; track item.id) {
-                <div class="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-xl
-                            bg-mm-surface border border-white/[0.05]
-                            group/chip cursor-pointer
-                            hover:border-white/10 hover:bg-white/[0.02]
-                            transition-all opacity-60 hover:opacity-90"
-                     (click)="handleRowClick(item)">
-
-                  <div class="w-0.5 h-3.5 rounded-full bg-yellow-600/60 flex-shrink-0"></div>
-
-                  <span class="text-sm text-mm-text2 group-hover/chip:text-mm-text1
-                               transition-colors whitespace-nowrap">
-                    {{ item.name }}
-                  </span>
-
-                  <span class="text-xs text-mm-text3 tabular-nums">
-                    {{ item.unit }}
-                  </span>
-
-                  <!-- Delete on hover -->
-                  <button (click)="$event.stopPropagation(); deleteItem(item)"
-                          title="Eliminar"
-                          class="p-0.5 rounded-md text-mm-text3 transition-colors
-                                 opacity-0 group-hover/chip:opacity-100
-                                 hover:text-red-400 hover:bg-red-400/10 ml-0.5">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                  </button>
-                </div>
+              @if (isGroupCollapsed('__depleted__')) {
+                <p class="text-[10px] text-mm-text3/50 truncate min-w-0">
+                  {{ collapsedPreview(depleted.items) }}
+                </p>
               }
+              <div class="flex-1 h-px bg-white/[0.05] min-w-2"></div>
+              <span class="text-xs text-mm-text3 tabular-nums flex-shrink-0">{{ depleted.items.length }}</span>
+              <svg [class]="chevronClass('__depleted__')"
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+              </svg>
             </div>
+
+            <div [class]="isGroupCollapsed('__depleted__') ? 'collapsible collapsed' : 'collapsible'">
+              <div>
+                <div class="flex flex-wrap gap-2">
+                  @for (item of depleted.items; track item.id) {
+                    <div class="flex items-center gap-2 pl-2.5 pr-1.5 py-1.5 rounded-xl
+                                bg-mm-surface border border-white/[0.05]
+                                group/chip cursor-pointer
+                                hover:border-white/10 hover:bg-white/[0.02]
+                                transition-all opacity-60 hover:opacity-90"
+                         (click)="handleRowClick(item)">
+
+                      <div class="w-0.5 h-3.5 rounded-full bg-yellow-600/60 flex-shrink-0"></div>
+
+                      <span class="text-sm text-mm-text2 group-hover/chip:text-mm-text1
+                                   transition-colors whitespace-nowrap">
+                        {{ item.name }}
+                      </span>
+
+                      <span class="text-xs text-mm-text3 tabular-nums">
+                        {{ item.unit }}
+                      </span>
+
+                      <button (click)="$event.stopPropagation(); deleteItem(item)"
+                              title="Eliminar"
+                              class="p-0.5 rounded-md text-mm-text3 transition-colors
+                                     opacity-0 group-hover/chip:opacity-100
+                                     hover:text-red-400 hover:bg-red-400/10 ml-0.5">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+
           </div>
         }
 
@@ -222,12 +365,12 @@ const CAT_PALETTE = [
 
     <!-- ── Modal ──────────────────────────────────────────── -->
     @if (showModal()) {
-      <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50
+      <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 modal-backdrop-enter
                   flex items-end sm:items-center justify-center p-0 sm:p-4"
            (click)="closeModal()">
 
         <div class="bg-mm-surface border border-white/[0.07] sm:rounded-2xl rounded-t-2xl
-                    w-full sm:max-w-md shadow-2xl max-h-[92vh] flex flex-col"
+                    w-full sm:max-w-md shadow-2xl max-h-[92vh] flex flex-col modal-enter"
              (click)="$event.stopPropagation()">
 
           <div class="flex items-center justify-between px-6 pt-6 pb-0 flex-shrink-0">
@@ -398,7 +541,7 @@ const CAT_PALETTE = [
   `,
 })
 export class PantryComponent implements OnInit, OnDestroy {
-  private readonly pantryService    = inject(PantryService);
+  private readonly pantryService      = inject(PantryService);
   private readonly ingredientsService = inject(IngredientsService);
   private readonly fb = inject(FormBuilder);
 
@@ -407,6 +550,13 @@ export class PantryComponent implements OnInit, OnDestroy {
   categories = signal<IngredientCategory[]>([]);
   catalog    = signal<IngredientResult[]>([]);
   loading    = signal(true);
+
+  // ── Search, filter & sort ──────────────────────────────────
+  searchQuery     = signal('');
+  collapsedGroups = signal<Set<string>>(new Set());
+  expiryFilter    = signal<'soon' | 'expired' | null>(null);
+  categoryFilter  = signal<string | null>(null);
+  sortOrder       = signal<'name' | 'expiry' | 'quantity'>('name');
 
   // ── Modal ──────────────────────────────────────────────────
   showModal    = signal(false);
@@ -458,6 +608,74 @@ export class PantryComponent implements OnInit, OnDestroy {
 
   inStockGroups = computed(() => this.groupedItems().filter(g => !g.isDepleted));
   depletedGroup = computed(() => this.groupedItems().find(g => g.isDepleted) ?? null);
+
+  isFiltering = computed(() =>
+    !!this.searchQuery().trim() || !!this.expiryFilter() || !!this.categoryFilter()
+  );
+
+  noResultsMessage = computed(() => {
+    const q = this.searchQuery().trim();
+    const expiry = this.expiryFilter();
+    const catId  = this.categoryFilter();
+    if (q)                   return `No se encontró "${q}"`;
+    if (expiry === 'expired') return 'No hay ingredientes caducados en stock';
+    if (expiry === 'soon')    return 'No hay ingredientes con caducidad próxima';
+    if (catId) {
+      const cat = this.categories().find(c => c.id === catId);
+      return `No hay ingredientes en "${cat?.name ?? 'esta categoría'}"`;
+    }
+    return 'Ningún ingrediente coincide con los filtros activos';
+  });
+
+  filteredInStockGroups = computed(() => {
+    const q        = this.searchQuery().trim().toLowerCase();
+    const expiry   = this.expiryFilter();
+    const catFilter = this.categoryFilter();
+    const sort     = this.sortOrder();
+
+    return this.inStockGroups()
+      .filter(g => !catFilter || g.id === catFilter)
+      .map(g => {
+        const items = g.items
+          .filter(item => {
+            if (q && !item.name.toLowerCase().includes(q)) return false;
+            if (expiry) {
+              const badge = this.expiryBadge(item as PantryItem);
+              if (expiry === 'expired' && (!badge || !badge.cls.includes('red'))) return false;
+              if (expiry === 'soon'    && (!badge || badge.cls.includes('red')))  return false;
+            }
+            return true;
+          })
+          .sort((a, b) => {
+            if (sort === 'name')     return a.name.localeCompare(b.name, 'es');
+            if (sort === 'quantity') return b.quantity - a.quantity;
+            if (sort === 'expiry') {
+              const ma = this.getExpiryMs(a as PantryItem);
+              const mb = this.getExpiryMs(b as PantryItem);
+              if (ma === null && mb === null) return 0;
+              if (ma === null) return 1;
+              if (mb === null) return -1;
+              return ma - mb;
+            }
+            return 0;
+          });
+        return { ...g, items };
+      })
+      .filter(g => g.items.length > 0);
+  });
+
+  filteredDepletedGroup = computed(() => {
+    const q   = this.searchQuery().trim().toLowerCase();
+    const dep = this.depletedGroup();
+    if (!dep) return null;
+    if (!q)   return dep;
+    const items = dep.items.filter(i => i.name.toLowerCase().includes(q));
+    return items.length ? { ...dep, items } : null;
+  });
+
+  filteredInStockCount = computed(() =>
+    this.filteredInStockGroups().reduce((s, g) => s + g.items.length, 0)
+  );
 
   groupedItems = computed<PantryGroup[]>(() => {
     const inStock  = this.mergedItems().filter(i => i.quantity > 0);
@@ -529,10 +747,44 @@ export class PantryComponent implements OnInit, OnDestroy {
     if (this.searchTimer) clearTimeout(this.searchTimer);
   }
 
+  // ── Collapse ───────────────────────────────────────────────
+  toggleGroup(id: string): void {
+    this.collapsedGroups.update(set => {
+      const next = new Set(set);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  isGroupCollapsed(id: string): boolean {
+    if (this.isFiltering()) return false;
+    return this.collapsedGroups().has(id);
+  }
+
+  chevronClass(id: string): string {
+    const base = 'w-3.5 h-3.5 text-mm-text3 flex-shrink-0 transition-transform duration-200';
+    return this.isGroupCollapsed(id) ? `${base} -rotate-90` : base;
+  }
+
+  collapsedPreview(items: DisplayItem[]): string {
+    const names = items.slice(0, 3).map(i => i.name).join(' · ');
+    return items.length > 3 ? `${names} +${items.length - 3}` : names;
+  }
+
+  // ── Filters ────────────────────────────────────────────────
+  toggleExpiryFilter(val: 'soon' | 'expired'): void {
+    this.expiryFilter.update(v => v === val ? null : val);
+  }
+
+  clearFilters(): void {
+    this.searchQuery.set('');
+    this.expiryFilter.set(null);
+    this.categoryFilter.set(null);
+  }
+
   // ── Row interaction ────────────────────────────────────────
   handleRowClick(item: DisplayItem): void {
     if (item.virtual) {
-      // Open add modal pre-filled from catalog ingredient
       this.openAddModal({ id: item.ingredientId!, name: item.name, unit: item.unit, caloriesPer100g: null });
     } else {
       this.openEditModal(item);
@@ -548,7 +800,6 @@ export class PantryComponent implements OnInit, OnDestroy {
 
   deleteItem(item: DisplayItem): void {
     if (item.virtual) {
-      // Delete from global catalog
       this.ingredientsService.delete(item.id).subscribe({
         next: () => this.catalog.update(l => l.filter(i => i.id !== item.id)),
         error: (e) => alert(e.error?.message ?? 'No se puede eliminar este ingrediente'),
@@ -602,7 +853,7 @@ export class PantryComponent implements OnInit, OnDestroy {
     if (this.selectedCatalog() && value !== this.selectedCatalog()!.name) {
       this.selectedCatalog.set(null);
     }
-    if (this.editMode()) return; // no catalog search in edit mode
+    if (this.editMode()) return;
     if (this.searchTimer) clearTimeout(this.searchTimer);
     if (value.length < 2) { this.catalogResults.set([]); return; }
     this.searchTimer = setTimeout(() => {
@@ -657,7 +908,6 @@ export class PantryComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Add mode
     const existing = this.existingMatch();
     if (existing) {
       this.pantryService.update(existing.id, { quantity: existing.quantity + qty! }).subscribe({
@@ -704,6 +954,12 @@ export class PantryComponent implements OnInit, OnDestroy {
     if (days < 0)  return { label: 'Caducado',      cls: 'bg-red-500/15 text-red-400' };
     if (days <= 3) return { label: `Caduca ${date}`, cls: 'bg-orange-500/15 text-orange-400' };
     if (days <= 7) return { label: `Caduca ${date}`, cls: 'bg-yellow-500/15 text-yellow-400' };
+    return null;
+  }
+
+  private getExpiryMs(item: PantryItem): number | null {
+    if (item.expiresAt) return new Date(item.expiresAt).getTime();
+    if (item.category)  return new Date(item.createdAt).getTime() + item.category.defaultDays * 86_400_000;
     return null;
   }
 

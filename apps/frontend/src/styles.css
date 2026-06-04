@@ -60,3 +60,43 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
+
+/* ── Smooth collapse via CSS grid trick ─────────────────── */
+.collapsible {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 220ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+}
+.collapsible.collapsed {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
+}
+.collapsible > * {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Modal entrance animations ──────────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.modal-enter         { animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.modal-backdrop-enter { animation: fadeIn 0.18s ease forwards; }
+
+/* ── Focus-visible ring (keyboard nav) ──────────────────── */
+:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Sidebar active nav indicator bar ───────────────────── */
+a.is-active .nav-indicator { opacity: 1 !important; }
