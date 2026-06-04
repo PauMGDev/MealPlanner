@@ -117,19 +117,22 @@ const CAT_PALETTE = [
 
                       <span class="flex-1 text-sm text-mm-text1 truncate min-w-0">{{ item.name }}</span>
 
-                      <!-- Expiry badge -->
-                      @if (!item.virtual && expiryBadge(item); as badge) {
-                        <span class="hidden lg:inline text-xs px-1.5 py-0.5 rounded-md font-medium flex-shrink-0"
-                              [class]="badge.cls">
-                          {{ badge.label }}
-                        </span>
-                      }
+                      <!-- Expiry badge: fixed-width slot so badges align across rows -->
+                      <div class="hidden lg:flex w-28 flex-shrink-0 justify-end">
+                        @if (!item.virtual && expiryBadge(item); as badge) {
+                          <span class="text-xs px-1.5 py-0.5 rounded-md font-medium" [class]="badge.cls">
+                            {{ badge.label }}
+                          </span>
+                        }
+                      </div>
 
-                      <!-- Quantity -->
-                      <span class="text-xs tabular-nums flex-shrink-0 px-2 py-0.5 rounded-md
-                                   border border-white/[0.06] bg-mm-card text-mm-text2">
-                        {{ item.quantity }} {{ item.unit }}
-                      </span>
+                      <!-- Quantity: fixed-width slot, chip right-aligned inside -->
+                      <div class="w-24 flex-shrink-0 flex justify-end">
+                        <span class="text-xs tabular-nums px-2 py-0.5 rounded-md
+                                     border border-white/[0.06] bg-mm-card text-mm-text2">
+                          {{ item.quantity }} {{ item.unit }}
+                        </span>
+                      </div>
 
                       <!-- Actions -->
                       <div class="flex items-center gap-0.5 flex-shrink-0
