@@ -20,11 +20,16 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
     <div class="p-8">
 
       <!-- Header -->
-      <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center justify-between mb-5">
         <div>
           <h1 class="text-2xl font-bold text-mm-text1">Recetas</h1>
           <p class="text-mm-text2 mt-0.5 text-sm">
-            {{ recipes().length }} receta{{ recipes().length !== 1 ? 's' : '' }}
+            @if (isFiltering()) {
+              <span class="text-mm-text2">{{ filteredRecipes().length }}</span>
+              <span> de {{ recipes().length }}</span>
+            } @else {
+              <span class="text-mm-text2">{{ recipes().length }}</span> receta{{ recipes().length !== 1 ? 's' : '' }}
+            }
           </p>
         </div>
         <button (click)="openModal()"
@@ -35,6 +40,56 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
           Nueva receta
         </button>
       </div>
+
+      <!-- Search & filters -->
+      @if (!loading() && recipes().length > 0) {
+        <div class="sticky top-0 z-10 -mx-8 px-8 pt-3 pb-4 mb-4
+                    bg-mm-base/90 backdrop-blur-md border-b border-white/[0.04]">
+          <div class="relative mb-2.5">
+            <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mm-text3 pointer-events-none"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607"/>
+            </svg>
+            <input type="text"
+                   [value]="searchQuery()"
+                   (input)="searchQuery.set($any($event.target).value)"
+                   placeholder="Buscar receta…"
+                   class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/[0.06]
+                          bg-mm-surface text-mm-text1 text-sm outline-none
+                          transition-colors focus:border-blue-500/50 placeholder:text-mm-text3" />
+            @if (searchQuery()) {
+              <button (click)="searchQuery.set('')"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5
+                             text-mm-text3 hover:text-mm-text1 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            }
+          </div>
+          <div class="flex items-center gap-2">
+            <button (click)="onlyAvailable.update(v => !v)"
+                    [class]="onlyAvailable()
+                      ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-green-500/20 text-green-400 border-green-500/30'
+                      : 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0"></span>
+              Listo para cocinar
+            </button>
+            @if (isFiltering()) {
+              <button (click)="clearFilters()"
+                      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
+                             text-mm-text3 hover:text-mm-text1 transition-colors
+                             border border-white/[0.06] hover:border-white/10 ml-auto">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+                Limpiar
+              </button>
+            }
+          </div>
+        </div>
+      }
 
       <!-- Loading -->
       @if (loading()) {
@@ -68,8 +123,34 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
 
       <!-- Recipes grid -->
       @else {
+        @if (filteredRecipes().length === 0) {
+          <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-mm-surface border border-white/[0.06]
+                        flex items-center justify-center mb-4">
+              <svg class="w-5 h-5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607"/>
+              </svg>
+            </div>
+            <p class="text-mm-text1 font-semibold mb-1">Sin resultados</p>
+            <p class="text-mm-text3 text-sm mb-4">
+              @if (onlyAvailable() && searchQuery()) {
+                Ninguna receta coincide con "{{ searchQuery() }}" y tienes todos los ingredientes
+              } @else if (onlyAvailable()) {
+                No tienes todos los ingredientes para ninguna receta
+              } @else {
+                No se encontró ninguna receta con "{{ searchQuery() }}"
+              }
+            </p>
+            <button (click)="clearFilters()"
+                    class="px-4 py-2 rounded-full border border-white/[0.07] text-mm-text2
+                           hover:text-mm-text1 hover:border-white/10 transition-colors text-sm">
+              Limpiar filtros
+            </button>
+          </div>
+        }
         <div class="grid gap-3 items-start" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))">
-          @for (recipe of recipes(); track recipe.id) {
+          @for (recipe of filteredRecipes(); track recipe.id) {
             <div class="bg-mm-surface border rounded-xl overflow-hidden group transition-all duration-200 cursor-pointer"
                  [class]="cardBorderClass(recipe)"
                  (click)="openDetail(recipe)">
@@ -720,6 +801,10 @@ export class RecipesComponent implements OnInit, OnDestroy {
   loading = signal(true);
   expandedId = signal<string | null>(null);
 
+  // Filters
+  searchQuery   = signal('');
+  onlyAvailable = signal(false);
+
   // Modal
   showModal = signal(false);
   saving = signal(false);
@@ -765,6 +850,18 @@ export class RecipesComponent implements OnInit, OnDestroy {
       if (item.ingredientId) map.set(item.ingredientId, item);
     }
     return map;
+  });
+
+  isFiltering = computed(() => !!this.searchQuery().trim() || this.onlyAvailable());
+
+  filteredRecipes = computed(() => {
+    const q = this.searchQuery().trim().toLowerCase();
+    const onlyAvail = this.onlyAvailable();
+    return this.recipes().filter(recipe => {
+      if (q && !recipe.name.toLowerCase().includes(q)) return false;
+      if (onlyAvail && this.overallStatus(recipe) !== 'available') return false;
+      return true;
+    });
   });
 
   // ── Lifecycle ──────────────────────────────────────────────
@@ -822,6 +919,11 @@ export class RecipesComponent implements OnInit, OnDestroy {
     if (s === 'depleted')  return 'bg-yellow-500/60';
     if (s === 'missing')   return 'bg-red-500/40';
     return 'bg-white/[0.04]';
+  }
+
+  clearFilters(): void {
+    this.searchQuery.set('');
+    this.onlyAvailable.set(false);
   }
 
   openDetail(recipe: Recipe): void {
