@@ -16,6 +16,10 @@ export class CreateRecipeDto {
   @IsString()
   description?: string;
 
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
   @IsInt()
   @IsPositive()
   prepTime: number;

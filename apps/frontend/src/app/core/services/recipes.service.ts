@@ -13,6 +13,7 @@ export interface Recipe {
   id: string;
   name: string;
   description: string | null;
+  imageUrl: string | null;
   prepTime: number;
   servings: number;
   steps: string[];
@@ -27,6 +28,7 @@ export interface CreateRecipeDto {
   servings: number;
   steps: string[];
   description?: string;
+  imageUrl?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -40,6 +42,10 @@ export class RecipesService {
 
   create(dto: CreateRecipeDto) {
     return this.http.post<Recipe>(this.base, dto);
+  }
+
+  update(id: string, dto: Partial<CreateRecipeDto> & { description?: string }) {
+    return this.http.patch<Recipe>(`${this.base}/${id}`, dto);
   }
 
   remove(id: string) {

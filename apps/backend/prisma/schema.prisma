@@ -50,6 +50,7 @@ model Recipe {
   userId            String             @map("user_id")
   name              String
   description       String?
+  imageUrl          String?            @map("image_url")
   prepTime          Int                @map("prep_time")
   servings          Int
   steps             Json

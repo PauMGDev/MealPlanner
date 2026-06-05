@@ -68,36 +68,62 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
 
       <!-- Recipes grid -->
       @else {
-        <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))">
+        <div class="grid gap-3 items-start" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))">
           @for (recipe of recipes(); track recipe.id) {
             <div class="bg-mm-surface border rounded-xl overflow-hidden group transition-all duration-200 cursor-pointer"
                  [class]="cardBorderClass(recipe)"
-                 (click)="toggleExpand(recipe.id)">
+                 (click)="openDetail(recipe)">
 
-              <!-- Color accent bar -->
-              <div class="h-0.5 w-full" [class]="accentBarClass(recipe)"></div>
+              <!-- Image area -->
+              <div class="relative h-36 overflow-hidden rounded-t-xl">
+                @if (recipe.imageUrl) {
+                  <img [src]="recipe.imageUrl" [alt]="recipe.name"
+                       class="w-full h-full object-cover" />
+                } @else {
+                  <div class="w-full h-full flex items-center justify-center text-white"
+                       [style]="cardGradientStyle(recipe)">
+                    <svg class="w-12 h-12 opacity-20" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="1.2">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
+                  </div>
+                }
+                <div class="absolute bottom-0 left-0 right-0 h-0.5" [class]="accentBarClass(recipe)"></div>
+              </div>
 
               <div class="p-4">
                 <!-- Top row: name + delete -->
                 <div class="flex items-start justify-between mb-2">
-                  <p class="text-[15px] font-semibold text-mm-text1 leading-snug flex-1 min-w-0 pr-2">
+                  <p class="text-[15px] font-semibold text-mm-text1 leading-snug flex-1 min-w-0 pr-2 line-clamp-2 min-h-[2.75rem]">
                     {{ recipe.name }}
                   </p>
-                  <button (click)="$event.stopPropagation(); deleteRecipe(recipe.id)"
-                          class="flex-shrink-0 p-1.5 rounded-lg text-mm-text3
-                                 opacity-0 group-hover:opacity-100 transition-all
-                                 hover:text-red-400 hover:bg-red-400/10">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                    </svg>
-                  </button>
+                  <div class="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all"
+                       (click)="$event.stopPropagation()">
+                    <button (click)="openEditModal(recipe)"
+                            title="Editar"
+                            class="p-1.5 rounded-lg text-mm-text3
+                                   hover:text-blue-400 hover:bg-blue-400/10 transition-colors">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                           stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                      </svg>
+                    </button>
+                    <button (click)="deleteRecipe(recipe.id)"
+                            title="Eliminar"
+                            class="p-1.5 rounded-lg text-mm-text3
+                                   hover:text-red-400 hover:bg-red-400/10 transition-colors">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
+                           stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
-                @if (recipe.description) {
-                  <p class="text-xs text-mm-text2 mb-3 line-clamp-2 leading-relaxed">{{ recipe.description }}</p>
-                }
+                <p class="text-xs text-mm-text2 mb-3 line-clamp-1 leading-relaxed min-h-[1rem] overflow-hidden">{{ recipe.description }}</p>
 
                 <!-- Meta pills -->
                 <div class="flex flex-wrap gap-1.5 mb-3">
@@ -128,7 +154,8 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
 
                 <!-- Ingredient availability summary -->
                 @if (recipe.recipeIngredients.length > 0) {
-                  <div class="flex items-center gap-2 pt-2.5 border-t border-white/[0.04]">
+                  <div class="flex items-center gap-2 pt-2.5 border-t border-white/[0.04]"
+                       (click)="$event.stopPropagation(); toggleExpand(recipe.id)">
                     <div class="flex gap-1">
                       @for (ri of recipe.recipeIngredients; track ri.id) {
                         <span class="w-2 h-2 rounded-full flex-shrink-0"
@@ -146,7 +173,8 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
                     </svg>
                   </div>
                 } @else {
-                  <div class="flex items-center gap-1.5 pt-2.5 border-t border-white/[0.04]">
+                  <div class="flex items-center gap-1.5 pt-2.5 border-t border-white/[0.04]"
+                       (click)="$event.stopPropagation(); toggleExpand(recipe.id)">
                     <span class="text-xs text-mm-text3">Sin ingredientes</span>
                     <svg class="w-3 h-3 text-mm-text3 ml-auto transition-transform duration-200"
                          [class.rotate-180]="expandedId() === recipe.id"
@@ -163,17 +191,11 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
                       <p class="text-xs text-mm-text3 text-center py-2">No hay ingredientes en esta receta</p>
                     }
                     @for (ri of recipe.recipeIngredients; track ri.id) {
-                      <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2 min-w-0">
-                          <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                                [class]="dotClass(ingredientStatus(ri.ingredientId))"></span>
-                          <span class="text-xs text-mm-text1 truncate">{{ ri.ingredient.name }}</span>
-                          <span class="text-xs text-mm-text3 flex-shrink-0">{{ ri.quantity }} {{ ri.ingredient.unit }}</span>
-                        </div>
-                        <span class="text-xs flex-shrink-0 font-medium"
-                              [class]="statusLabelClass(ingredientStatus(ri.ingredientId))">
-                          {{ statusLabel(ri.ingredientId) }}
-                        </span>
+                      <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                              [class]="dotClass(ingredientStatus(ri.ingredientId))"></span>
+                        <span class="text-xs text-mm-text1 truncate">{{ ri.ingredient.name }}</span>
+                        <span class="text-xs text-mm-text3 flex-shrink-0">{{ ri.quantity }} {{ ri.ingredient.unit }}</span>
                       </div>
                     }
                     @if (recipe.steps.length > 0) {
@@ -198,6 +220,166 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
       }
     </div>
 
+    <!-- ── Detail Modal ──────────────────────────────────────── -->
+    @if (detailRecipe(); as recipe) {
+      <div class="fixed inset-0 bg-black/75 backdrop-blur-md z-50
+                  flex items-center justify-center p-4 modal-backdrop-enter"
+           (click)="closeDetail()">
+        <div class="relative bg-mm-surface border border-white/[0.07] rounded-2xl
+                    w-full max-w-3xl shadow-2xl modal-enter
+                    flex flex-col sm:flex-row overflow-hidden max-h-[90vh]"
+             (click)="$event.stopPropagation()">
+
+          <!-- Status accent line across top -->
+          <div class="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl z-10"
+               [class]="accentBarClass(recipe)"></div>
+
+          <!-- Content — left / bottom -->
+          <div class="flex-1 overflow-y-auto p-6 sm:p-8 min-w-0 order-2 sm:order-1">
+
+            <!-- Header -->
+            <div class="flex items-start justify-between gap-3 mb-1">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 mb-2.5">
+                  <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                        [class]="dotClass(detailStatusForDot(recipe))"></span>
+                  <span class="text-[10px] font-semibold tracking-[0.15em] uppercase"
+                        [class]="overallStatusTextClass(recipe)">
+                    {{ overallStatusLabel(recipe) }}
+                  </span>
+                </div>
+                <h2 class="text-2xl font-bold text-mm-text1 leading-tight">{{ recipe.name }}</h2>
+              </div>
+              <div class="flex items-center gap-0.5 flex-shrink-0 mt-0.5">
+                <button (click)="openEditModal(recipe)"
+                        title="Editar"
+                        class="p-2 rounded-xl text-mm-text3 hover:text-blue-400
+                               hover:bg-blue-400/10 transition-colors">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/>
+                  </svg>
+                </button>
+                <button (click)="closeDetail()"
+                        class="p-2 rounded-xl text-mm-text3 hover:text-mm-text1
+                               hover:bg-white/[0.04] transition-colors">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            @if (recipe.description) {
+              <p class="text-sm text-mm-text2 leading-relaxed mt-3">{{ recipe.description }}</p>
+            }
+
+            <!-- Meta pills -->
+            <div class="flex flex-wrap gap-2 mt-5 mb-6">
+              <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                           bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+                <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                {{ recipe.prepTime }} min
+              </span>
+              <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                           bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+                <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                </svg>
+                {{ recipe.servings }} ración{{ recipe.servings !== 1 ? 'es' : '' }}
+              </span>
+              @if (recipe.steps.length > 0) {
+                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full
+                             bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+                  <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5"/>
+                  </svg>
+                  {{ recipe.steps.length }} paso{{ recipe.steps.length !== 1 ? 's' : '' }}
+                </span>
+              }
+            </div>
+
+            <div class="border-t border-white/[0.05] mb-6"></div>
+
+            <!-- Ingredients -->
+            @if (recipe.recipeIngredients.length > 0) {
+              <section class="mb-7">
+                <p class="text-[10px] font-semibold uppercase tracking-[0.15em] text-mm-text3 mb-3">
+                  Ingredientes
+                </p>
+                <div class="space-y-1.5">
+                  @for (ri of recipe.recipeIngredients; track ri.id) {
+                    <div class="flex items-center gap-2.5 px-3 py-2.5
+                                rounded-xl bg-mm-card/60 border border-white/[0.04] min-w-0">
+                      <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                            [class]="dotClass(ingredientStatus(ri.ingredientId))"></span>
+                      <span class="text-sm text-mm-text1 truncate">{{ ri.ingredient.name }}</span>
+                      <span class="text-xs text-mm-text3 flex-shrink-0 ml-auto">{{ ri.quantity }} {{ ri.ingredient.unit }}</span>
+                    </div>
+                  }
+                </div>
+              </section>
+            }
+
+            <!-- Steps -->
+            @if (recipe.steps.length > 0) {
+              <section>
+                <p class="text-[10px] font-semibold uppercase tracking-[0.15em] text-mm-text3 mb-4">
+                  Preparación
+                </p>
+                <ol class="space-y-4">
+                  @for (step of recipe.steps; track $index) {
+                    <li class="flex gap-4">
+                      <span class="flex-shrink-0 w-6 h-6 rounded-full
+                                   bg-mm-card border border-white/[0.06]
+                                   flex items-center justify-center
+                                   text-[11px] font-semibold text-mm-text3 mt-0.5">
+                        {{ $index + 1 }}
+                      </span>
+                      <p class="text-sm text-mm-text2 leading-relaxed">{{ step }}</p>
+                    </li>
+                  }
+                </ol>
+              </section>
+            }
+
+            @if (recipe.recipeIngredients.length === 0 && recipe.steps.length === 0) {
+              <p class="text-sm text-mm-text3 text-center py-8">
+                Esta receta no tiene ingredientes ni pasos definidos aún.
+              </p>
+            }
+
+          </div>
+
+          <!-- Image — top on mobile, right column on sm+ -->
+          <div class="h-52 sm:h-auto sm:w-72 sm:flex-shrink-0 relative order-first sm:order-last">
+            @if (recipe.imageUrl) {
+              <img [src]="recipe.imageUrl" [alt]="recipe.name"
+                   class="w-full h-full object-cover" />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center text-white"
+                   [style]="cardGradientStyle(recipe)">
+                <svg class="w-16 h-16 opacity-15" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="1">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                </svg>
+              </div>
+            }
+            <!-- Fade toward content on desktop -->
+            <div class="hidden sm:block absolute inset-y-0 left-0 w-12
+                        bg-gradient-to-r from-mm-surface to-transparent pointer-events-none"></div>
+            <!-- Fade toward content on mobile -->
+            <div class="sm:hidden absolute inset-x-0 bottom-0 h-10
+                        bg-gradient-to-t from-mm-surface to-transparent pointer-events-none"></div>
+          </div>
+
+        </div>
+      </div>
+    }
+
     <!-- ── Modal ────────────────────────────────────────────── -->
     @if (showModal()) {
       <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50
@@ -210,7 +392,7 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
 
           <!-- Modal header -->
           <div class="flex items-center justify-between px-8 pt-7 pb-0 flex-shrink-0">
-            <h2 class="text-xl font-bold text-mm-text1">Nueva receta</h2>
+            <h2 class="text-xl font-bold text-mm-text1">{{ editingRecipe() ? 'Editar receta' : 'Nueva receta' }}</h2>
             <button (click)="closeModal()"
                     class="p-2 rounded-xl text-mm-text3 hover:text-mm-text1
                            hover:bg-white/[0.04] transition-colors">
@@ -248,6 +430,23 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
                                  bg-mm-card text-mm-text1 text-[15px] outline-none
                                  transition-colors focus:border-blue-500
                                  placeholder:text-mm-text3 resize-none"></textarea>
+              </div>
+
+              <!-- Image upload (próximamente) -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-mm-text2 mb-1.5">
+                  Imagen <span class="text-mm-text3 font-normal">(próximamente)</span>
+                </label>
+                <div class="w-full h-24 rounded-[10px] border border-dashed border-white/[0.10]
+                            bg-mm-card flex flex-col items-center justify-center gap-1.5
+                            opacity-40 cursor-not-allowed select-none">
+                  <svg class="w-6 h-6 text-mm-text3" fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                  </svg>
+                  <p class="text-xs text-mm-text3">Subir imagen</p>
+                </div>
               </div>
 
               <!-- PrepTime + Servings -->
@@ -498,7 +697,7 @@ type AvailabilityStatus = 'available' | 'depleted' | 'missing';
                         class="flex-1 btn-primary py-3 text-[15px]
                                disabled:opacity-60 disabled:cursor-not-allowed
                                disabled:translate-y-0 disabled:shadow-none">
-                  {{ saving() ? 'Guardando...' : 'Crear receta' }}
+                  {{ saving() ? 'Guardando...' : editingRecipe() ? 'Guardar cambios' : 'Crear receta' }}
                 </button>
               </div>
 
@@ -525,6 +724,8 @@ export class RecipesComponent implements OnInit, OnDestroy {
   showModal = signal(false);
   saving = signal(false);
   saveError = signal('');
+  editingRecipe = signal<Recipe | null>(null);
+  detailRecipe = signal<Recipe | null>(null);
 
   // Ingredient search
   ingredientQuery = signal('');
@@ -623,6 +824,44 @@ export class RecipesComponent implements OnInit, OnDestroy {
     return 'bg-white/[0.04]';
   }
 
+  openDetail(recipe: Recipe): void {
+    this.expandedId.set(null);
+    this.detailRecipe.set(recipe);
+  }
+
+  closeDetail(): void {
+    this.detailRecipe.set(null);
+  }
+
+  detailStatusForDot(recipe: Recipe): AvailabilityStatus {
+    const s = this.overallStatus(recipe);
+    return s === 'none' ? 'missing' : s;
+  }
+
+  overallStatusLabel(recipe: Recipe): string {
+    const s = this.overallStatus(recipe);
+    if (s === 'available') return 'Listo para cocinar';
+    if (s === 'depleted')  return 'Ingredientes agotados';
+    if (s === 'missing')   return 'Faltan ingredientes';
+    return 'Sin ingredientes vinculados';
+  }
+
+  overallStatusTextClass(recipe: Recipe): string {
+    const s = this.overallStatus(recipe);
+    if (s === 'available') return 'text-green-400';
+    if (s === 'depleted')  return 'text-yellow-400';
+    if (s === 'missing')   return 'text-red-400';
+    return 'text-mm-text3';
+  }
+
+  cardGradientStyle(recipe: Recipe): string {
+    const s = this.overallStatus(recipe);
+    if (s === 'available') return 'background: linear-gradient(135deg, #0f1e28 0%, #0d2018 100%)';
+    if (s === 'depleted')  return 'background: linear-gradient(135deg, #1a1a0a 0%, #1e1a06 100%)';
+    if (s === 'missing')   return 'background: linear-gradient(135deg, #1e0f0f 0%, #200c0c 100%)';
+    return 'background: linear-gradient(135deg, #0f1628 0%, #131a2e 100%)';
+  }
+
   dotClass(status: AvailabilityStatus): string {
     if (status === 'available') return 'bg-green-400';
     if (status === 'depleted')  return 'bg-yellow-400';
@@ -652,6 +891,7 @@ export class RecipesComponent implements OnInit, OnDestroy {
 
   // ── Modal ──────────────────────────────────────────────────
   openModal(): void {
+    this.editingRecipe.set(null);
     while (this.stepsArray.length > 1) this.stepsArray.removeAt(this.stepsArray.length - 1);
     this.stepsArray.at(0).reset('');
     this.form.reset({ name: '', description: '', prepTime: null, servings: null });
@@ -665,8 +905,35 @@ export class RecipesComponent implements OnInit, OnDestroy {
     this.showModal.set(true);
   }
 
+  openEditModal(recipe: Recipe): void {
+    this.detailRecipe.set(null);
+    this.editingRecipe.set(recipe);
+    this.form.reset({
+      name: recipe.name,
+      description: recipe.description ?? '',
+      prepTime: recipe.prepTime,
+      servings: recipe.servings,
+    });
+    while (this.stepsArray.length > 0) this.stepsArray.removeAt(0);
+    const steps = recipe.steps.length > 0 ? recipe.steps : [''];
+    for (const step of steps) {
+      this.stepsArray.push(this.fb.control(step, Validators.required));
+    }
+    this.pendingIngredients.set(
+      recipe.recipeIngredients.map(ri => ({ ingredient: ri.ingredient as IngredientResult, quantity: ri.quantity }))
+    );
+    this.ingredientQuery.set('');
+    this.ingredientResults.set([]);
+    this.showResults.set(false);
+    this.showCreateIngredient.set(false);
+    this.ingredientSuggestions.set([]);
+    this.saveError.set('');
+    this.showModal.set(true);
+  }
+
   closeModal(): void {
     this.showModal.set(false);
+    this.editingRecipe.set(null);
   }
 
   addStep(): void {
@@ -686,6 +953,54 @@ export class RecipesComponent implements OnInit, OnDestroy {
     this.saveError.set('');
 
     const { name, description, prepTime, servings, steps } = this.form.value;
+    const pending = this.pendingIngredients();
+    const editing = this.editingRecipe();
+
+    if (editing) {
+      const dto = {
+        name: name!,
+        prepTime: prepTime!,
+        servings: servings!,
+        steps: (steps as string[]).filter(s => s?.trim()),
+        ...(description ? { description } : { description: undefined }),
+      };
+
+      const origMap = new Map(editing.recipeIngredients.map(ri => [ri.ingredientId, ri]));
+      const pendingMap = new Map(pending.map(p => [p.ingredient.id, p]));
+
+      // Remove ingredients deleted or with changed quantity (will be re-added)
+      const toRemove = editing.recipeIngredients.filter(ri => {
+        const p = pendingMap.get(ri.ingredientId);
+        return !p || p.quantity !== ri.quantity;
+      });
+      // Add ingredients that are new or whose quantity changed
+      const toAdd = pending.filter(p => {
+        const orig = origMap.get(p.ingredient.id);
+        return !orig || orig.quantity !== p.quantity;
+      });
+
+      this.recipesService.update(editing.id, dto).pipe(
+        switchMap(() => toRemove.length
+          ? forkJoin(toRemove.map(ri => this.recipesService.removeIngredient(editing.id, ri.ingredientId)))
+          : of(null)),
+        switchMap(() => toAdd.length
+          ? forkJoin(toAdd.map(p => this.recipesService.addIngredient(editing.id, { ingredientId: p.ingredient.id, quantity: p.quantity })))
+          : of(null)),
+        switchMap(() => this.recipesService.getAll()),
+      ).subscribe({
+        next: recipes => {
+          this.recipes.set(recipes as Recipe[]);
+          this.saving.set(false);
+          this.closeModal();
+        },
+        error: err => {
+          this.saveError.set(err.error?.message ?? 'No se pudo guardar la receta');
+          this.saving.set(false);
+        },
+      });
+      return;
+    }
+
     const dto = {
       name: name!,
       prepTime: prepTime!,
@@ -693,8 +1008,6 @@ export class RecipesComponent implements OnInit, OnDestroy {
       steps: (steps as string[]).filter(s => s?.trim()),
       ...(description ? { description } : {}),
     };
-
-    const pending = this.pendingIngredients();
 
     this.recipesService.create(dto).pipe(
       switchMap(recipe => {
