@@ -2,6 +2,41 @@
 
 ---
 
+## `c0f310f` — feat: add search and availability filter to recipes
+**Fecha:** 5 jun 2026
+
+**Tecnología:** Angular 21 · Tailwind CSS · Angular Signals
+
+**Qué se cambió y por qué:**
+
+- **Búsqueda por nombre** — Campo de texto con icono de lupa y botón de limpiar, idéntico en estética al buscador de la despensa. Filtra en tiempo real sobre la lista de recetas.
+- **Filtro "Listo para cocinar"** — Pill toggle que, cuando está activo, muestra únicamente las recetas cuyo `overallStatus` es `available` (todos los ingredientes en despensa con cantidad > 0). El pill cambia a verde al activarse para reforzar el estado.
+- **Barra sticky con backdrop blur** — La barra de búsqueda y filtros queda fija en la parte superior al hacer scroll, con `bg-mm-base/90 backdrop-blur-md`, coherente con la barra de la despensa.
+- **Contador contextual** — El subtítulo del header pasa de "N recetas" a "X de Y" cuando hay algún filtro activo, dando feedback inmediato de cuántos resultados quedan.
+- **Estado vacío descriptivo** — Si los filtros no devuelven resultados, el mensaje explica exactamente la causa: sin coincidencias por texto, sin ingredientes completos, o la combinación de ambos.
+- **Botón "Limpiar"** — Aparece solo cuando hay algún filtro activo y resetea búsqueda y toggle de disponibilidad de una vez.
+
+---
+
+## `2a737e5` — feat: recipe images, detail modal, edit flow and UI improvements
+**Fecha:** 5 jun 2026
+
+**Tecnología:** NestJS · Prisma 7 · Angular 21 · Tailwind CSS · Unsplash CDN
+
+**Qué se cambió y por qué:**
+
+- **Campo `imageUrl` en recetas** — Se añadió el campo opcional `image_url` al modelo `Recipe` en Prisma con su migración correspondiente. El DTO del backend acepta el campo; el frontend actualiza la interfaz `Recipe` y `CreateRecipeDto`.
+- **Imagen en las tarjetas** — Cada tarjeta muestra un área de imagen de altura fija (`h-36`) en la parte superior. Si la receta tiene `imageUrl`, se muestra con `object-cover`; si no, aparece un gradiente oscuro con un icono de libro cuyo color varía según la disponibilidad de ingredientes (verde / amarillo / rojo / neutro).
+- **Modal de detalle de receta** — Click en la imagen, nombre, descripción o pills de la tarjeta abre un modal de solo lectura con layout de dos columnas: contenido a la izquierda (nombre, estado, pills de metadatos, ingredientes con dots de color, pasos numerados) e imagen a la derecha. En móvil, la imagen se apila encima del contenido. La línea de acento de color en la parte superior refleja el estado de disponibilidad.
+- **Separación de interacciones en la tarjeta** — La franja inferior (dots de disponibilidad + chevron) mantiene el toggle expand/collapse mediante `stopPropagation`, mientras que el resto de la card abre el modal de detalle.
+- **Flujo de edición desde el detalle** — El modal de detalle incluye un botón de lápiz que cierra el detalle y abre el formulario de edición pre-relleno con todos los datos de la receta, incluyendo ingredientes actuales.
+- **Simplificación de la lista de ingredientes** — Tanto en el desplegable de la tarjeta como en el modal de detalle, se eliminó la columna de estado de despensa (texto "En stock", "Agotado"…). Solo se muestra el dot de color, el nombre y la cantidad necesaria para la receta.
+- **Flechas personalizadas en selects del pantry** — Los selects de filtros y del modal de despensa usan `appearance-none` con un SVG chevron posicionado a distancia controlada del borde, eliminando la flecha nativa pegada al margen.
+- **Altura uniforme en las tarjetas de receta** — `line-clamp-2` en el nombre con `min-h-[2.75rem]` y slot de descripción siempre renderizado con `line-clamp-1` y `min-h-[1rem]` aseguran que todas las tarjetas colapsadas tengan la misma altura.
+- **Edición de recetas** — Se añadió el método `update()` al `RecipesService` del frontend (`PATCH /recipes/:id`). El modal de edición pre-rellena nombre, descripción, tiempo, raciones, pasos e ingredientes. El guardado calcula el diff de ingredientes: elimina los modificados o borrados y re-añade los nuevos con la cantidad correcta.
+
+---
+
 ## `c6f81e3` — feat: pantry UX polish and app-wide design improvements
 **Fecha:** 4 jun 2026
 
