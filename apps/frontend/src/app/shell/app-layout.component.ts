@@ -1,110 +1,14 @@
-import { Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
-  template: `
-    <div class="flex h-screen bg-mm-base overflow-hidden">
-
-      <!-- Sidebar -->
-      <aside class="w-60 flex-shrink-0 bg-mm-surface border-r border-white/[0.06] flex flex-col">
-
-        <!-- Logo -->
-        <div class="px-5 py-[18px] border-b border-white/[0.06]">
-          <a routerLink="/app/dashboard"
-             class="flex items-center gap-2.5 font-bold text-lg text-mm-text1">
-            <svg viewBox="0 0 28 28" class="w-[22px] h-[22px]" fill="none">
-              <rect x="2" y="2" width="24" height="24" rx="7" fill="#3b82f6" opacity="0.14"/>
-              <rect x="6" y="6" width="16" height="16" rx="4" fill="#3b82f6"/>
-            </svg>
-            MealMap
-          </a>
-        </div>
-
-        <!-- Nav items -->
-        <nav class="flex-1 px-3 py-4 space-y-0.5">
-
-          <a routerLink="/app/dashboard"
-             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
-             [routerLinkActiveOptions]="{ exact: true }"
-             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
-            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
-                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
-            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
-            </svg>
-            Dashboard
-          </a>
-
-          <a routerLink="/app/recipes"
-             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
-             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
-            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
-                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
-            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-            </svg>
-            Recetas
-          </a>
-
-          <a routerLink="/app/pantry"
-             routerLinkActive="!text-blue-400 bg-blue-500/10 is-active"
-             class="relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-mm-text2
-                    hover:text-mm-text1 hover:bg-white/[0.04] transition-colors text-sm font-medium">
-            <span class="nav-indicator absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full
-                         bg-blue-400 opacity-0 transition-opacity duration-200"></span>
-            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
-            </svg>
-            Despensa
-          </a>
-
-        </nav>
-
-        <!-- User section -->
-        <div class="px-3 py-4 border-t border-white/[0.06]">
-          <div class="flex items-center gap-3 px-3 py-2 mb-1">
-            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center
-                        text-blue-400 text-sm font-bold flex-shrink-0">
-              {{ initial() }}
-            </div>
-            <p class="text-sm font-medium text-mm-text1 truncate flex-1 min-w-0">
-              {{ email() }}
-            </p>
-          </div>
-          <button (click)="logout()"
-                  class="w-full flex items-center gap-3 px-3 py-2 rounded-xl
-                         text-mm-text2 hover:text-red-400 hover:bg-red-400/[0.06]
-                         transition-colors text-sm font-medium">
-            <svg class="w-[18px] h-[18px] flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
-            </svg>
-            Cerrar sesión
-          </button>
-        </div>
-
-      </aside>
-
-      <!-- Main content -->
-      <main class="flex-1 overflow-auto">
-        <router-outlet />
-      </main>
-
-    </div>
-  `,
+  templateUrl: './app-layout.component.html',
+  styleUrl: './app-layout.component.css',
 })
 export class AppLayoutComponent {
   private readonly auth = inject(AuthService);
@@ -112,7 +16,5 @@ export class AppLayoutComponent {
   email   = computed(() => this.auth.user()?.email ?? '');
   initial = computed(() => (this.auth.user()?.email ?? 'U')[0].toUpperCase());
 
-  logout(): void {
-    this.auth.logout();
-  }
+  logout(): void { this.auth.logout(); }
 }

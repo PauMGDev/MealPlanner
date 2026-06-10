@@ -1,0 +1,38 @@
+<div appReveal [appRevealDelay]="0.12"
+     class="relative overflow-hidden rounded-2xl bg-mm-card border border-white/[0.07] p-7 flex flex-col group transition-colors duration-300 hover:border-white/[0.13]">
+  <div class="absolute inset-x-0 top-0 h-px pointer-events-none bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+  <span class="inline-flex items-center gap-1.5 mb-4 text-[10px] font-bold tracking-[0.18em] uppercase text-blue-400 bg-blue-400/[0.08] border border-blue-400/[0.15] px-2.5 py-1 rounded-full w-fit">
+    <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+    Disponible ahora
+  </span>
+  <h3 class="text-[19px] font-bold text-mm-text1 mb-2.5 leading-snug">Tus propias recetas</h3>
+  <p class="text-sm leading-relaxed text-mm-text2 mb-6">
+    Crea y vincula ingredientes de tu despensa. Sabes al instante qué puedes cocinar hoy.
+  </p>
+  <div class="mt-auto rounded-xl border border-white/[0.06] bg-mm-surface/60 overflow-hidden transition-colors duration-300 group-hover:border-white/[0.1]">
+    <div class="h-11 bg-gradient-to-br from-blue-900/50 to-mm-elevated/80 flex items-center gap-2 px-3">
+      <div class="w-5 h-5 rounded-md bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+        <svg class="w-3 h-3 text-blue-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+        </svg>
+      </div>
+      <div class="h-2 rounded-full bg-mm-text3/20 w-24"></div>
+    </div>
+    <div class="px-3 pt-3 pb-2 space-y-2">
+      @for (ing of sampleIngredients; track ing.name) {
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                  [class]="ing.status === 'available' ? 'bg-emerald-400' : ing.status === 'depleted' ? 'bg-yellow-400' : 'bg-red-400'"></span>
+            <span class="text-[11px] text-mm-text2 truncate">{{ ing.name }}</span>
+          </div>
+          <span class="text-[10px] text-mm-text3 flex-shrink-0 tabular-nums">{{ ing.qty }}</span>
+        </div>
+      }
+    </div>
+    <div class="mx-3 mb-3 pt-2 border-t border-white/[0.05] flex items-center justify-between">
+      <span class="text-[10px] text-mm-text3">En despensa</span>
+      <span class="text-[10px] font-semibold text-emerald-400">2 de 4</span>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
@@ -15,9 +16,12 @@ interface JwtPayload {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly TOKEN_KEY = 'mm_token';
 
-  private readonly _token = signal<string | null>(localStorage.getItem(this.TOKEN_KEY));
+  private readonly _token = signal<string | null>(
+    isPlatformBrowser(this.platformId) ? localStorage.getItem(this.TOKEN_KEY) : null
+  );
 
   readonly user = computed(() => {
     const token = this._token();
@@ -59,13 +63,22 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
-  saveToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+  handleCallback(token: string | null): void {
+    if (token) {
+      this.saveToken(token);
+      this.router.navigate(['/app/dashboard']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  private saveToken(token: string): void {
+    if (isPlatformBrowser(this.platformId)) localStorage.setItem(this.TOKEN_KEY, token);
     this._token.set(token);
   }
 
   private clearToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    if (isPlatformBrowser(this.platformId)) localStorage.removeItem(this.TOKEN_KEY);
     this._token.set(null);
   }
 }

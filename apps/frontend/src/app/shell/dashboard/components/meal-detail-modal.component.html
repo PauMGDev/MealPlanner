@@ -1,0 +1,107 @@
+@if (meal) {
+  <div class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4 modal-backdrop-enter"
+       (click)="closed.emit()">
+    <div class="relative bg-mm-surface border border-white/[0.07] rounded-2xl w-full max-w-3xl shadow-2xl modal-enter flex flex-col sm:flex-row overflow-hidden max-h-[90vh]"
+         (click)="$event.stopPropagation()">
+
+      @if (loading()) {
+        <div class="flex-1 p-8 space-y-4 relative">
+          <button (click)="closed.emit()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-mm-elevated text-mm-text3 hover:text-mm-text1 flex items-center justify-center transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+          <div class="h-4 w-1/3 bg-mm-elevated rounded-full animate-pulse"></div>
+          <div class="h-7 w-2/3 bg-mm-elevated rounded-full animate-pulse"></div>
+          <div class="flex gap-2 mt-4">
+            @for (i of skeletonRows; track i) { <div class="h-7 w-20 bg-mm-elevated rounded-full animate-pulse"></div> }
+          </div>
+          <div class="space-y-2 pt-4">
+            @for (i of skeletonRows; track i) { <div class="h-10 bg-mm-elevated rounded-xl animate-pulse"></div> }
+          </div>
+        </div>
+      } @else if (recipe(); as r) {
+        <div class="flex-1 overflow-y-auto p-6 sm:p-8 min-w-0 order-2 sm:order-1">
+          <div class="flex items-center gap-2 mb-2.5">
+            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [class]="rowDef.dot"></span>
+            <span class="text-[10px] font-semibold tracking-[0.15em] uppercase" [class]="rowDef.color">{{ rowDef.label }}</span>
+            <span class="text-mm-text3 text-[10px]">·</span>
+            <span class="text-[10px] text-mm-text3">{{ formatSlotDate(meal.date.slice(0,10)) }}</span>
+          </div>
+          <h2 class="text-2xl font-bold text-mm-text1 leading-tight mb-1">{{ r.name }}</h2>
+          @if (r.description) { <p class="text-sm text-mm-text2 leading-relaxed mt-3">{{ r.description }}</p> }
+          <div class="flex flex-wrap gap-2 mt-5 mb-5">
+            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+              <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              {{ r.prepTime }} min
+            </span>
+            <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+              <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+              {{ r.servings }} ración{{ r.servings !== 1 ? 'es' : '' }}
+            </span>
+            @if (r.steps.length > 0) {
+              <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-mm-card border border-white/[0.06] text-xs text-mm-text2">
+                <svg class="w-3.5 h-3.5 text-mm-text3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h7.5M8.25 12h7.5m-7.5 5.25h4.5"/></svg>
+                {{ r.steps.length }} paso{{ r.steps.length !== 1 ? 's' : '' }}
+              </span>
+            }
+          </div>
+          <div class="border-t border-white/[0.05] mb-5"></div>
+          @if (r.recipeIngredients.length > 0) {
+            <section class="mb-7">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.15em] text-mm-text3 mb-3">Ingredientes</p>
+              <div class="space-y-1.5">
+                @for (ri of r.recipeIngredients; track ri.id) {
+                  <div class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-mm-card/60 border border-white/[0.04] min-w-0">
+                    <svg class="w-3.5 h-3.5 text-mm-text3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+                    <span class="text-sm text-mm-text1 truncate">{{ ri.ingredient.name }}</span>
+                    <span class="text-xs text-mm-text3 flex-shrink-0 ml-auto">{{ ri.quantity }} {{ ri.ingredient.unit }}</span>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+          @if (r.steps.length > 0) {
+            <section class="mb-7">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.15em] text-mm-text3 mb-4">Preparación</p>
+              <ol class="space-y-4">
+                @for (step of r.steps; track $index) {
+                  <li class="flex gap-4">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-mm-card border border-white/[0.06] flex items-center justify-center text-[11px] font-semibold text-mm-text3 mt-0.5">{{ $index + 1 }}</span>
+                    <p class="text-sm text-mm-text2 leading-relaxed">{{ step }}</p>
+                  </li>
+                }
+              </ol>
+            </section>
+          }
+          @if (r.recipeIngredients.length === 0 && r.steps.length === 0) {
+            <p class="text-sm text-mm-text3 text-center py-8">Esta receta no tiene ingredientes ni pasos definidos aún.</p>
+          }
+          <div class="flex gap-3 pt-2 border-t border-white/[0.05] mt-2">
+            <button (click)="onSwitchRecipe()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium hover:bg-blue-500/20 hover:border-blue-500/30 transition-all duration-150">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+              Cambiar receta
+            </button>
+            <button (click)="onRemove()" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-mm-text3 text-sm font-medium border border-white/[0.06] hover:text-red-400 hover:border-red-500/20 hover:bg-red-500/[0.06] transition-all duration-150">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+              Quitar del plan
+            </button>
+          </div>
+        </div>
+        <div class="h-52 sm:h-auto sm:w-64 sm:flex-shrink-0 relative order-first sm:order-last">
+          @if (r.imageUrl) {
+            <img [src]="r.imageUrl" [alt]="r.name" class="w-full h-full object-cover" />
+          } @else {
+            <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, #0d1525 0%, #111b35 100%)">
+              <svg class="w-16 h-16 opacity-[0.07]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            </div>
+          }
+          <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/55 to-transparent pointer-events-none"></div>
+          <button (click)="closed.emit()" class="absolute top-3 right-3 w-7 h-7 rounded-full flex items-center justify-center bg-white/10 backdrop-blur-sm border border-white/[0.15] text-white/70 hover:text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+          <div class="hidden sm:block absolute inset-y-0 left-0 w-14 bg-gradient-to-r from-mm-surface to-transparent pointer-events-none"></div>
+          <div class="sm:hidden absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-mm-surface to-transparent pointer-events-none"></div>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -18,9 +18,10 @@ enum AuthProvider {
 
 enum MealType {
   BREAKFAST
+  ALMUERZO
   LUNCH
-  DINNER
   SNACK
+  DINNER
 
   @@map("meal_type")
 }
@@ -101,6 +102,7 @@ model Meal {
   createdAt    DateTime    @default(now()) @map("created_at")
   updatedAt    DateTime    @updatedAt @map("updated_at")
 
+  @@unique([userId, date, mealType])
   @@index([userId, date])
   @@map("meals")
 }

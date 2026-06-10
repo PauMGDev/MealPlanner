@@ -1,0 +1,96 @@
+@if (loadingPlan) {
+  <div class="rounded-2xl border border-white/[0.06] overflow-hidden">
+    <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
+      <div class="p-4 h-[52px]"></div>
+      @for (i of skeletonDays; track i) {
+        <div class="p-3 flex flex-col items-center gap-2">
+          <div class="h-2.5 w-5 bg-mm-elevated rounded-full animate-pulse"></div>
+          <div class="h-6 w-6 bg-mm-elevated rounded-full animate-pulse"></div>
+        </div>
+      }
+    </div>
+    @for (i of skeletonRows; track i) {
+      <div class="grid border-b border-white/[0.04] last:border-0" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
+        <div class="p-4 flex items-center gap-2">
+          <div class="h-2 w-2 rounded-full bg-mm-elevated animate-pulse"></div>
+          <div class="h-2.5 w-14 bg-mm-elevated rounded-full animate-pulse"></div>
+        </div>
+        @for (j of skeletonDays; track j) {
+          <div class="p-1.5"><div class="h-[72px] rounded-xl bg-mm-elevated/40 animate-pulse"></div></div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <div class="overflow-x-auto">
+    <div class="min-w-[640px] rounded-2xl border border-white/[0.06] overflow-hidden">
+      <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
+        <div class="p-4"></div>
+        @for (day of weekDays; track toISODate(day); let i = $index) {
+          <div class="p-3 flex flex-col items-center gap-1.5" [class]="isToday(day) ? 'bg-blue-500/[0.06]' : ''">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-mm-text3">{{ dayLabels[i] }}</span>
+            <span class="w-7 h-7 rounded-full flex items-center justify-center text-sm font-semibold transition-colors"
+                  [class]="isToday(day) ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'text-mm-text1'">
+              {{ day.getDate() }}
+            </span>
+          </div>
+        }
+      </div>
+      @for (row of filteredMealRows; track row.type) {
+        <div class="grid border-b border-white/[0.04] last:border-0" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
+          <div class="px-4 py-3 flex items-center gap-2 border-r border-white/[0.04]">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" [class]="row.dot"></span>
+            <span class="text-[11px] font-bold uppercase tracking-wider" [class]="row.color">{{ row.label }}</span>
+          </div>
+          @for (day of weekDays; track toISODate(day)) {
+            @let meal = getMeal(day, row.type);
+            <div class="p-1.5" [class]="isToday(day) ? 'bg-blue-500/[0.03]' : ''">
+              @if (meal) {
+                <div class="cell-enter group relative min-h-[72px] rounded-xl bg-mm-card border border-white/[0.06] overflow-hidden cursor-pointer flex transition-all duration-200 hover:border-white/[0.14] hover:bg-mm-elevated"
+                     [class]="row.leftBorder" (click)="openDetail.emit(meal)">
+                  <div class="flex-1 p-3 flex flex-col justify-between min-w-0">
+                    <p class="text-xs font-semibold text-mm-text1 leading-snug line-clamp-2">{{ meal.recipe.name }}</p>
+                    <div class="flex items-center gap-1 mt-2">
+                      <svg class="w-3 h-3 text-mm-text3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                      </svg>
+                      <span class="text-[10px] text-mm-text3 tabular-nums">{{ meal.recipe.prepTime }}m</span>
+                    </div>
+                  </div>
+                  @if (meal.recipe.imageUrl) {
+                    <div class="w-12 flex-shrink-0 overflow-hidden">
+                      <img [src]="meal.recipe.imageUrl" [alt]="meal.recipe.name"
+                           class="w-full h-full object-cover opacity-75 group-hover:opacity-95 transition-opacity duration-200" />
+                    </div>
+                  }
+                  <button (click)="onRemoveSlot(toISODate(day), row.type, $event)"
+                          class="absolute top-1.5 right-1.5 w-5 h-5 rounded-md opacity-0 group-hover:opacity-100
+                                 bg-black/50 backdrop-blur-sm transition-all duration-150 flex items-center justify-center
+                                 text-white/70 hover:text-white hover:bg-red-500/80">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                  </button>
+                </div>
+              } @else {
+                <button (click)="openPicker.emit({ date: toISODate(day), mealType: row.type })"
+                        class="cell-enter group/cell w-full min-h-[72px] rounded-xl border border-dashed border-white/[0.06] flex items-center justify-center transition-all duration-200 hover:border-blue-500/40 hover:bg-blue-500/[0.04]">
+                  <svg class="w-4 h-4 text-mm-text3 opacity-30 group-hover/cell:opacity-70 group-hover/cell:text-blue-400 transition-all duration-200"
+                       fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                  </svg>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+      @if (filteredMealRows.length === 0) {
+        <div class="py-12 flex flex-col items-center justify-center text-center">
+          <p class="text-sm text-mm-text3">Todas las franjas están ocultas.</p>
+          <p class="text-xs text-mm-text3 mt-1">Activa alguna con los filtros de arriba.</p>
+        </div>
+      }
+    </div>
+  </div>
+}

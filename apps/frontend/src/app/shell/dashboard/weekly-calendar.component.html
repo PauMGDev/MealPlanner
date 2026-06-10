@@ -1,0 +1,42 @@
+@if (calendarError()) {
+  <div class="mx-8 mt-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
+    <span>{{ calendarError() }}</span>
+    <button (click)="calendarError.set('')" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">✕</button>
+  </div>
+}
+
+<div class="px-8 pb-12">
+  <app-calendar-header
+    [weekRangeLabel]="weekRangeLabel()"
+    [mealRows]="allMealRows"
+    [visibleMealTypes]="visibleMealTypes()"
+    (prevWeek)="prevWeek()"
+    (nextWeek)="nextWeek()"
+    (goToThisWeek)="goToThisWeek()"
+    (toggleMealType)="toggleMealType($event)" />
+
+  <app-calendar-grid
+    [weekDays]="weekDays()"
+    [filteredMealRows]="filteredMealRows()"
+    [mealGrid]="mealGrid()"
+    [loadingPlan]="loadingPlan()"
+    (openDetail)="openDetail($event)"
+    (openPicker)="openPicker($event.date, $event.mealType)"
+    (removeSlot)="removeSlot($event)" />
+</div>
+
+<app-meal-detail-modal
+  [meal]="detailMeal()"
+  [recipeDetail]="detailRecipe()"
+  [loadingRecipe]="loadingDetail()"
+  (closed)="closeDetail()"
+  (switchRecipe)="onDetailSwitchRecipe($event)"
+  (removed)="onDetailRemoved($event)" />
+
+<app-recipe-picker-modal
+  [show]="pickerOpen()"
+  [slot]="pickerSlot()"
+  [recipes]="pickerRecipes()"
+  [loadingRecipes]="loadingPickerRecipes()"
+  (closed)="closePicker()"
+  (selected)="assignRecipe($event)" />

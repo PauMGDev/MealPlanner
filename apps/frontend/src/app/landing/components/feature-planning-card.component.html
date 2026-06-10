@@ -1,0 +1,44 @@
+<div appReveal [appRevealDelay]="0"
+     class="relative overflow-hidden rounded-2xl
+            bg-mm-card border border-white/[0.07] p-7 group h-full
+            transition-colors duration-300 hover:border-white/[0.13]">
+  <div class="absolute inset-x-0 top-0 h-px pointer-events-none bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent"></div>
+  <div class="flex flex-col sm:flex-row sm:items-end gap-7">
+    <div class="flex-1 min-w-0">
+      <span class="inline-flex items-center gap-1.5 mb-4 text-[10px] font-bold tracking-[0.18em] uppercase text-cyan-400 bg-cyan-400/[0.08] border border-cyan-400/[0.15] px-2.5 py-1 rounded-full">
+        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+        Disponible ahora
+      </span>
+      <h3 class="text-[19px] font-bold text-mm-text1 mb-2.5 leading-snug">Planificación visual</h3>
+      <p class="text-sm leading-relaxed text-mm-text2 max-w-[260px]">
+        Toda la semana de un vistazo. Asigna recetas a cada franja horaria con un clic.
+      </p>
+    </div>
+    <div class="w-full sm:w-[214px] flex-shrink-0 rounded-xl overflow-hidden border border-white/[0.06] bg-mm-surface/70 p-3 transition-colors duration-300 group-hover:border-white/[0.1]">
+      <div class="grid grid-cols-7 gap-1 mb-2">
+        @for (d of dayLabels; track d) {
+          <div class="text-[8px] font-bold text-mm-text3 text-center uppercase">{{ d }}</div>
+        }
+      </div>
+      @for (row of calendarRows; track row.label) {
+        <div class="grid grid-cols-7 gap-1 mb-1 last:mb-0">
+          @for (cell of row.cells; track $index) {
+            @if (cell === 'filled') {
+              <div class="h-3.5 rounded-[3px]" [style.background-color]="row.color" style="opacity:0.72"></div>
+            } @else {
+              <div class="h-3.5 rounded-[3px] border border-dashed border-white/[0.1]" style="opacity:0.35"></div>
+            }
+          }
+        </div>
+      }
+      <div class="flex items-center gap-3 mt-2.5 pt-2.5 border-t border-white/[0.06]">
+        @for (row of calendarRows; track row.label) {
+          <span class="flex items-center gap-1 text-[8px] text-mm-text3 whitespace-nowrap">
+            <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" [style.background-color]="row.color"></span>
+            {{ row.label }}
+          </span>
+        }
+      </div>
+    </div>
+  </div>
+</div>

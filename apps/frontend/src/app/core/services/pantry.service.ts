@@ -1,34 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import type { IngredientCategory, PantryItem, CreatePantryItemDto } from '../models/pantry.types';
 
-export interface IngredientCategory {
-  id: string;
-  name: string;
-  defaultDays: number;
-}
-
-export interface PantryItem {
-  id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  expiresAt: string | null;
-  categoryId: string | null;
-  category: IngredientCategory | null;
-  ingredientId: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreatePantryItemDto {
-  name: string;
-  quantity: number;
-  unit: string;
-  expiresAt?: string | null;
-  categoryId?: string | null;
-  ingredientId?: string;
-}
+export type { IngredientCategory, PantryItem, CreatePantryItemDto } from '../models/pantry.types';
 
 @Injectable({ providedIn: 'root' })
 export class PantryService {
