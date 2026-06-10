@@ -9,3 +9,6 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Audit reports and screenshots (local only, not part of the project)
+/Audit/
