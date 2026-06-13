@@ -1,0 +1,13 @@
+<div class="h-full bg-surface-container-lowest dark:bg-surface-container-high p-6 md:p-8 rounded-xl border border-outline-variant/30 transition-all hover:-translate-y-1 hover:shadow-lg">
+  <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-6"
+       [class.bg-primary-container]="variant === 'primary'"
+       [class.bg-secondary-container]="variant === 'secondary'"
+       [class.bg-tertiary-container]="variant === 'tertiary'">
+    <span class="material-symbols-outlined icon-fill"
+          [class.text-on-primary-container]="variant === 'primary'"
+          [class.text-on-secondary-container]="variant === 'secondary'"
+          [class.text-on-tertiary-container]="variant === 'tertiary'">{{ icon }}</span>
+  </div>
+  <h3 class="font-sans text-2xl font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-3">{{ title }}</h3>
+  <p class="font-body text-base text-on-surface-variant">{{ description }}</p>
+</div>

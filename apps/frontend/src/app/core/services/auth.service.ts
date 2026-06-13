@@ -12,6 +12,13 @@ interface JwtPayload {
   exp: number;
 }
 
+interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  authProvider: 'LOCAL' | 'GOOGLE';
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -44,6 +51,10 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.user() !== null;
+  }
+
+  getProfile() {
+    return this.http.get<UserProfile>(`${environment.apiUrl}/auth/me`);
   }
 
   login(email: string, password: string) {

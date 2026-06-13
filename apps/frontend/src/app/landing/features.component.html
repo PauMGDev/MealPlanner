@@ -1,17 +1,28 @@
-<section id="features" class="py-24 px-8">
-  <div class="max-w-[1200px] mx-auto">
-    <div appReveal class="mb-12">
-      <span class="text-[11px] font-bold tracking-[0.22em] uppercase text-cyan-400 mb-4 block">
-        Funcionalidades
-      </span>
-      <h2 class="text-3xl md:text-4xl font-extrabold leading-[1.1] tracking-tight text-mm-text1 max-w-[460px]">
-        Pensado para planificar bien, cada semana
+<section id="features" class="bg-surface-container-low dark:bg-surface-dim py-16 md:py-24 px-4 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div appReveal class="text-center mb-12 md:mb-16">
+      <span class="text-secondary font-sans text-sm font-semibold uppercase tracking-widest">Características</span>
+      <h2 class="font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface mt-2">
+        Todo lo que necesitas para organizarte
       </h2>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-      <app-feature-planning-card class="lg:col-span-2" />
-      <app-feature-recipes-card />
-      <app-feature-roadmap class="md:col-span-2 lg:col-span-3" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <app-feature-card
+        icon="calendar_month"
+        title="Planificación Visual"
+        description="Calendario semanal interactivo con función de arrastrar y soltar para organizar tus menús sin esfuerzo."
+        variant="primary" />
+      <app-feature-card
+        icon="menu_book"
+        title="Recetario Inteligente"
+        description="Guarda tus platos favoritos y descubre nuevas ideas basadas en lo que ya tienes en casa."
+        variant="secondary" />
+      <app-feature-card
+        class="sm:col-span-2 lg:col-span-1"
+        icon="kitchen"
+        title="Despensa Conectada"
+        description="Control total sobre tus ingredientes. Te avisamos cuando algo se está agotando o va a caducar."
+        variant="tertiary" />
     </div>
   </div>
 </section>

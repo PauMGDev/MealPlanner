@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
@@ -21,15 +21,9 @@ import { AuthService } from '../../core/services/auth.service';
 export class CallbackComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
-    if (token) {
-      this.auth.saveToken(token);
-      this.router.navigate(['/app/dashboard']);
-    } else {
-      this.router.navigate(['/login']);
-    }
+    this.auth.handleCallback(token);
   }
 }

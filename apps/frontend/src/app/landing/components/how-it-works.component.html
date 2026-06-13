@@ -1,0 +1,31 @@
+<section class="py-16 md:py-24 overflow-hidden bg-surface dark:bg-surface-dim px-4 md:px-10">
+  <div class="max-w-7xl mx-auto">
+    <div appReveal class="text-center mb-16 md:mb-20">
+      <h2 class="font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface">
+        Simplifica tu rutina en 3 pasos
+      </h2>
+    </div>
+
+    <div class="relative flex flex-col md:flex-row justify-between items-start gap-12 md:gap-8">
+      <div class="hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 border-t-2 border-dashed border-outline-variant/30 -z-10" aria-hidden="true"></div>
+
+      <div appReveal class="flex-1 w-full flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-primary text-on-primary rounded-full flex items-center justify-center font-sans text-2xl font-semibold mb-6">1</div>
+        <h3 class="font-sans text-2xl font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-2">Planifica</h3>
+        <p class="font-body text-base text-on-surface-variant max-w-xs px-4">Elige tus recetas para la semana en menos de 5 minutos.</p>
+      </div>
+
+      <div appReveal [appRevealDelay]="0.1" class="flex-1 w-full flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-primary text-on-primary rounded-full flex items-center justify-center font-sans text-2xl font-semibold mb-6">2</div>
+        <h3 class="font-sans text-2xl font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-2">Cocina</h3>
+        <p class="font-body text-base text-on-surface-variant max-w-xs px-4">Sigue instrucciones paso a paso optimizadas para cada plato.</p>
+      </div>
+
+      <div appReveal [appRevealDelay]="0.2" class="flex-1 w-full flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-primary text-on-primary rounded-full flex items-center justify-center font-sans text-2xl font-semibold mb-6">3</div>
+        <h3 class="font-sans text-2xl font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-2">Disfruta</h3>
+        <p class="font-body text-base text-on-surface-variant max-w-xs px-4">Ahorra tiempo y dinero mientras comes más saludable.</p>
+      </div>
+    </div>
+  </div>
+</section>

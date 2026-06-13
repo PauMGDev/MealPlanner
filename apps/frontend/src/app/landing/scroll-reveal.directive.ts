@@ -24,7 +24,7 @@ export class ScrollRevealDirective implements AfterViewInit {
         if (entry.isIntersecting) {
           setTimeout(() => {
             el.style.opacity = '1';
-            el.style.transform = 'translateY(0)';
+            el.style.transform = '';
           }, this.delay * 1000);
           obs.disconnect();
         }

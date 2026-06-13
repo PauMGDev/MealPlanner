@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-mm-base: #070b14;
   --color-mm-surface: #0f1628;
@@ -9,16 +11,135 @@
   --color-mm-text2: #8898b5;
   --color-mm-text3: #4a5875;
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: "Work Sans", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, monospace;
   --radius-2xl: 20px;
+
+  /* Harmonic Kitchen / Harmonic Kitchen Blue — landing color tokens */
+  --color-surface: var(--hk-surface);
+  --color-surface-dim: var(--hk-surface-dim);
+  --color-surface-bright: var(--hk-surface-bright);
+  --color-surface-container-lowest: var(--hk-surface-container-lowest);
+  --color-surface-container-low: var(--hk-surface-container-low);
+  --color-surface-container: var(--hk-surface-container);
+  --color-surface-container-high: var(--hk-surface-container-high);
+  --color-surface-container-highest: var(--hk-surface-container-highest);
+  --color-surface-variant: var(--hk-surface-variant);
+  --color-on-surface: var(--hk-on-surface);
+  --color-on-surface-variant: var(--hk-on-surface-variant);
+  --color-inverse-surface: var(--hk-inverse-surface);
+  --color-inverse-on-surface: var(--hk-inverse-on-surface);
+  --color-outline: var(--hk-outline);
+  --color-outline-variant: var(--hk-outline-variant);
+  --color-background: var(--hk-background);
+  --color-on-background: var(--hk-on-background);
+  --color-primary: var(--hk-primary);
+  --color-on-primary: var(--hk-on-primary);
+  --color-primary-container: var(--hk-primary-container);
+  --color-on-primary-container: var(--hk-on-primary-container);
+  --color-inverse-primary: var(--hk-inverse-primary);
+  --color-primary-fixed: var(--hk-primary-fixed);
+  --color-primary-fixed-dim: var(--hk-primary-fixed-dim);
+  --color-secondary: var(--hk-secondary);
+  --color-on-secondary: var(--hk-on-secondary);
+  --color-secondary-container: var(--hk-secondary-container);
+  --color-on-secondary-container: var(--hk-on-secondary-container);
+  --color-tertiary: var(--hk-tertiary);
+  --color-on-tertiary: var(--hk-on-tertiary);
+  --color-tertiary-container: var(--hk-tertiary-container);
+  --color-on-tertiary-container: var(--hk-on-tertiary-container);
+  --color-error: var(--hk-error);
+  --color-on-error: var(--hk-on-error);
+  --color-error-container: var(--hk-error-container);
+  --color-on-error-container: var(--hk-on-error-container);
+}
+
+/* Harmonic Kitchen Blue (claro) */
+:root {
+  --hk-surface: #f7f9fb;
+  --hk-surface-dim: #d8dadc;
+  --hk-surface-bright: #f7f9fb;
+  --hk-surface-container-lowest: #ffffff;
+  --hk-surface-container-low: #f2f4f6;
+  --hk-surface-container: #eceef0;
+  --hk-surface-container-high: #e6e8ea;
+  --hk-surface-container-highest: #e0e3e5;
+  --hk-surface-variant: #e0e3e5;
+  --hk-on-surface: #191c1e;
+  --hk-on-surface-variant: #424752;
+  --hk-inverse-surface: #2d3133;
+  --hk-inverse-on-surface: #eff1f3;
+  --hk-outline: #727783;
+  --hk-outline-variant: #c2c6d4;
+  --hk-background: #f7f9fb;
+  --hk-on-background: #191c1e;
+  --hk-primary: #00448c;
+  --hk-on-primary: #ffffff;
+  --hk-primary-container: #005bb7;
+  --hk-on-primary-container: #c4d7ff;
+  --hk-inverse-primary: #aac7ff;
+  --hk-primary-fixed: #d7e3ff;
+  --hk-primary-fixed-dim: #aac7ff;
+  --hk-secondary: #515f74;
+  --hk-on-secondary: #ffffff;
+  --hk-secondary-container: #d5e3fc;
+  --hk-on-secondary-container: #57657a;
+  --hk-tertiary: #374751;
+  --hk-on-tertiary: #ffffff;
+  --hk-tertiary-container: #4e5f69;
+  --hk-on-tertiary-container: #c7d8e4;
+  --hk-error: #ba1a1a;
+  --hk-on-error: #ffffff;
+  --hk-error-container: #ffdad6;
+  --hk-on-error-container: #93000a;
+}
+
+/* Harmonic Kitchen (oscuro) */
+.dark {
+  --hk-surface: #0b1326;
+  --hk-surface-dim: #0b1326;
+  --hk-surface-bright: #31394d;
+  --hk-surface-container-lowest: #060e20;
+  --hk-surface-container-low: #131b2e;
+  --hk-surface-container: #171f33;
+  --hk-surface-container-high: #222a3d;
+  --hk-surface-container-highest: #2d3449;
+  --hk-surface-variant: #2d3449;
+  --hk-on-surface: #dae2fd;
+  --hk-on-surface-variant: #c2c6d6;
+  --hk-inverse-surface: #dae2fd;
+  --hk-inverse-on-surface: #283044;
+  --hk-outline: #8c909f;
+  --hk-outline-variant: #424754;
+  --hk-background: #0b1326;
+  --hk-on-background: #dae2fd;
+  --hk-primary: #adc6ff;
+  --hk-on-primary: #002e6a;
+  --hk-primary-container: #4d8eff;
+  --hk-on-primary-container: #00285d;
+  --hk-inverse-primary: #005ac2;
+  --hk-primary-fixed: #d8e2ff;
+  --hk-primary-fixed-dim: #adc6ff;
+  --hk-secondary: #4edea3;
+  --hk-on-secondary: #003824;
+  --hk-secondary-container: #00a572;
+  --hk-on-secondary-container: #00311f;
+  --hk-tertiary: #ffb95f;
+  --hk-on-tertiary: #472a00;
+  --hk-tertiary-container: #ca8100;
+  --hk-on-tertiary-container: #3e2400;
+  --hk-error: #ffb4ab;
+  --hk-on-error: #690005;
+  --hk-error-container: #93000a;
+  --hk-on-error-container: #ffdad6;
 }
 
 /* MealMap — custom utilities */
 
-.grad-text {
-  background: linear-gradient(135deg, #3b82f6 0%, #22d3ee 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ── Material Symbols: filled icon variant ──────────────── */
+.icon-fill {
+  font-variation-settings: 'FILL' 1;
 }
 
 .btn-primary {
@@ -29,19 +150,6 @@
 .btn-primary:hover {
   @apply bg-blue-400 -translate-y-px;
   box-shadow: 0 6px 24px rgba(59, 130, 246, 0.35);
-}
-
-.hero-bg {
-  background: radial-gradient(ellipse 80% 60% at 70% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
-}
-
-.mockup-glow {
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, transparent 65%);
-  filter: blur(50px);
-}
-
-.cta-glow {
-  background: radial-gradient(ellipse, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
 }
 
 .meal-enter {
@@ -55,10 +163,6 @@
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
 }
 
 /* ── Smooth collapse via CSS grid trick ─────────────────── */
@@ -105,5 +209,9 @@
   border-radius: 6px;
 }
 
-/* ── Sidebar active nav indicator bar ───────────────────── */
-a.is-active .nav-indicator { opacity: 1 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .ticket-sway, .ticket-enter, .ticket--tilt-l, .ticket--tilt-r, .day-ticket {
+    animation: none !important;
+    transition: none !important;
+  }
+}
