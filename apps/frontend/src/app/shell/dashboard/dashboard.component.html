@@ -1,75 +1,133 @@
 <div class="pt-8">
 
-  <div class="px-8 mb-8">
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-mm-text1">Dashboard</h1>
-      <p class="text-mm-text2 mt-1">Bienvenido, {{ email() }}</p>
-    </div>
+  <app-weekly-calendar />
 
+  <div class="border-t border-white/[0.04]"></div>
+
+  <div class="px-8 py-8">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-      <div class="bg-mm-surface border border-white/[0.06] rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">Recetas</p>
-          <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-            <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-            </svg>
+      <a routerLink="/app/recipes"
+         class="group relative flex flex-col bg-mm-surface border border-white/[0.06] border-l-2 border-l-blue-500/50 rounded-2xl p-5 transition-all duration-200 hover:border-white/[0.14] hover:border-l-blue-400 hover:bg-mm-elevated hover:-translate-y-0.5">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <app-recipe-cards-icon class="w-5 h-5 text-blue-400" />
           </div>
+          <svg class="w-4 h-4 text-mm-text3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
         </div>
-        @if (loadingRecipes()) {
-          <div class="h-9 w-12 bg-mm-card rounded-lg animate-pulse"></div>
-        } @else {
-          <p class="text-3xl font-bold text-mm-text1">{{ recipeCount() }}</p>
-        }
-      </div>
 
-      <div class="bg-mm-surface border border-white/[0.06] rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">Ítems en despensa</p>
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        @if (loadingRecipes()) {
+          <div class="space-y-2">
+            <div class="h-8 w-14 bg-mm-card rounded-lg animate-pulse"></div>
+            <div class="h-4 w-36 bg-mm-card rounded animate-pulse"></div>
+            <div class="h-3 w-44 bg-mm-card rounded animate-pulse"></div>
+          </div>
+        } @else {
+          <p class="text-3xl font-bold text-mm-text1 tabular-nums leading-none">{{ recipeCount() }}</p>
+          <p class="text-sm font-semibold text-mm-text1 mt-2">{{ recipeCount() === 1 ? 'receta en tu recetario' : 'recetas en tu recetario' }}</p>
+          <p class="text-xs text-mm-text3 mt-1">
+            @if (recipeCount() === 0) {
+              Crea tu primera receta para empezar a planificar
+            } @else {
+              Explora, edita o añade nuevas recetas
+            }
+          </p>
+        }
+      </a>
+
+      <a routerLink="/app/pantry"
+         class="group relative flex flex-col bg-mm-surface border border-white/[0.06] border-l-2 rounded-2xl p-5 transition-all duration-200 hover:border-white/[0.14] hover:bg-mm-elevated hover:-translate-y-0.5"
+         [class]="depletedCount() > 0 ? 'border-l-yellow-500/50 hover:border-l-yellow-400' : 'border-l-emerald-500/50 hover:border-l-emerald-400'">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+               [class]="depletedCount() > 0 ? 'bg-yellow-500/10' : 'bg-emerald-500/10'">
+            <svg class="w-5 h-5" [class]="depletedCount() > 0 ? 'text-yellow-400' : 'text-emerald-400'"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round"
                     d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
             </svg>
           </div>
+          <svg class="w-4 h-4 text-mm-text3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
         </div>
-        @if (loadingPantry()) {
-          <div class="h-9 w-12 bg-mm-card rounded-lg animate-pulse"></div>
-        } @else {
-          <p class="text-3xl font-bold text-mm-text1">{{ pantryCount() }}</p>
-          @if (depletedCount() > 0) {
-            <p class="text-xs text-yellow-400 mt-1">{{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }}</p>
-          }
-        }
-      </div>
 
-      <div class="bg-mm-surface border border-white/[0.06] rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">Comidas esta semana</p>
-          <div class="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
-            <svg class="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        @if (loadingPantry()) {
+          <div class="space-y-2">
+            <div class="h-8 w-14 bg-mm-card rounded-lg animate-pulse"></div>
+            <div class="h-4 w-36 bg-mm-card rounded animate-pulse"></div>
+            <div class="h-3 w-44 bg-mm-card rounded animate-pulse"></div>
+          </div>
+        } @else {
+          <p class="text-3xl font-bold text-mm-text1 tabular-nums leading-none">{{ pantryCount() }}</p>
+          <p class="text-sm font-semibold text-mm-text1 mt-2">{{ pantryCount() === 1 ? 'ingrediente disponible' : 'ingredientes disponibles' }}</p>
+
+          @if (totalPantryItems() > 0) {
+            <div class="flex gap-0.5 mt-3" aria-hidden="true">
+              @if (pantryCount() > 0) {
+                <div class="h-1.5 rounded-full bg-emerald-500/70" [style.flex-grow]="pantryCount()"></div>
+              }
+              @if (depletedCount() > 0) {
+                <div class="h-1.5 rounded-full bg-yellow-500/70" [style.flex-grow]="depletedCount()"></div>
+              }
+            </div>
+          }
+
+          <p class="text-xs mt-2" [class]="depletedCount() > 0 ? 'text-yellow-400/90' : 'text-mm-text3'">
+            @if (depletedCount() > 0) {
+              {{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }} — hora de reponer
+            } @else if (totalPantryItems() === 0) {
+              Añade ingredientes para empezar
+            } @else {
+              Tu despensa está completa
+            }
+          </p>
+        }
+      </a>
+
+      <div class="relative flex flex-col bg-mm-surface border border-white/[0.06] border-l-2 border-l-violet-500/50 rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
+            <svg class="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
               <path stroke-linecap="round" stroke-linejoin="round"
                     d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
             </svg>
           </div>
         </div>
+
         @if (loadingMeals()) {
-          <div class="h-9 w-12 bg-mm-card rounded-lg animate-pulse"></div>
+          <div class="space-y-2">
+            <div class="h-8 w-20 bg-mm-card rounded-lg animate-pulse"></div>
+            <div class="h-4 w-36 bg-mm-card rounded animate-pulse"></div>
+            <div class="h-3 w-44 bg-mm-card rounded animate-pulse"></div>
+          </div>
         } @else {
-          <p class="text-3xl font-bold text-mm-text1">{{ mealsThisWeek() }}</p>
-          @if (mealsThisWeek() > 0) {
-            <p class="text-xs text-mm-text3 mt-1">planificadas</p>
-          }
+          <p class="text-3xl font-bold text-mm-text1 tabular-nums leading-none">{{ mealsThisWeek() }}<span class="text-base font-semibold text-mm-text3">/{{ totalWeekSlots }}</span></p>
+          <p class="text-sm font-semibold text-mm-text1 mt-2">comidas planificadas esta semana</p>
+
+          <div class="flex gap-1 mt-3" role="img" [attr.aria-label]="'Progreso semanal: ' + mealsThisWeek() + ' de ' + totalWeekSlots + ' comidas planificadas'">
+            @for (filled of mealsByDay(); track $index) {
+              <span class="flex-1 h-1.5 rounded-full" [class]="filled ? 'bg-violet-500/70' : 'bg-white/[0.06]'" [title]="dayLabels[$index]"></span>
+            }
+          </div>
+
+          <p class="text-xs text-mm-text3 mt-2">
+            @if (mealsThisWeek() === 0) {
+              Aún no has planificado nada — usa el calendario de arriba
+            } @else if (mealsThisWeek() >= totalWeekSlots) {
+              ¡Semana completamente planificada!
+            } @else {
+              Sigue completando tu semana arriba
+            }
+          </p>
         }
       </div>
 
     </div>
   </div>
-
-  <div class="border-t border-white/[0.04]"></div>
-
-  <app-weekly-calendar />
 
 </div>

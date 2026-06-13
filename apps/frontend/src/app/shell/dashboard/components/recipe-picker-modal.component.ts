@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, signal } from '@angular/core';
 import type { MealType } from '../../../core/services/meal-plans.service';
 import { type Recipe } from '../../../core/services/recipes.service';
+import { RecipeCardsIconComponent } from '../../../shared/icons/recipe-cards-icon.component';
 import { MEAL_ROWS, SKELETON_ROWS, formatSlotDate, type MealRowDef } from '../weekly-calendar.types';
 
 @Component({
   selector: 'app-recipe-picker-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RecipeCardsIconComponent],
   templateUrl: './recipe-picker-modal.component.html',
   styleUrl: './recipe-picker-modal.component.css',
 })

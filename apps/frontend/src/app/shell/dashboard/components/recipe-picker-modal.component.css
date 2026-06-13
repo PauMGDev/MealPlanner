@@ -1,0 +1,19 @@
+/* ── Recipe ticket: ligera rotación de reposo en algunas cards ── */
+.recipe-ticket {
+  transform: rotate(0deg);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.recipe-ticket--tilt {
+  transform: rotate(-0.5deg);
+}
+.recipe-ticket:hover {
+  transform: rotate(0deg) translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recipe-ticket,
+  .recipe-ticket--tilt,
+  .recipe-ticket:hover {
+    transform: none;
+  }
+}

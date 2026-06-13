@@ -1,0 +1,9 @@
+/* ── Placeholder "plato vacío" cuando la receta no tiene imagen ── */
+.empty-plate {
+  background: radial-gradient(circle at center, var(--color-mm-elevated) 0%, var(--color-mm-surface) 70%);
+}
+
+/* ── Skeleton del lado de imagen: mismo gradiente radial ── */
+.empty-plate-skeleton {
+  background: radial-gradient(circle at center, var(--color-mm-elevated) 0%, var(--color-mm-surface) 70%);
+}

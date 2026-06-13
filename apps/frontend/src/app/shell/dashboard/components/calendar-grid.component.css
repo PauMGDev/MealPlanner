@@ -1,0 +1,30 @@
+/* ── Celda vacía: cubiertos cruzados, entrada rotada en hover ── */
+.empty-slot__cutlery {
+  transform: rotate(-18deg) scale(0.85);
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.empty-slot:hover .empty-slot__cutlery,
+.group\/cell:hover .empty-slot__cutlery {
+  transform: rotate(0deg) scale(1);
+}
+
+/* ── Skeleton de celdas: alterna rectángulo y anillo circular ── */
+.skeleton-cell--ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+}
+.skeleton-cell--ring__inner {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  border: 2px dashed var(--color-mm-elevated);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-slot__cutlery {
+    transition: opacity 0.2s ease;
+  }
+}
