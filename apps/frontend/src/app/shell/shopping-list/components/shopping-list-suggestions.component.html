@@ -1,0 +1,38 @@
+<section class="bg-mm-card border border-white/[0.06] rounded-2xl p-5">
+  <div class="flex items-center gap-2.5">
+    <span class="w-2 h-2 rounded-full bg-yellow-600/70 flex-shrink-0"></span>
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-yellow-500/60">
+      Agotados para tu plan
+    </h2>
+  </div>
+  <p class="text-xs text-mm-text3 mt-1.5 mb-4">Ingredientes que necesitas y no tienes</p>
+
+  @if (loading) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      @for (i of [0, 1, 2, 3]; track i) {
+        <div class="h-12 rounded-xl bg-mm-surface animate-pulse"></div>
+      }
+    </div>
+  } @else if (suggestions.length === 0) {
+    <p class="text-sm text-mm-text3 py-1">Nada pendiente, ¡vas bien!</p>
+  } @else {
+    <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      @for (s of suggestions; track s.ingredientId) {
+        <li class="flex items-center justify-between gap-3 pl-3 pr-2 py-2 rounded-xl
+                    bg-mm-surface border border-white/[0.05]">
+          <div class="min-w-0">
+            <p class="text-sm text-mm-text1 truncate">{{ s.name }}</p>
+            <p class="text-xs text-mm-text3 truncate">{{ s.recipeNames.join(', ') }}</p>
+          </div>
+          <button type="button" (click)="add.emit(s)"
+                  title="Añadir a la lista" aria-label="Añadir a la lista"
+                  class="suggestion-add flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+            </svg>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

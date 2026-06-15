@@ -33,6 +33,10 @@ export const routes: Routes = [
         path: 'recipes',
         loadComponent: () => import('./shell/recipes/recipes.component').then(m => m.RecipesComponent),
       },
+      {
+        path: 'shopping-list',
+        loadComponent: () => import('./shell/shopping-list/shopping-list.component').then(m => m.ShoppingListComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: '**', redirectTo: 'dashboard' },
     ],

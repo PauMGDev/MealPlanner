@@ -1,0 +1,15 @@
+.suggestion-add {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  color: #eab308;
+  background-color: rgba(234, 179, 8, 0.1);
+  transition: background-color 0.15s ease;
+}
+
+.suggestion-add:hover {
+  background-color: rgba(234, 179, 8, 0.2);
+}

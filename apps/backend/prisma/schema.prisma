@@ -39,6 +39,7 @@ model User {
   weeklyPlans  WeeklyPlan[]
   recipes      Recipe[]
   pantryItems  PantryItem[]
+  shoppingListItems ShoppingListItem[]
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
@@ -71,6 +72,7 @@ model Ingredient {
   caloriesPer100g   Float?             @map("calories_per_100g")
   recipeIngredients RecipeIngredient[]
   pantryItems       PantryItem[]
+  shoppingListItems ShoppingListItem[]
 
   @@map("ingredients")
 }
@@ -149,4 +151,22 @@ model PantryItem {
   @@index([categoryId])
   @@index([ingredientId])
   @@map("pantry_items")
+}
+
+model ShoppingListItem {
+  id           String      @id @default(cuid())
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String      @map("user_id")
+  name         String
+  quantity     Float?
+  unit         String?
+  checked      Boolean     @default(false)
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
+  ingredientId String?     @map("ingredient_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([ingredientId])
+  @@map("shopping_list_items")
 }
