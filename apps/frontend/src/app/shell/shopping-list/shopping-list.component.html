@@ -24,7 +24,7 @@
   </div>
 
   @if (error()) {
-    <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
+    <div class="mb-4 px-4 py-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm flex items-center justify-between">
       <span>{{ error() }}</span>
       <button (click)="error.set('')" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">✕</button>
     </div>

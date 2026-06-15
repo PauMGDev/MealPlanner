@@ -6,14 +6,14 @@
       <p class="text-mm-text3 text-sm mt-1">
         @if (!loading()) {
           @if (isFiltering()) {
-            <span class="text-mm-text2">{{ filteredInStockCount() }}</span>
-            <span> de {{ inStockCount() }} en stock</span>
+            <span class="text-mm-text2 font-data tabular-nums">{{ filteredInStockCount() }}</span>
+            <span> de <span class="font-data tabular-nums">{{ inStockCount() }}</span> en stock</span>
           } @else {
-            <span class="text-mm-text2">{{ inStockCount() }}</span> en stock
+            <span class="text-mm-text2 font-data tabular-nums">{{ inStockCount() }}</span> en stock
             @if (depletedCount() > 0) {
               <span class="mx-1.5 text-white/20">·</span>
-              <span class="text-yellow-500/80">
-                {{ depletedCount() }} agotado{{ depletedCount() !== 1 ? 's' : '' }}
+              <span class="text-warning/80">
+                <span class="font-data tabular-nums">{{ depletedCount() }}</span> agotado{{ depletedCount() !== 1 ? 's' : '' }}
               </span>
             }
           }
@@ -30,7 +30,7 @@
   </div>
 
   @if (pantryError()) {
-    <div class="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
+    <div class="mb-4 px-4 py-3 rounded-xl bg-danger/10 border border-danger/20 text-danger text-sm flex items-center justify-between">
       <span>{{ pantryError() }}</span>
       <button (click)="pantryError.set('')" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">✕</button>
     </div>

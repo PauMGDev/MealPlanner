@@ -10,6 +10,26 @@
   --color-mm-text1: #e8ecf4;
   --color-mm-text2: #8898b5;
   --color-mm-text3: #4a5875;
+
+  /* MealMap — accent (brand) */
+  --color-accent: #3b66e0;
+  --color-accent-hover: #5681f5;
+  --color-accent-soft: #8fb4ff;
+  --color-accent-deep: #2748b0;
+
+  /* MealMap — semantic status */
+  --color-success: #3ddc97;
+  --color-warning: #ffb454;
+  --color-caution: #ffd968;
+  --color-danger: #ff6b6b;
+
+  /* MealMap — meal-type categorical arc (sunrise → night) */
+  --color-meal-breakfast: #ff9966;
+  --color-meal-almuerzo: #ffc44d;
+  --color-meal-lunch: #4fc8ed;
+  --color-meal-snack: #5fdba3;
+  --color-meal-dinner: #bb96f5;
+
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-display: "Work Sans", system-ui, sans-serif;
   --font-body: "Source Sans 3", system-ui, sans-serif;
@@ -145,12 +165,12 @@
 
 .btn-primary {
   @apply inline-flex items-center justify-center font-semibold rounded-[10px]
-         bg-blue-500 text-white transition-all duration-200;
-  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.25);
+         bg-accent text-white transition-all duration-200;
+  box-shadow: 0 2px 12px rgba(59, 102, 224, 0.3);
 }
 .btn-primary:hover {
-  @apply bg-blue-400 -translate-y-px;
-  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.35);
+  @apply bg-accent-hover -translate-y-px;
+  box-shadow: 0 6px 24px rgba(86, 129, 245, 0.4);
 }
 
 .meal-enter {
@@ -205,7 +225,7 @@
 
 /* ── Focus-visible ring (keyboard nav) ──────────────────── */
 :focus-visible {
-  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline: 2px solid rgba(59, 102, 224, 0.55);
   outline-offset: 2px;
   border-radius: 6px;
 }

@@ -7,6 +7,6 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   templateUrl: './recipe-cards-icon.component.html',
 })
 export class RecipeCardsIconComponent {
-  /** Clases Tailwind para tamaño y color (ej: "w-5 h-5 text-blue-400") */
+  /** Clases Tailwind para tamaño y color (ej: "w-5 h-5 text-accent-soft") */
   @Input() class = 'w-5 h-5';
 }

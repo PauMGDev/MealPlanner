@@ -1,30 +1,26 @@
-<div class="flex items-center gap-2 px-3 py-2.5 group/row transition-colors
+<div class="flex items-center gap-3 px-4 py-2.5 group/row transition-colors
             hover:bg-white/[0.05] cursor-pointer"
      [class.border-b]="!isLast"
      style="border-color: rgba(255,255,255,0.04)"
      (click)="rowClick.emit(item)">
 
-  <div class="w-0.5 h-4 rounded-full flex-shrink-0 opacity-60"
-       [style.background]="categoryColor"></div>
-
-  <span class="flex-1 text-sm text-mm-text1 truncate min-w-0">{{ item.name }}</span>
+  <span class="flex-1 text-sm text-mm-text1 truncate min-w-0" [title]="item.name">{{ item.name }}</span>
 
   @if (!item.virtual && badge; as b) {
     <span class="lg:hidden w-2 h-2 rounded-full flex-shrink-0"
-          [style.background]="b.cls.includes('red') ? '#f87171' : b.cls.includes('orange') ? '#fb923c' : '#fbbf24'">
+          [style.background]="b.cls.includes('danger') ? '#ff6b6b' : b.cls.includes('warning') ? '#ffb454' : '#ffd968'">
     </span>
-    <span class="hidden lg:inline text-xs px-1.5 py-0.5 rounded-md font-medium w-28 text-right flex-shrink-0"
+    <span class="hidden lg:inline text-xs px-1.5 py-0.5 rounded-md font-medium w-24 text-right flex-shrink-0"
           [class]="b.cls">
       {{ b.label }}
     </span>
   } @else {
-    <span class="hidden lg:block w-28 flex-shrink-0"></span>
+    <span class="hidden lg:block w-24 flex-shrink-0"></span>
   }
 
-  <div class="w-24 flex-shrink-0 flex justify-end">
-    <span class="text-xs tabular-nums px-2 py-0.5 rounded-md border border-white/[0.06] bg-mm-card text-mm-text2">
-      {{ item.quantity }} {{ item.unit }}
-    </span>
+  <div class="w-24 flex-shrink-0 text-right">
+    <span class="text-xs font-data tabular-nums text-mm-text2">{{ item.quantity }}</span>
+    <span class="text-xs font-data text-mm-text3 ml-0.5">{{ item.unit }}</span>
   </div>
 
   <div class="flex items-center gap-0.5 flex-shrink-0 opacity-0 group-hover/row:opacity-100 transition-opacity"
@@ -32,7 +28,7 @@
     @if (!item.virtual && item.quantity > 0) {
       <button (click)="setDepleted.emit(item)"
               title="Marcar como agotado"
-              class="p-1 rounded-md text-mm-text3 transition-colors hover:text-yellow-400 hover:bg-yellow-400/10">
+              class="p-1 rounded-md text-mm-text3 transition-colors hover:text-warning hover:bg-warning/10">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
                 d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"/>
@@ -41,7 +37,7 @@
     }
     <button (click)="delete.emit(item)"
             title="Eliminar"
-            class="p-1 rounded-md text-mm-text3 transition-colors hover:text-red-400 hover:bg-red-400/10">
+            class="p-1 rounded-md text-mm-text3 transition-colors hover:text-danger hover:bg-danger/10">
       <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
         <path stroke-linecap="round" stroke-linejoin="round"
               d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>

@@ -11,7 +11,7 @@
            placeholder="Buscar receta…"
            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/[0.06]
                   bg-mm-surface text-mm-text1 text-sm outline-none
-                  transition-colors focus:border-blue-500/50 placeholder:text-mm-text3" />
+                  transition-colors focus:border-accent/50 placeholder:text-mm-text3" />
     @if (searchQuery) {
       <button (click)="searchQueryChange.emit('')"
               class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-mm-text3 hover:text-mm-text1 transition-colors">
@@ -24,9 +24,9 @@
   <div class="flex items-center gap-2">
     <button (click)="onlyAvailableChange.emit(!onlyAvailable)"
             [class]="onlyAvailable
-              ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-green-500/20 text-green-400 border-green-500/30'
+              ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-success/20 text-success border-success/30'
               : 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
-      <span class="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0"></span>
+      <span class="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0"></span>
       Listo para cocinar
     </button>
     @if (isFiltering) {

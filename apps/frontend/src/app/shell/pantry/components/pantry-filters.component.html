@@ -12,7 +12,7 @@
            placeholder="Buscar ingrediente…"
            class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/[0.06]
                   bg-mm-surface text-mm-text1 text-sm outline-none
-                  transition-colors focus:border-blue-500/50 placeholder:text-mm-text3" />
+                  transition-colors focus:border-accent/50 placeholder:text-mm-text3" />
     @if (searchQuery) {
       <button (click)="searchQueryChange.emit('')"
               class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5
@@ -27,13 +27,13 @@
   <div class="flex items-center gap-2 flex-wrap">
     <button (click)="toggleExpiry('soon')"
             [class]="expiryFilter === 'soon'
-              ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+              ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-warning/20 text-warning border border-warning/30'
               : 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-mm-surface border border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
       Caduca pronto
     </button>
     <button (click)="toggleExpiry('expired')"
             [class]="expiryFilter === 'expired'
-              ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-red-500/20 text-red-400 border border-red-500/30'
+              ? 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-danger/20 text-danger border border-danger/30'
               : 'px-3 py-1.5 rounded-full text-xs font-medium transition-colors bg-mm-surface border border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
       Caducados
     </button>
@@ -42,7 +42,7 @@
         <select [value]="categoryFilter ?? ''"
                 (change)="categoryFilterChange.emit($any($event.target).value || null)"
                 [class]="categoryFilter
-                  ? 'appearance-none pl-3 pr-6 py-1.5 rounded-full text-xs font-medium border outline-none transition-colors cursor-pointer [color-scheme:dark] bg-blue-500/20 text-blue-400 border-blue-500/30'
+                  ? 'appearance-none pl-3 pr-6 py-1.5 rounded-full text-xs font-medium border outline-none transition-colors cursor-pointer [color-scheme:dark] bg-accent/20 text-accent-soft border-accent/30'
                   : 'appearance-none pl-3 pr-6 py-1.5 rounded-full text-xs font-medium border outline-none transition-colors cursor-pointer [color-scheme:dark] bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10'">
           <option value="">Todas las categorías</option>
           @for (cat of categories; track cat.id) {

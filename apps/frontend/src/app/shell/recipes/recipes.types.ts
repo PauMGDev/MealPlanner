@@ -38,22 +38,22 @@ export function computeAvailability(recipe: Recipe, pantryMap: Map<string, Pantr
 }
 
 export function dotClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'bg-green-400';
-  if (status === 'depleted') return 'bg-yellow-400';
-  return 'bg-red-400';
+  if (status === 'available') return 'bg-success';
+  if (status === 'depleted') return 'bg-warning';
+  return 'bg-danger';
 }
 
 export function accentBarClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'bg-green-500/60';
-  if (status === 'depleted') return 'bg-yellow-500/60';
-  if (status === 'missing') return 'bg-red-500/40';
+  if (status === 'available') return 'bg-success/60';
+  if (status === 'depleted') return 'bg-warning/60';
+  if (status === 'missing') return 'bg-danger/40';
   return 'bg-white/[0.04]';
 }
 
 export function cardBorderClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'border-green-500/30 hover:border-green-500/50';
-  if (status === 'depleted') return 'border-yellow-500/30 hover:border-yellow-500/50';
-  if (status === 'missing') return 'border-red-500/20 hover:border-red-500/30';
+  if (status === 'available') return 'border-success/30 hover:border-success/50';
+  if (status === 'depleted') return 'border-warning/30 hover:border-warning/50';
+  if (status === 'missing') return 'border-danger/20 hover:border-danger/30';
   return 'border-white/[0.06] hover:border-white/10';
 }
 
@@ -72,8 +72,8 @@ export function statusLabel(status: AvailabilityStatus): string {
 }
 
 export function statusTextClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'text-green-400';
-  if (status === 'depleted') return 'text-yellow-400';
-  if (status === 'missing') return 'text-red-400';
+  if (status === 'available') return 'text-success';
+  if (status === 'depleted') return 'text-warning';
+  if (status === 'missing') return 'text-danger';
   return 'text-mm-text3';
 }

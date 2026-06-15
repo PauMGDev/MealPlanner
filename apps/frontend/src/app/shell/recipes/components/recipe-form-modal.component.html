@@ -13,33 +13,33 @@
       <div class="mb-4">
         <label class="block text-sm font-medium text-mm-text2 mb-1.5">Nombre</label>
         <input formControlName="name" type="text" placeholder="Ej: Pasta carbonara"
-               class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-blue-500 placeholder:text-mm-text3" />
+               class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-accent placeholder:text-mm-text3" />
         @if (form.get('name')?.touched && form.get('name')?.invalid) {
-          <p class="text-red-400 text-xs mt-1.5">El nombre es obligatorio (mín. 2 caracteres)</p>
+          <p class="text-danger text-xs mt-1.5">El nombre es obligatorio (mín. 2 caracteres)</p>
         }
       </div>
 
       <div class="mb-4">
         <label class="block text-sm font-medium text-mm-text2 mb-1.5">Descripción <span class="text-mm-text3 font-normal">(opcional)</span></label>
         <textarea formControlName="description" rows="2" placeholder="Breve descripción..."
-                  class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-blue-500 placeholder:text-mm-text3 resize-none"></textarea>
+                  class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-accent placeholder:text-mm-text3 resize-none"></textarea>
       </div>
 
       <div class="flex gap-3 mb-5">
         <div class="flex-1">
           <label class="block text-sm font-medium text-mm-text2 mb-1.5">Tiempo (min)</label>
           <input formControlName="prepTime" type="number" placeholder="30" min="1"
-                 class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-blue-500 placeholder:text-mm-text3" />
+                 class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-accent placeholder:text-mm-text3" />
           @if (form.get('prepTime')?.touched && form.get('prepTime')?.invalid) {
-            <p class="text-red-400 text-xs mt-1.5">Tiempo inválido</p>
+            <p class="text-danger text-xs mt-1.5">Tiempo inválido</p>
           }
         </div>
         <div class="flex-1">
           <label class="block text-sm font-medium text-mm-text2 mb-1.5">Raciones</label>
           <input formControlName="servings" type="number" placeholder="4" min="1"
-                 class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-blue-500 placeholder:text-mm-text3" />
+                 class="w-full px-4 py-3 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-[15px] outline-none transition-colors focus:border-accent placeholder:text-mm-text3" />
           @if (form.get('servings')?.touched && form.get('servings')?.invalid) {
-            <p class="text-red-400 text-xs mt-1.5">Raciones inválidas</p>
+            <p class="text-danger text-xs mt-1.5">Raciones inválidas</p>
           }
         </div>
       </div>
@@ -49,15 +49,15 @@
       <div class="mb-5">
         <div class="flex items-center justify-between mb-2">
           <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">Pasos</p>
-          <button type="button" (click)="addStep()" class="text-xs text-blue-400 hover:text-blue-300 transition-colors">+ Añadir paso</button>
+          <button type="button" (click)="addStep()" class="text-xs text-accent-soft hover:text-white transition-colors">+ Añadir paso</button>
         </div>
         @for (step of stepControls; track $index) {
           <div class="flex gap-2 mb-2">
             <span class="flex-shrink-0 w-5 h-10 flex items-center justify-center text-xs text-mm-text3 font-medium">{{ $index + 1 }}.</span>
             <input [formControl]="step" [placeholder]="'Paso ' + ($index + 1) + '...'"
-                   class="flex-1 px-3 py-2.5 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-sm outline-none transition-colors focus:border-blue-500 placeholder:text-mm-text3" />
+                   class="flex-1 px-3 py-2.5 rounded-[10px] border border-white/[0.06] bg-mm-card text-mm-text1 text-sm outline-none transition-colors focus:border-accent placeholder:text-mm-text3" />
             @if (stepControls.length > 1) {
-              <button type="button" (click)="removeStep($index)" class="flex-shrink-0 p-2 rounded-lg text-mm-text3 hover:text-red-400 hover:bg-red-400/10 transition-all">
+              <button type="button" (click)="removeStep($index)" class="flex-shrink-0 p-2 rounded-lg text-mm-text3 hover:text-danger hover:bg-danger/10 transition-all">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
               </button>
             }
@@ -80,9 +80,9 @@
                 <span class="flex-1 text-sm text-mm-text1 truncate">{{ pi.ingredient.name }}</span>
                 <input type="number" min="0.001" step="any" [value]="pi.quantity"
                        (change)="updatePendingQty($index, $any($event.target).value)"
-                       class="w-16 px-2 py-1 rounded-lg border border-white/[0.06] bg-mm-elevated text-mm-text1 text-xs text-center outline-none focus:border-blue-500 transition-colors" />
+                       class="w-16 px-2 py-1 rounded-lg border border-white/[0.06] bg-mm-elevated text-mm-text1 text-xs text-center outline-none focus:border-accent transition-colors" />
                 <span class="text-xs text-mm-text3 w-8">{{ pi.ingredient.unit }}</span>
-                <button type="button" (click)="removePending($index)" class="text-mm-text3 hover:text-red-400 transition-colors p-1">
+                <button type="button" (click)="removePending($index)" class="text-mm-text3 hover:text-danger transition-colors p-1">
                   <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
@@ -92,7 +92,7 @@
       </div>
 
       @if (saveError()) {
-        <p class="text-red-400 text-sm mb-4 bg-red-400/10 px-4 py-2.5 rounded-lg">{{ saveError() }}</p>
+        <p class="text-danger text-sm mb-4 bg-danger/10 px-4 py-2.5 rounded-lg">{{ saveError() }}</p>
       }
 
       <div class="flex gap-3">

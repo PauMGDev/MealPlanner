@@ -11,8 +11,8 @@ export interface PantryGroup {
 }
 
 export const CAT_PALETTE = [
-  '#60a5fa', '#34d399', '#f87171', '#fbbf24',
-  '#a78bfa', '#fb923c', '#38bdf8', '#4ade80',
+  '#ff9966', '#ffc44d', '#4fc8ed', '#5fdba3',
+  '#bb96f5', '#ff7a93', '#5fd0c0', '#d9b27c',
 ];
 
 export function buildMergedItems(items: PantryItem[], catalog: IngredientResult[]): DisplayItem[] {
@@ -61,9 +61,9 @@ export function expiryBadgeOf(item: PantryItem): { label: string; cls: string } 
   if (ms === null) return null;
   const days = (ms - Date.now()) / 86_400_000;
   const date = new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-  if (days < 0)  return { label: 'Caducado',       cls: 'bg-red-500/15 text-red-400' };
-  if (days <= 3) return { label: `Caduca ${date}`,  cls: 'bg-orange-500/15 text-orange-400' };
-  if (days <= 7) return { label: `Caduca ${date}`,  cls: 'bg-yellow-500/15 text-yellow-400' };
+  if (days < 0)  return { label: 'Caducado',       cls: 'bg-danger/15 text-danger' };
+  if (days <= 3) return { label: `Caduca ${date}`,  cls: 'bg-warning/15 text-warning' };
+  if (days <= 7) return { label: `Caduca ${date}`,  cls: 'bg-caution/15 text-caution' };
   return null;
 }
 

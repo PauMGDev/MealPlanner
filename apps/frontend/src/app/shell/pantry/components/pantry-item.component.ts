@@ -11,7 +11,6 @@ import { expiryBadgeOf, type DisplayItem } from '../pantry.types';
 })
 export class PantryItemComponent {
   @Input({ required: true }) item!: DisplayItem;
-  @Input() categoryColor = '#374151';
   @Input() isLast = false;
 
   @Output() rowClick = new EventEmitter<DisplayItem>();

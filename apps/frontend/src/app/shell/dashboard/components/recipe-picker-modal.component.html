@@ -28,7 +28,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
             </svg>
             <input type="text" placeholder="Buscar receta..." autofocus
-                   class="w-full bg-mm-card border border-white/[0.06] rounded-xl pl-9 pr-4 py-2 text-sm text-mm-text1 placeholder-mm-text3 focus:outline-none focus:border-blue-500/50 transition-colors"
+                   class="w-full bg-mm-card border border-white/[0.06] rounded-xl pl-9 pr-4 py-2 text-sm text-mm-text1 placeholder-mm-text3 focus:outline-none focus:border-accent/50 transition-colors"
                    [value]="query()"
                    (input)="query.set($any($event.target).value)">
           </div>
@@ -81,14 +81,14 @@
           <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(170px, 1fr))">
             @for (recipe of filteredRecipes(); track recipe.id; let i = $index) {
               <button (click)="selected.emit(recipe)"
-                      class="recipe-ticket group/recipe text-left bg-mm-card border border-white/[0.06] rounded-xl hover:border-blue-500/40 hover:shadow-lg hover:shadow-blue-500/[0.08] transition-colors duration-200 flex flex-col p-3 gap-2.5"
+                      class="recipe-ticket group/recipe text-left bg-mm-card border border-white/[0.06] rounded-xl hover:border-accent/40 hover:shadow-lg hover:shadow-accent/[0.08] transition-colors duration-200 flex flex-col p-3 gap-2.5"
                       [class.recipe-ticket--tilt]="i % 3 === 1">
                 <div class="flex items-start gap-2.5">
                   @if (recipe.imageUrl) {
                     <img [src]="recipe.imageUrl" [alt]="recipe.name"
                          class="w-11 h-11 rounded-lg object-cover -rotate-2 flex-shrink-0 border border-white/[0.08] shadow-sm" />
                   } @else {
-                    <div class="w-11 h-11 rounded-lg -rotate-2 flex-shrink-0 border border-white/[0.08] bg-mm-elevated flex items-center justify-center group-hover/recipe:bg-blue-500/[0.08] transition-colors duration-200">
+                    <div class="w-11 h-11 rounded-lg -rotate-2 flex-shrink-0 border border-white/[0.08] bg-mm-elevated flex items-center justify-center group-hover/recipe:bg-accent/[0.08] transition-colors duration-200">
                       <app-recipe-cards-icon class="w-5 h-5 text-mm-text3 opacity-50 group-hover/recipe:opacity-70 transition-opacity" />
                     </div>
                   }
