@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { Meal, MealType } from '../../../core/services/meal-plans.service';
-import { DAY_LABELS, SKELETON_DAYS, SKELETON_ROWS, isToday, toISODate, type MealRowDef } from '../weekly-calendar.types';
+import { DAY_LABELS, MEAL_ROWS, SKELETON_DAYS, SKELETON_ROWS, isToday, toISODate, type MealRowDef } from '../weekly-calendar.types';
 
 @Component({
   selector: 'app-calendar-grid',
@@ -22,6 +22,7 @@ export class CalendarGridComponent {
   readonly dayLabels = DAY_LABELS;
   readonly skeletonRows = SKELETON_ROWS;
   readonly skeletonDays = SKELETON_DAYS;
+  readonly allMealRows = MEAL_ROWS;
   protected readonly isToday = isToday;
   protected readonly toISODate = toISODate;
 

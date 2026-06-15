@@ -42,6 +42,7 @@ export class WeeklyCalendarComponent {
   weekDays = computed(() => Array.from({ length: 7 }, (_, i) => addDays(this.currentWeekStart(), i)));
   filteredMealRows = computed(() => MEAL_ROWS.filter(r => this.visibleMealTypes().includes(r.type)));
   weekRangeLabel = computed(() => formatWeekRange(this.currentWeekStart()));
+  isCurrentWeek = computed(() => toISODate(this.currentWeekStart()) === toISODate(getThisMonday()));
   mealGrid = computed(() => {
     const map = new Map<string, Meal>();
     for (const meal of (this.weeklyPlan()?.meals ?? [])) {

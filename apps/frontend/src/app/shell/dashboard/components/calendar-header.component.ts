@@ -13,6 +13,7 @@ export class CalendarHeaderComponent {
   @Input() weekRangeLabel = '';
   @Input() mealRows: MealRowDef[] = [];
   @Input() visibleMealTypes: MealType[] = [];
+  @Input() isCurrentWeek = true;
 
   @Output() prevWeek = new EventEmitter<void>();
   @Output() nextWeek = new EventEmitter<void>();

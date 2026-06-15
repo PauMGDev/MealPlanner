@@ -1,7 +1,19 @@
 @if (calendarError()) {
-  <div class="mx-8 mt-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
-    <span>{{ calendarError() }}</span>
-    <button (click)="calendarError.set('')" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">✕</button>
+  <div class="mx-8 mt-4 px-4 py-3 rounded-xl bg-mm-card border border-white/[0.06] border-l-2 border-l-red-500/50 text-mm-text2 text-sm flex items-center justify-between gap-3">
+    <div class="flex items-center gap-2.5">
+      <svg class="w-4 h-4 flex-shrink-0 text-red-400/80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v5" />
+        <path d="M12 16.5v.01" />
+      </svg>
+      <span>{{ calendarError() }}</span>
+    </div>
+    <button (click)="calendarError.set('')" title="Cerrar"
+            class="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-lg text-mm-text3 hover:text-mm-text1 hover:bg-mm-elevated transition-colors duration-150">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
   </div>
 }
 
@@ -10,6 +22,7 @@
     [weekRangeLabel]="weekRangeLabel()"
     [mealRows]="allMealRows"
     [visibleMealTypes]="visibleMealTypes()"
+    [isCurrentWeek]="isCurrentWeek()"
     (prevWeek)="prevWeek()"
     (nextWeek)="nextWeek()"
     (goToThisWeek)="goToThisWeek()"

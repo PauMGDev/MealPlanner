@@ -1,3 +1,43 @@
+/* ── Marcador de "hoy": anillo ámbar con gnomon (estilo reloj de sol) ── */
+.today-marker {
+  position: relative;
+  border: 2px solid color-mix(in srgb, var(--color-amber-400) 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-amber-400) 18%, transparent);
+}
+.today-marker::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 1px;
+  height: 4px;
+  background: var(--color-amber-400);
+  transform: translateX(-50%);
+}
+
+/* ── Línea superior del día "hoy" en la cabecera ── */
+.today-hairline {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-amber-400) 70%, transparent), transparent);
+}
+
+/* ── Tarjeta de comida: ligera intensificación al hover ── */
+.meal-card {
+  transition: border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.meal-card:hover {
+  filter: brightness(1.18);
+}
+
+/* ── Miniatura de receta: degradado hacia el fondo de la tarjeta ── */
+.meal-card__media-fade {
+  background: linear-gradient(to right, var(--color-mm-card), transparent);
+}
+
+/* ── Botón "Quitar": entra desde abajo con la misma curva que el resto del calendario ── */
+.meal-card__remove {
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+}
+
 /* ── Celda vacía: cubiertos cruzados, entrada rotada en hover ── */
 .empty-slot__cutlery {
   transform: rotate(-18deg) scale(0.85);

@@ -12,11 +12,8 @@
       </svg>
     </button>
     <button (click)="goToThisWeek.emit()" title="Semana actual"
-            class="relative px-2.5 h-8 flex items-center justify-center gap-1.5 rounded-lg text-mm-text3 hover:text-mm-text1 hover:bg-mm-card active:scale-95 transition-all duration-150 text-xs font-semibold">
-      <span class="relative flex h-1.5 w-1.5">
-        <span class="absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75 animate-ping"></span>
-        <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-blue-500"></span>
-      </span>
+            class="relative px-3 h-8 flex items-center justify-center rounded-lg active:scale-95 transition-all duration-150 text-xs font-semibold border-t-2"
+            [class]="isCurrentWeek ? 'text-mm-text3 border-t-transparent' : 'text-mm-text2 hover:text-mm-text1 hover:bg-mm-card border-t-amber-400/60'">
       Hoy
     </button>
     <button (click)="nextWeek.emit()" title="Semana siguiente"
@@ -32,8 +29,8 @@
 <div class="flex flex-wrap gap-2 mb-5">
   @for (row of mealRows; track row.type) {
     <button (click)="toggleMealType.emit(row.type)"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-t-2 border-t-transparent transition-all duration-150"
-            [class]="isVisible(row.type) ? (row.activePill + ' ' + row.activeBorderTop) : 'border-white/[0.06] text-mm-text3 opacity-40 hover:opacity-60'">
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-t-2 transition-all duration-150"
+            [class]="isVisible(row.type) ? (row.activePill + ' ' + row.activeBorderTop) : 'border-t-transparent border-white/[0.06] text-mm-text3 opacity-40 hover:opacity-60'">
       <svg class="w-3.5 h-3.5 flex-shrink-0" [class]="isVisible(row.type) ? row.color : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         @for (path of row.iconPaths; track path) {
           <path [attr.d]="path" />

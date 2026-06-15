@@ -14,6 +14,7 @@
   --font-display: "Work Sans", system-ui, sans-serif;
   --font-body: "Source Sans 3", system-ui, sans-serif;
   --font-data: "JetBrains Mono", ui-monospace, monospace;
+  --font-handwritten: "Caveat", cursive;
   --radius-2xl: 20px;
 
   /* Harmonic Kitchen / Harmonic Kitchen Blue — landing color tokens */
@@ -214,4 +215,35 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* ── Shopping list: handwritten notebook page ───────────── */
+.notebook-margin {
+  position: relative;
+}
+.notebook-margin::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3.25rem;
+  width: 1px;
+  background: rgba(248, 113, 113, 0.22);
+}
+
+/* Hand-drawn strikethrough for checked-off items */
+.notebook-strike {
+  position: relative;
+  display: inline-block;
+}
+.notebook-strike::after {
+  content: '';
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 52%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  opacity: 0.55;
 }
