@@ -1,25 +1,19 @@
-<section class="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24 px-4 md:px-10 bg-surface dark:bg-surface-dim">
+<section class="hero-section">
   <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
 
     <!-- Text -->
-    <div class="relative z-10 space-y-6 text-center md:text-left">
-      <h1 class="font-sans text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-on-surface dark:text-inverse-surface">
+    <div class="hero-text">
+      <h1 class="hero-title">
         Domina tu cocina, <span class="text-primary">simplifica tu vida</span>
       </h1>
-      <p class="font-body text-lg text-on-surface-variant mx-auto md:mx-0 max-w-lg">
+      <p class="hero-subtitle">
         Planifica tus comidas, gestiona tu despensa y genera listas de la compra en segundos. Todo en un solo lugar.
       </p>
-      <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
-        <a routerLink="/register"
-           class="bg-primary text-on-primary px-8 py-4 rounded-full text-sm font-semibold hover:scale-105 transition-transform w-full sm:w-auto text-center shadow-lg shadow-primary/20">
-          Empezar gratis
-        </a>
-        <a href="#preview"
-           class="border-2 border-outline text-on-surface-variant px-8 py-4 rounded-full text-sm font-semibold hover:bg-surface-variant/20 transition-colors w-full sm:w-auto text-center">
-          Ver Tutorial
-        </a>
+      <div class="hero-actions">
+        <a routerLink="/register" class="hero-cta-primary">Empezar gratis</a>
+        <a href="#preview" class="hero-cta-secondary">Ver Tutorial</a>
       </div>
-      <p class="font-body text-sm text-on-surface-variant text-center md:text-left">
+      <p class="hero-login-note">
         ¿Ya tienes cuenta?
         <a routerLink="/login" class="text-primary font-medium hover:underline">Iniciar sesión</a>
       </p>
@@ -27,49 +21,48 @@
 
     <!-- Interface preview: today's meal plan card -->
     <div class="relative px-4 md:px-0">
-      <div class="absolute -top-20 -right-20 w-96 h-96 bg-primary-container opacity-20 rounded-full blur-3xl hidden md:block" aria-hidden="true"></div>
-      <div class="relative bg-surface-container-lowest dark:bg-surface-container-high rounded-xl shadow-xl border border-outline-variant/30 overflow-hidden">
+      <div class="hero-blob" aria-hidden="true"></div>
+      <div class="hero-card">
 
-        <!-- Hero food photo: today's dinner -->
-        <div class="relative aspect-video overflow-hidden">
+        <div class="hero-card-photo">
           <img
             src="https://loremflickr.com/800/450/salmon,food?lock=1"
             alt="Salmón al horno con espárragos, la cena planificada para hoy"
-            class="absolute inset-0 w-full h-full object-cover"
+            class="hero-card-img"
             width="800" height="450"
             fetchpriority="high"
           />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-          <div class="absolute bottom-4 left-4 right-4">
-            <span class="inline-block bg-primary text-on-primary text-xs font-semibold px-3 py-1 rounded-full mb-2">Cena de hoy</span>
-            <h3 class="font-sans text-lg md:text-xl font-semibold text-white leading-tight">Salmón al horno con espárragos</h3>
+          <div class="hero-card-overlay"></div>
+          <div class="hero-card-caption">
+            <span class="hero-card-badge">Cena de hoy</span>
+            <h3 class="hero-card-title">Salmón al horno con espárragos</h3>
           </div>
         </div>
 
         <!-- Other meals of the day -->
-        <div class="p-4 md:p-6 space-y-3">
-          <div class="flex items-center gap-3">
+        <div class="hero-card-meals">
+          <div class="hero-meal-item">
             <img
               src="https://loremflickr.com/96/96/granola,food?lock=25"
               alt=""
-              class="w-12 h-12 rounded-lg object-cover shrink-0"
+              class="hero-meal-thumb"
               loading="lazy" width="48" height="48"
             />
             <div class="min-w-0">
-              <p class="font-sans text-sm font-semibold text-on-surface dark:text-inverse-surface truncate">Avena con frutos rojos</p>
-              <p class="font-body text-xs text-on-surface-variant">Desayuno · 10 min</p>
+              <p class="hero-meal-name">Avena con frutos rojos</p>
+              <p class="hero-meal-meta">Desayuno · 10 min</p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="hero-meal-item">
             <img
               src="https://loremflickr.com/96/96/salad,quinoa?lock=33"
               alt=""
-              class="w-12 h-12 rounded-lg object-cover shrink-0"
+              class="hero-meal-thumb"
               loading="lazy" width="48" height="48"
             />
             <div class="min-w-0">
-              <p class="font-sans text-sm font-semibold text-on-surface dark:text-inverse-surface truncate">Ensalada de quinoa y garbanzos</p>
-              <p class="font-body text-xs text-on-surface-variant">Almuerzo · 20 min</p>
+              <p class="hero-meal-name">Ensalada de quinoa y garbanzos</p>
+              <p class="hero-meal-meta">Almuerzo · 20 min</p>
             </div>
           </div>
         </div>

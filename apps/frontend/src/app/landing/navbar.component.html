@@ -1,44 +1,28 @@
 <header
   class="fixed top-0 inset-x-0 z-50 bg-surface dark:bg-surface-container border-b border-outline-variant/30 transition-shadow duration-200"
   [class.shadow-sm]="scrolled()">
-  <nav class="max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-20 gap-4">
+  <nav class="navbar-inner">
 
     <!-- Logo -->
-    <a routerLink="/" class="flex items-center gap-2 shrink-0">
+    <a routerLink="/" class="navbar-logo">
       <span class="material-symbols-outlined icon-fill text-primary text-3xl">restaurant_menu</span>
       <span class="font-sans text-2xl font-semibold text-primary">MealMap</span>
     </a>
 
     <!-- Desktop links -->
-    <div class="hidden md:flex items-center gap-8">
-      <a href="#features"
-         class="font-body text-base text-primary font-bold border-b-2 border-primary pb-1 transition-colors">
-        Características
-      </a>
-      <a href="#preview"
-         class="font-body text-base text-on-surface-variant font-medium hover:text-primary transition-colors">
-        Recetas
-      </a>
+    <div class="navbar-links">
+      <a href="#features" class="navbar-link--active">Características</a>
+      <a href="#preview" class="navbar-link">Recetas</a>
     </div>
 
     <!-- Controls -->
-    <div class="flex items-center gap-2 md:gap-4">
-      <a routerLink="/login"
-         class="hidden md:inline-flex text-on-surface-variant px-4 py-2.5 rounded-full text-sm font-medium hover:text-primary transition-colors">
-        Iniciar sesión
-      </a>
-      <a routerLink="/register"
-         class="hidden md:inline-flex bg-primary text-on-primary px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all">
-        Empezar
-      </a>
-      <button type="button" (click)="toggleTheme()"
-              class="p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors"
-              aria-label="Cambiar tema">
+    <div class="navbar-controls">
+      <a routerLink="/login" class="navbar-login">Iniciar sesión</a>
+      <a routerLink="/register" class="navbar-register">Empezar</a>
+      <button type="button" (click)="toggleTheme()" class="navbar-icon-btn" aria-label="Cambiar tema">
         <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
       </button>
-      <button type="button" (click)="toggleMenu()"
-              class="md:hidden p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors"
-              aria-label="Abrir menú">
+      <button type="button" (click)="toggleMenu()" class="navbar-icon-btn md:hidden" aria-label="Abrir menú">
         <span class="material-symbols-outlined text-3xl">{{ menuOpen() ? 'close' : 'menu' }}</span>
       </button>
     </div>
@@ -47,16 +31,10 @@
   <!-- Mobile menu -->
   <div class="collapsible md:hidden" [class.collapsed]="!menuOpen()">
     <div class="flex flex-col gap-1 px-4 pb-4">
-      <a href="#features" (click)="closeMenu()" class="font-body text-base text-primary font-bold py-2">Características</a>
-      <a href="#preview" (click)="closeMenu()" class="font-body text-base text-on-surface-variant font-medium py-2">Recetas</a>
-      <a routerLink="/login" (click)="closeMenu()"
-         class="font-body text-base text-on-surface-variant font-medium py-2">
-        Iniciar sesión
-      </a>
-      <a routerLink="/register" (click)="closeMenu()"
-         class="bg-primary text-on-primary px-6 py-3 rounded-full text-sm font-semibold text-center mt-1">
-        Empezar
-      </a>
+      <a href="#features" (click)="closeMenu()" class="navbar-link--active py-2">Características</a>
+      <a href="#preview" (click)="closeMenu()" class="navbar-mobile-link">Recetas</a>
+      <a routerLink="/login" (click)="closeMenu()" class="navbar-mobile-link">Iniciar sesión</a>
+      <a routerLink="/register" (click)="closeMenu()" class="navbar-mobile-register">Empezar</a>
     </div>
   </div>
 </header>

@@ -1,17 +1,14 @@
-<section id="features" class="bg-surface-container dark:bg-surface-container py-16 md:py-24 px-4 md:px-10">
+<section id="features" class="features-section">
   <div class="max-w-7xl mx-auto">
 
-    <!-- Left-aligned section header -->
-    <div appReveal class="mb-12 md:mb-16">
-      <span class="text-secondary font-sans text-sm font-semibold uppercase tracking-widest">Características</span>
-      <h2 class="font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface mt-2">
-        Todo lo que necesitas para organizarte
-      </h2>
+    <!-- Section header -->
+    <div appReveal class="features-header">
+      <span class="section-eyebrow">Características</span>
+      <h2 class="section-title">Todo lo que necesitas para organizarte</h2>
     </div>
 
     <!-- Asymmetric bento: [3fr] tall featured | [2fr] three compact stacked -->
-    <div appReveal [appRevealDelay]="0.08"
-         class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5">
+    <div appReveal [appRevealDelay]="0.08" class="features-grid">
 
       <!-- Featured: Planificación Visual — spans left 3 columns, 3 rows -->
       <app-feature-card
@@ -22,7 +19,7 @@
         variant="primary"
         [featured]="true" />
 
-      <!-- Compact 1: Recetario Inteligente -->
+      <!-- Compact: Recetario Inteligente -->
       <app-feature-card
         class="lg:col-span-2"
         icon="menu_book"
@@ -30,7 +27,7 @@
         description="Guarda tus platos favoritos y descubre nuevas ideas basadas en lo que ya tienes en casa."
         variant="secondary" />
 
-      <!-- Compact 2: Despensa Conectada -->
+      <!-- Compact: Despensa Conectada -->
       <app-feature-card
         class="lg:col-span-2"
         icon="kitchen"
@@ -38,7 +35,7 @@
         description="Control total sobre tus ingredientes. Te avisamos cuando algo se está agotando o va a caducar."
         variant="tertiary" />
 
-      <!-- Compact 3: Lista de la compra -->
+      <!-- Compact: Lista de la compra -->
       <app-feature-card
         class="lg:col-span-2"
         icon="shopping_cart"
@@ -47,6 +44,5 @@
         variant="primary" />
 
     </div>
-
   </div>
 </section>

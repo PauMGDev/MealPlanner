@@ -1,103 +1,89 @@
 @if (featured) {
-  <!-- FEATURED: tall card with primary-container bg (#005bb7 light / #4d8eff dark) + week planner visual -->
-  <div class="h-full rounded-2xl p-7 md:p-10 flex flex-col
-              bg-primary-container border border-on-primary-container/10
-              transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl">
+  <!-- FEATURED: tall card with primary-container bg + week planner visual -->
+  <div class="fc-featured">
 
-    <div class="w-16 h-16 rounded-xl bg-on-primary-container/15 flex items-center justify-center mb-7 shrink-0">
-      <span class="material-symbols-outlined icon-fill text-on-primary-container text-[38px]">{{ icon }}</span>
+    <div class="fc-featured__icon-wrap">
+      <span class="material-symbols-outlined fc-featured__icon">{{ icon }}</span>
     </div>
 
-    <h3 class="font-sans text-2xl md:text-[1.75rem] font-bold leading-tight text-on-primary-container mb-3">{{ title }}</h3>
-    <p class="font-body text-base text-on-primary-container/70 leading-relaxed">{{ description }}</p>
+    <h3 class="fc-featured__title">{{ title }}</h3>
+    <p class="fc-featured__desc">{{ description }}</p>
 
     <!-- Decorative week planner grid -->
-    <div class="mt-8 rounded-xl bg-on-primary-container/10 p-4 shrink-0">
-      <div class="grid grid-cols-7 gap-1.5 mb-2.5">
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">L</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">M</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">X</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">J</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">V</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">S</span>
-        <span class="font-mono text-[9px] text-on-primary-container/40 text-center">D</span>
+    <div class="fc-planner">
+      <div class="fc-planner__days">
+        <span class="fc-day-label">L</span>
+        <span class="fc-day-label">M</span>
+        <span class="fc-day-label">X</span>
+        <span class="fc-day-label">J</span>
+        <span class="fc-day-label">V</span>
+        <span class="fc-day-label">S</span>
+        <span class="fc-day-label">D</span>
       </div>
-      <div class="grid grid-cols-7 gap-1.5 mb-1.5">
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
+      <div class="fc-planner__row">
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--empty"></div>
       </div>
-      <div class="grid grid-cols-7 gap-1.5 mb-1.5">
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
+      <div class="fc-planner__row">
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--empty"></div>
       </div>
-      <div class="grid grid-cols-7 gap-1.5">
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/80"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
-        <div class="aspect-square rounded-sm bg-on-primary-container/20"></div>
+      <div class="fc-planner__row">
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--filled"></div>
+        <div class="fc-cell--empty"></div>
+        <div class="fc-cell--empty"></div>
       </div>
-      <p class="font-mono text-[10px] text-on-primary-container/50 mt-3">15 comidas planificadas</p>
+      <p class="fc-planner__count">15 comidas planificadas</p>
     </div>
   </div>
 
 } @else if (variant === 'primary') {
   <!-- COMPACT: Lista de la compra — primary accent -->
-  <div class="h-full rounded-2xl p-5 md:p-6 flex items-center gap-4
-              bg-surface-container-lowest dark:bg-surface-container-high
-              border border-primary/20 dark:border-outline-variant/20
-              transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-    <div class="w-11 h-11 rounded-lg flex items-center justify-center shrink-0
-                bg-primary-container">
-      <span class="material-symbols-outlined icon-fill text-[22px] text-on-primary-container">{{ icon }}</span>
+  <div class="fc-compact fc-compact--primary">
+    <div class="fc-icon-wrap fc-icon-wrap--primary">
+      <span class="material-symbols-outlined fc-icon fc-icon--primary">{{ icon }}</span>
     </div>
     <div class="min-w-0">
-      <h3 class="font-sans text-lg font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-1.5">{{ title }}</h3>
-      <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ description }}</p>
+      <h3 class="fc-title">{{ title }}</h3>
+      <p class="fc-desc">{{ description }}</p>
     </div>
   </div>
 
 } @else if (variant === 'secondary') {
   <!-- COMPACT: Recetario Inteligente — secondary accent -->
-  <div class="h-full rounded-2xl p-5 md:p-6 flex items-center gap-4
-              bg-secondary-container/40 dark:bg-surface-container-high
-              border border-secondary/20 dark:border-outline-variant/20
-              transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-    <div class="w-11 h-11 rounded-lg flex items-center justify-center shrink-0
-                bg-secondary dark:bg-secondary-container">
-      <span class="material-symbols-outlined icon-fill text-[22px] text-on-secondary dark:text-on-secondary-container">{{ icon }}</span>
+  <div class="fc-compact fc-compact--secondary">
+    <div class="fc-icon-wrap fc-icon-wrap--secondary">
+      <span class="material-symbols-outlined fc-icon fc-icon--secondary">{{ icon }}</span>
     </div>
     <div class="min-w-0">
-      <h3 class="font-sans text-lg font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-1.5">{{ title }}</h3>
-      <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ description }}</p>
+      <h3 class="fc-title">{{ title }}</h3>
+      <p class="fc-desc">{{ description }}</p>
     </div>
   </div>
 
 } @else {
   <!-- COMPACT: Despensa Conectada — tertiary accent -->
-  <div class="h-full rounded-2xl p-5 md:p-6 flex items-center gap-4
-              bg-surface-container-high dark:bg-surface-container-highest
-              border border-outline-variant/40 dark:border-outline-variant/20
-              transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg">
-    <div class="w-11 h-11 rounded-lg flex items-center justify-center shrink-0
-                bg-tertiary-container dark:bg-tertiary">
-      <span class="material-symbols-outlined icon-fill text-[22px] text-on-tertiary-container dark:text-on-tertiary">{{ icon }}</span>
+  <div class="fc-compact fc-compact--tertiary">
+    <div class="fc-icon-wrap fc-icon-wrap--tertiary">
+      <span class="material-symbols-outlined fc-icon fc-icon--tertiary">{{ icon }}</span>
     </div>
     <div class="min-w-0">
-      <h3 class="font-sans text-lg font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-1.5">{{ title }}</h3>
-      <p class="font-body text-sm text-on-surface-variant leading-relaxed">{{ description }}</p>
+      <h3 class="fc-title">{{ title }}</h3>
+      <p class="fc-desc">{{ description }}</p>
     </div>
   </div>
 }
