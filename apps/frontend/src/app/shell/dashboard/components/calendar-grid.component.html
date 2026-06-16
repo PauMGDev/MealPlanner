@@ -1,5 +1,5 @@
 @if (loadingPlan) {
-  <div class="rounded-2xl border border-white/[0.06] overflow-hidden">
+  <div class="rounded-2xl bg-mm-card border border-white/[0.06] overflow-hidden">
     <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
       <div class="p-4 h-20"></div>
       @for (i of skeletonDays; track i) {
@@ -31,7 +31,7 @@
   </div>
 } @else {
   <div class="overflow-x-auto">
-    <div class="min-w-[640px] rounded-2xl border border-white/[0.06] overflow-hidden">
+    <div class="min-w-[640px] rounded-2xl bg-mm-card border border-white/[0.06] overflow-hidden">
       <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
         <div class="p-4"></div>
         @for (day of weekDays; track toISODate(day); let i = $index) {

@@ -1,28 +1,52 @@
-<section id="features" class="bg-surface-container-low dark:bg-surface-dim py-16 md:py-24 px-4 md:px-10">
+<section id="features" class="bg-surface-container dark:bg-surface-container py-16 md:py-24 px-4 md:px-10">
   <div class="max-w-7xl mx-auto">
-    <div appReveal class="text-center mb-12 md:mb-16">
+
+    <!-- Left-aligned section header -->
+    <div appReveal class="mb-12 md:mb-16">
       <span class="text-secondary font-sans text-sm font-semibold uppercase tracking-widest">Características</span>
       <h2 class="font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface mt-2">
         Todo lo que necesitas para organizarte
       </h2>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Asymmetric bento: [3fr] tall featured | [2fr] three compact stacked -->
+    <div appReveal [appRevealDelay]="0.08"
+         class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5">
+
+      <!-- Featured: Planificación Visual — spans left 3 columns, 3 rows -->
       <app-feature-card
+        class="lg:col-span-3 lg:row-span-3"
         icon="calendar_month"
         title="Planificación Visual"
         description="Calendario semanal interactivo con función de arrastrar y soltar para organizar tus menús sin esfuerzo."
-        variant="primary" />
+        variant="primary"
+        [featured]="true" />
+
+      <!-- Compact 1: Recetario Inteligente -->
       <app-feature-card
+        class="lg:col-span-2"
         icon="menu_book"
         title="Recetario Inteligente"
         description="Guarda tus platos favoritos y descubre nuevas ideas basadas en lo que ya tienes en casa."
         variant="secondary" />
+
+      <!-- Compact 2: Despensa Conectada -->
       <app-feature-card
-        class="sm:col-span-2 lg:col-span-1"
+        class="lg:col-span-2"
         icon="kitchen"
         title="Despensa Conectada"
         description="Control total sobre tus ingredientes. Te avisamos cuando algo se está agotando o va a caducar."
         variant="tertiary" />
+
+      <!-- Compact 3: Lista de la compra -->
+      <app-feature-card
+        class="lg:col-span-2"
+        icon="shopping_cart"
+        title="Lista de la compra"
+        description="Generada automáticamente a partir del plan semanal y de lo que ya tienes en despensa."
+        variant="primary" />
+
     </div>
+
   </div>
 </section>

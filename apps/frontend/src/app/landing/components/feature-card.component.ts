@@ -6,6 +6,7 @@ export type FeatureCardVariant = 'primary' | 'secondary' | 'tertiary';
   selector: 'app-feature-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'block h-full' },
   templateUrl: './feature-card.component.html',
 })
 export class FeatureCardComponent {
@@ -13,4 +14,5 @@ export class FeatureCardComponent {
   @Input({ required: true }) title!: string;
   @Input({ required: true }) description!: string;
   @Input({ required: true }) variant!: FeatureCardVariant;
+  @Input() featured = false;
 }
