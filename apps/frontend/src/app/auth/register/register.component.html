@@ -1,127 +1,64 @@
-<div class="flex min-h-dvh">
+<app-auth-shell
+  title="Crea tu cuenta"
+  subtitle="Todo listo en menos de un minuto."
+  footerText="¿Ya tienes cuenta?"
+  footerLinkLabel="Iniciar sesión"
+  footerLink="/login">
 
-  <!-- Left brand panel (always dark, decorative) -->
-  <aside class="hidden lg:flex w-[42%] xl:w-[38%] flex-col relative overflow-hidden bg-mm-base shrink-0 border-r border-white/[0.1]">
-    <div class="absolute -top-32 -left-20 w-[500px] h-[500px] rounded-full bg-accent/[0.12] blur-3xl pointer-events-none" aria-hidden="true"></div>
-    <div class="absolute bottom-0 right-[-5%] w-80 h-80 rounded-full bg-accent/[0.07] blur-3xl pointer-events-none" aria-hidden="true"></div>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
 
-    <div class="relative z-10 flex flex-col h-full px-10 py-10 xl:px-14 xl:py-12">
-
-      <a routerLink="/" class="flex items-center gap-2.5 group w-fit">
-        <span class="material-symbols-outlined icon-fill text-accent group-hover:text-accent-hover transition-colors text-3xl">restaurant_menu</span>
-        <span class="font-sans text-xl font-semibold text-mm-text1">MealMap</span>
-      </a>
-
-      <div class="flex-1 flex flex-col justify-center gap-10 pt-8">
-        <div class="space-y-4">
-          <h2 class="font-sans text-3xl xl:text-[2.1rem] font-bold text-mm-text1 leading-tight">
-            Cocinar mejor<br>empieza por<br><span class="text-accent-soft">planificar.</span>
-          </h2>
-          <p class="font-body text-[15px] text-mm-text2 max-w-[260px] leading-relaxed">
-            Semanas organizadas, despensa bajo control, lista de la compra generada sola.
-          </p>
-        </div>
-
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-mm-card border border-white/[0.06] flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined icon-fill text-accent text-[18px]">calendar_month</span>
-            </div>
-            <span class="font-body text-sm text-mm-text2">Planificación semanal visual</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-mm-card border border-white/[0.06] flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined icon-fill text-accent text-[18px]">kitchen</span>
-            </div>
-            <span class="font-body text-sm text-mm-text2">Despensa siempre actualizada</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-mm-card border border-white/[0.06] flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined icon-fill text-accent text-[18px]">shopping_cart</span>
-            </div>
-            <span class="font-body text-sm text-mm-text2">Lista de la compra automática</span>
-          </div>
-        </div>
-      </div>
+    <div class="lp-field">
+      <label for="register-name" class="lp-label">Nombre</label>
+      <input
+        id="register-name"
+        formControlName="name"
+        type="text"
+        autocomplete="given-name"
+        placeholder="Tu nombre"
+        class="auth-input" />
+      @if (form.get('name')?.touched && form.get('name')?.invalid) {
+        <p class="lp-field-error">El nombre es obligatorio</p>
+      }
     </div>
-  </aside>
 
-  <!-- Right form panel (adapts to light/dark theme) -->
-  <main class="flex-1 flex flex-col bg-surface-container-lowest">
-
-    <header class="flex items-center justify-between px-6 py-5 lg:px-12">
-      <a routerLink="/" class="flex items-center gap-2 lg:hidden">
-        <span class="material-symbols-outlined icon-fill text-primary text-[26px]">restaurant_menu</span>
-        <span class="font-sans text-lg font-semibold text-on-surface">MealMap</span>
-      </a>
-      <a routerLink="/" class="hidden lg:flex items-center gap-1.5 font-body text-sm text-on-surface-variant hover:text-on-surface transition-colors group">
-        <span class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-0.5">arrow_back</span>
-        Volver al inicio
-      </a>
-      <p class="font-body text-sm text-on-surface-variant">
-        ¿Ya tienes cuenta?
-        <a routerLink="/login" class="text-primary font-semibold hover:underline ml-1">Iniciar sesión</a>
-      </p>
-    </header>
-
-    <div class="flex-1 flex items-center justify-center px-6 py-10 lg:px-16">
-      <div class="w-full max-w-[380px]">
-
-        <div class="mb-8">
-          <h1 class="font-sans text-[26px] font-bold text-on-surface tracking-tight mb-1.5">Crea tu cuenta</h1>
-          <p class="font-body text-[15px] text-on-surface-variant">Todo listo en menos de un minuto.</p>
-        </div>
-
-        <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-
-          <div>
-            <label class="block font-sans text-sm font-medium text-on-surface mb-1.5">Nombre</label>
-            <input formControlName="name" type="text" autocomplete="given-name" placeholder="Tu nombre"
-                   class="auth-input" />
-            @if (form.get('name')?.touched && form.get('name')?.invalid) {
-              <p class="font-body text-xs text-error mt-1.5">El nombre es obligatorio</p>
-            }
-          </div>
-
-          <div>
-            <label class="block font-sans text-sm font-medium text-on-surface mb-1.5">Email</label>
-            <input formControlName="email" type="email" autocomplete="email" placeholder="tu@email.com"
-                   class="auth-input" />
-            @if (form.get('email')?.touched && form.get('email')?.hasError('email')) {
-              <p class="font-body text-xs text-error mt-1.5">Introduce un email válido</p>
-            }
-          </div>
-
-          <div>
-            <label class="block font-sans text-sm font-medium text-on-surface mb-1.5">Contraseña</label>
-            <input formControlName="password" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres"
-                   class="auth-input" />
-            @if (form.get('password')?.touched && form.get('password')?.hasError('minlength')) {
-              <p class="font-body text-xs text-error mt-1.5">Mínimo 8 caracteres</p>
-            }
-          </div>
-
-          @if (error()) {
-            <div class="flex items-start gap-3 bg-error-container/50 border border-error/20 px-4 py-3 rounded-xl" role="alert">
-              <span class="material-symbols-outlined text-error text-[18px] mt-px shrink-0">error_outline</span>
-              <p class="font-body text-sm text-on-error-container">{{ error() }}</p>
-            </div>
-          }
-
-          <div class="pt-2">
-            <button type="submit" [disabled]="loading()"
-                    class="w-full bg-primary text-on-primary font-sans text-sm font-semibold
-                           py-3.5 rounded-full
-                           hover:bg-primary-container hover:text-on-primary-container
-                           transition-all duration-200 hover:-translate-y-px
-                           disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0">
-              {{ loading() ? 'Creando cuenta…' : 'Crear cuenta' }}
-            </button>
-          </div>
-
-        </form>
-      </div>
+    <div class="lp-field">
+      <label for="register-email" class="lp-label">Email</label>
+      <input
+        id="register-email"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        placeholder="tu@email.com"
+        class="auth-input" />
+      @if (form.get('email')?.touched && form.get('email')?.hasError('email')) {
+        <p class="lp-field-error">Introduce un email válido</p>
+      }
     </div>
-  </main>
 
-</div>
+    <div class="lp-field">
+      <label for="register-password" class="lp-label">Contraseña</label>
+      <input
+        id="register-password"
+        formControlName="password"
+        type="password"
+        autocomplete="new-password"
+        placeholder="Mínimo 8 caracteres"
+        class="auth-input" />
+      @if (form.get('password')?.touched && form.get('password')?.hasError('minlength')) {
+        <p class="lp-field-error">Mínimo 8 caracteres</p>
+      }
+    </div>
+
+    @if (error()) {
+      <div class="lp-alert" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    <button type="submit" [disabled]="loading()" class="lp-btn lp-btn--solid lp-btn--block mt-2">
+      {{ loading() ? 'Creando cuenta...' : 'Crear cuenta' }}
+    </button>
+
+  </form>
+</app-auth-shell>

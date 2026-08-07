@@ -1,19 +1,16 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-callback',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-mm-base flex items-center justify-center">
-      <div class="flex items-center gap-3 text-mm-text2">
-        <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-          <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-        </svg>
-        Iniciando sesión...
+    <div class="lp-auth lp-auth--centered">
+      <div class="lp-auth__status">
+        <span class="lp-spinner" aria-hidden="true"></span>
+        <p role="status">Iniciando sesión...</p>
       </div>
     </div>
   `,

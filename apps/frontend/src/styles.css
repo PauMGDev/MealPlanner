@@ -88,6 +88,8 @@
   --color-lp-accent: #d4622a;
   --color-lp-accent-ink: #9c4419;
   --color-lp-accent-soft: #fae7db;
+  --color-lp-danger: #b3261e;
+  --color-lp-danger-soft: #fbe7e4;
 }
 
 /* Harmonic Kitchen Blue (claro) */
@@ -175,16 +177,6 @@
 /* ── Material Symbols: filled icon variant ──────────────── */
 .icon-fill {
   font-variation-settings: 'FILL' 1;
-}
-
-.auth-input {
-  @apply w-full px-4 py-3 rounded-xl border border-outline-variant
-         bg-surface-container-low text-on-surface text-sm font-body
-         placeholder:text-on-surface-variant/40 outline-none transition-all duration-150;
-}
-.auth-input:focus {
-  @apply border-primary;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
 
 .btn-primary {
@@ -638,3 +630,105 @@
 .lp-footer__locale { @apply flex items-center gap-1.5; }
 .lp-footer__locale .material-symbols-outlined { font-size: 14px; }
 
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH SURFACES (login, register, OAuth callback)
+   Public surfaces, so same lp-* family and same light-only rule
+   as the landing. Radius addition: text inputs use 14px, because
+   a full pill on a text field reads as a search box.
+   ═══════════════════════════════════════════════════════════ */
+
+.lp-auth {
+  color-scheme: light;
+  @apply grid min-h-[100dvh] grid-rows-[auto_1fr];
+  background: var(--color-lp-base);
+  color: var(--color-lp-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+.lp-auth :focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-lp-accent) 65%, transparent);
+  outline-offset: 3px;
+}
+
+/* Micro top bar: back, centred brand, help */
+.lp-auth__bar {
+  @apply grid h-16 grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8;
+  border-bottom: 1px solid var(--color-lp-line);
+}
+.lp-auth__back { @apply inline-flex w-fit items-center gap-1.5 text-sm font-medium text-lp-ink-soft transition-colors hover:text-lp-ink; }
+.lp-auth__back .material-symbols-outlined { font-size: 18px; }
+.lp-auth__brand { @apply flex items-center gap-2 text-lg font-bold tracking-tight text-lp-ink; }
+.lp-auth__brand .material-symbols-outlined { color: var(--color-lp-accent); font-size: 24px; }
+.lp-auth__help { @apply justify-self-end text-sm font-medium text-lp-ink-soft transition-colors hover:text-lp-ink; }
+
+/* Split: form left, product panel right */
+.lp-auth__split { @apply grid min-h-0 grid-cols-1 lg:grid-cols-2; }
+.lp-auth__form-col { @apply flex items-center justify-center px-5 py-12 md:px-10 md:py-16; }
+.lp-auth__form { @apply w-full max-w-[400px]; }
+.lp-auth__title { @apply text-3xl font-semibold leading-tight tracking-tight text-lp-ink; }
+.lp-auth__sub { @apply mt-2 text-[0.95rem] leading-relaxed text-lp-ink-soft; }
+
+.lp-auth__panel {
+  @apply relative hidden overflow-hidden lg:block;
+  background: var(--color-lp-tray);
+  border-left: 1px solid var(--color-lp-line);
+}
+/* The capture floats and is cropped by the right edge of the panel. */
+.lp-auth__shot {
+  @apply absolute left-14 top-1/2 w-[128%] -translate-y-1/2 overflow-hidden;
+  border-radius: 20px;
+  border: 1px solid var(--color-lp-line);
+  background: var(--color-lp-card);
+  box-shadow: 0 30px 70px rgb(34 30 26 / 0.12);
+}
+.lp-auth__shot img { @apply block h-auto w-full; }
+
+/* Fields */
+.lp-field { @apply flex flex-col gap-1.5; }
+.lp-label { @apply text-sm font-medium text-lp-ink; }
+.auth-input {
+  @apply w-full px-4 py-3 text-sm text-lp-ink outline-none transition-all duration-150;
+  border-radius: 14px;
+  border: 1px solid var(--color-lp-line);
+  background: var(--color-lp-card);
+}
+.auth-input::placeholder { color: var(--color-lp-ink-faint); }
+.auth-input:focus {
+  border-color: var(--color-lp-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-lp-accent) 14%, transparent);
+}
+.lp-field-error { @apply text-xs font-medium; color: var(--color-lp-danger); }
+
+.lp-alert {
+  @apply flex items-start gap-2.5 px-4 py-3 text-sm;
+  border-radius: 14px;
+  background: var(--color-lp-danger-soft);
+  color: var(--color-lp-ink);
+}
+.lp-alert .material-symbols-outlined { font-size: 18px; color: var(--color-lp-danger); }
+
+/* Written as plain rules: .lp-btn is unlayered and beats utilities. */
+.lp-btn--block { width: 100%; padding-block: 0.875rem; }
+.lp-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.lp-divider { @apply flex items-center gap-4 text-xs font-medium text-lp-ink-faint; }
+.lp-divider::before,
+.lp-divider::after { content: ""; @apply h-px flex-1; background: var(--color-lp-line); }
+
+.lp-auth__foot { @apply mt-8 text-center text-sm text-lp-ink-soft; }
+.lp-auth__foot a { @apply font-semibold text-lp-ink underline underline-offset-4; }
+
+/* OAuth callback: same surface, centred status */
+.lp-auth--centered { @apply grid-rows-1 place-items-center; }
+.lp-auth__status { @apply flex flex-col items-center justify-center gap-4 text-sm text-lp-ink-soft; }
+.lp-spinner {
+  @apply h-6 w-6 rounded-full;
+  border: 2px solid var(--color-lp-line);
+  border-top-color: var(--color-lp-accent);
+  animation: lp-spin 700ms linear infinite;
+}
+@keyframes lp-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .lp-spinner { animation-duration: 2s; }
+}

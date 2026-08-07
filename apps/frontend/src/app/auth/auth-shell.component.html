@@ -1,0 +1,61 @@
+<div class="lp-auth">
+
+  <header class="lp-auth__bar">
+    <a routerLink="/" class="lp-auth__back">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span class="hidden sm:inline">Volver</span>
+    </a>
+
+    <a routerLink="/" class="lp-auth__brand">
+      <span class="material-symbols-outlined icon-fill">restaurant_menu</span>
+      MealMap
+    </a>
+
+    <a routerLink="/" fragment="preguntas" class="lp-auth__help">Ayuda</a>
+  </header>
+
+  <div class="lp-auth__split">
+
+    <div class="lp-auth__form-col">
+      <div class="lp-auth__form">
+        <h1 class="lp-auth__title">{{ title }}</h1>
+        <p class="lp-auth__sub">{{ subtitle }}</p>
+
+        <div class="mt-8">
+          <ng-content />
+        </div>
+
+        <div class="lp-divider my-6">o</div>
+
+        <a [href]="googleUrl" class="lp-btn lp-btn--outline lp-btn--block">
+          <!-- Google brand mark: inlined because Google requires its own logo -->
+          <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.7 30.1 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.6 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.1-.4-4.6H24v9.1h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.2 5.6c4.2-3.9 6.6-9.6 6.6-17z"/>
+            <path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-2.9-.8-4.7s.3-3.3.8-4.7l-7.8-6.1C.9 16.3 0 20 0 24s.9 7.7 2.6 10.8l7.8-6.1z"/>
+            <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.2-5.6c-2 1.4-4.6 2.2-8.7 2.2-6.4 0-11.7-3.7-13.6-9.1l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/>
+          </svg>
+          Continuar con Google
+        </a>
+
+        <p class="lp-auth__foot">
+          {{ footerText }}
+          <a [routerLink]="footerLink">{{ footerLinkLabel }}</a>
+        </p>
+      </div>
+    </div>
+
+    <aside class="lp-auth__panel" aria-hidden="true">
+      <div class="lp-auth__shot">
+        <img
+          src="/calendar-placeholder.png"
+          alt=""
+          width="1600"
+          height="1000"
+          loading="lazy"
+        />
+      </div>
+    </aside>
+
+  </div>
+</div>

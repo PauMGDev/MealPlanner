@@ -10,12 +10,16 @@ roles, ratios and rules. Never duplicate hex values here; read the token block.
 
 ## Scope
 
-Governs the `lp-*` visual family: the landing (`apps/frontend/src/app/landing/`) and any
-future public or marketing surface.
+Governs the `lp-*` visual family: every public surface. That is the landing
+(`apps/frontend/src/app/landing/`), the auth screens (`apps/frontend/src/app/auth/`:
+login, register and the OAuth callback) and any future public or marketing page. Auth
+belongs to this family because it is reached logged out, from the landing.
 
 Out of scope: the authenticated shell (`apps/frontend/src/app/shell/`), which uses `mm-*`
-tokens and is dark only, and the auth pages, which use `hk-*`. Do not apply this system
-inside `/app` without an explicit decision. Never mix families in one component.
+tokens and is dark only. Do not apply this system inside `/app` without an explicit
+decision. Never mix families in one component.
+
+The `hk-*` set is legacy. Nothing in the `lp-*` family may reference it.
 
 ## Design read and dials
 
@@ -47,6 +51,8 @@ Semantic roles in the `@theme` block of `styles.css`:
 | `lp-accent` | Fills and graphics only: icon glyph in the brand mark, checkbox fill, timeline node, focus ring, active borders. |
 | `lp-accent-ink` | The accent when it carries text: badge tile glyph, tags, out of stock chips, the today pill background. |
 | `lp-accent-soft` | Accent tint background: icon tiles, tags, the tinted bento cell, the final CTA panel. |
+| `lp-danger` | Field errors and the alert icon. Text only, never a fill. |
+| `lp-danger-soft` | Background of the inline error alert. Text over it is `lp-ink`. |
 
 ### Combination rules
 
@@ -70,6 +76,8 @@ non text graphics need 3:1.
 - `ink-faint` over `base` 4.6, over `card` 5.0. Over `tray` it drops to 4.2, hence the rule
   above.
 - `accent-ink` over `accent-soft` 5.4, over `base` 5.9, over `card` 6.4.
+- `danger` over `base` 6.0, over `card` 6.4, over `danger-soft` 5.5. `ink` over
+  `danger-soft` 13.9.
 - `base` over `ink` 15.1 (the primary button).
 - White over `accent-ink` 6.5 (the today pill). White over `accent` is only 3.8, which is
   why text on a raw accent fill is banned and only graphics are allowed there.
@@ -103,7 +111,9 @@ position on the page, or from a pill badge.
   content is `mt-12` mobile and `mt-16` desktop. Do not add ad hoc section padding.
 - Radii, outer larger than inner, no exceptions:
   interactive elements are full pills, tray and the CTA panel 34px, card, media frame and
-  mobile nav panel 20px, icon tile 14px, checkbox 5px.
+  mobile nav panel 20px, icon tile, text input and inline alert 14px, checkbox 5px.
+  Text inputs are the one interactive exception to the pill rule: a full pill on a text
+  field reads as a search box.
 - Shadows are warm and low contrast, tinted with the ink hue at 4 to 10 percent alpha, and
   only on elements that genuinely float: the nav pill, framed captures, the meal card, the
   mobile nav panel. Bento cells use a hairline border and a 2px hover lift instead.
@@ -157,6 +167,21 @@ Both take a swappable placeholder from `apps/frontend/public/`. Always set `widt
 `height` attributes to reserve space, `fetchpriority="high"` for the hero image and
 `loading="lazy"` for the rest, and write a real Spanish `alt` describing the screen.
 
+**Auth split** (`lp-auth`). Public surface, same tokens and same light only rule. A 64px
+micro bar replaces the pill nav: back link left, brand centred, help link right, with a
+hairline under it. Below that a two column split: the form column is centred with a 400px
+maximum, the right panel carries the product capture floating and cropped by the panel
+edge (`lp-auth__shot`, offset from the left, 128 percent wide). From `lg` down the panel
+disappears and the form becomes a single centred column. Form order is title, subtitle,
+fields, error alert, full width solid submit, an "o" divider, the single Google button,
+then the cross link to the other form.
+
+**Form fields** (`lp-field`, `lp-label`, `auth-input`). Label always above the input, never
+placeholder as label, even when the reference does it. Input is card background, hairline
+border, 14px radius, with an accent border plus a soft accent ring on focus. Error text
+sits below the input in `lp-danger`. The inline alert is `lp-danger-soft` with ink text
+and a danger coloured icon.
+
 ## Motion
 
 One recipe, implemented in `landing/scroll-reveal.directive.ts` plus the `.lp-reveal`
@@ -187,6 +212,10 @@ rules in `styles.css`. No animation libraries, ever.
 - Icons come from Material Symbols, already loaded project wide. One family, no hand
   drawn SVG paths. This deviates from the generic taste skill, which prefers Phosphor, and
   the deviation is deliberate: reuse the installed system instead of adding a dependency.
+- One exception to the no inline SVG rule: the Google brand mark on the OAuth button,
+  inlined in `auth-shell.component.html` because Google requires its own logo and a
+  CDN request would fail offline. Do not add a second inline SVG without the same kind of
+  reason.
 
 ## Anti patterns
 
