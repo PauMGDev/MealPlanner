@@ -13,6 +13,10 @@ Thumbs.db
 # Audit reports and screenshots (local only, not part of the project)
 /Audit/
 
-# Claude Code configuration, agents, skills and project docs (local only)
-.claude/
-CLAUDE.md
+# Claude Code configuration and agents (local only)
+.claude/*
+!.claude/skills/
+.claude/skills/*
+# Project-owned skills are versioned; the rest of .claude/skills are symlinks
+# into .agents/skills and stay local.
+!.claude/skills/mealmap-design-system/
