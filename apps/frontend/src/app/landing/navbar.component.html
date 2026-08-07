@@ -1,40 +1,41 @@
-<header
-  class="fixed top-0 inset-x-0 z-50 bg-surface dark:bg-surface-container border-b border-outline-variant/30 transition-shadow duration-200"
-  [class.shadow-sm]="scrolled()">
-  <nav class="navbar-inner">
+<header class="lp-nav">
+  <nav class="lp-nav__pill" aria-label="Navegación principal">
 
-    <!-- Logo -->
-    <a routerLink="/" class="navbar-logo">
-      <span class="material-symbols-outlined icon-fill text-primary text-3xl">restaurant_menu</span>
-      <span class="font-sans text-2xl font-semibold text-primary">MealMap</span>
+    <a routerLink="/" class="lp-nav__brand">
+      <span class="material-symbols-outlined icon-fill">restaurant_menu</span>
+      MealMap
     </a>
 
-    <!-- Desktop links -->
-    <div class="navbar-links">
-      <a href="#features" class="navbar-link--active">Características</a>
-      <a href="#preview" class="navbar-link">Recetas</a>
+    <div class="lp-nav__links">
+      <a href="#caracteristicas" class="lp-nav__link">Características</a>
+      <a href="#como-funciona" class="lp-nav__link">Cómo funciona</a>
+      <a href="#preguntas" class="lp-nav__link">Preguntas</a>
     </div>
 
-    <!-- Controls -->
-    <div class="navbar-controls">
-      <a routerLink="/login" class="navbar-login">Iniciar sesión</a>
-      <a routerLink="/register" class="navbar-register">Empezar</a>
-      <button type="button" (click)="toggleTheme()" class="navbar-icon-btn" aria-label="Cambiar tema">
-        <span class="material-symbols-outlined">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
-      </button>
-      <button type="button" (click)="toggleMenu()" class="navbar-icon-btn md:hidden" aria-label="Abrir menú">
-        <span class="material-symbols-outlined text-3xl">{{ menuOpen() ? 'close' : 'menu' }}</span>
+    <div class="lp-nav__actions">
+      <a routerLink="/login" class="lp-nav__login">Iniciar sesión</a>
+      <a routerLink="/register" class="lp-btn lp-btn--solid lp-nav__cta">Crear cuenta</a>
+      <button
+        type="button"
+        class="lp-nav__burger"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="lp-nav-panel"
+        [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'">
+        <span class="material-symbols-outlined">{{ menuOpen() ? 'close' : 'menu' }}</span>
       </button>
     </div>
   </nav>
 
-  <!-- Mobile menu -->
-  <div class="collapsible md:hidden" [class.collapsed]="!menuOpen()">
-    <div class="flex flex-col gap-1 px-4 pb-4">
-      <a href="#features" (click)="closeMenu()" class="navbar-link--active py-2">Características</a>
-      <a href="#preview" (click)="closeMenu()" class="navbar-mobile-link">Recetas</a>
-      <a routerLink="/login" (click)="closeMenu()" class="navbar-mobile-link">Iniciar sesión</a>
-      <a routerLink="/register" (click)="closeMenu()" class="navbar-mobile-register">Empezar</a>
+  <div id="lp-nav-panel" class="lp-nav__panel collapsible" [class.collapsed]="!menuOpen()">
+    <div class="lp-nav__panel-inner">
+      <a href="#caracteristicas" (click)="closeMenu()" class="lp-nav__panel-link">Características</a>
+      <a href="#como-funciona" (click)="closeMenu()" class="lp-nav__panel-link">Cómo funciona</a>
+      <a href="#preguntas" (click)="closeMenu()" class="lp-nav__panel-link">Preguntas</a>
+      <a routerLink="/login" (click)="closeMenu()" class="lp-nav__panel-link">Iniciar sesión</a>
+      <a routerLink="/register" (click)="closeMenu()" class="lp-btn lp-btn--solid mt-1">
+        Crear cuenta
+      </a>
     </div>
   </div>
 </header>

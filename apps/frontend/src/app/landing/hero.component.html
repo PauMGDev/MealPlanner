@@ -1,72 +1,45 @@
-<section class="hero-section">
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+<section class="lp-hero">
+  <!-- Near-flat warm glow: gives the glass nav something to blur at scroll 0 -->
+  <div class="lp-hero__glow" aria-hidden="true"></div>
 
-    <!-- Text -->
-    <div class="hero-text">
-      <h1 class="hero-title">
-        Domina tu cocina, <span class="text-primary">simplifica tu vida</span>
+  <div class="lp-container">
+    <div class="lp-hero__inner">
+      <span class="lp-badge">
+        <span class="lp-badge__tile">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </span>
+        Planificador semanal de comidas
+      </span>
+
+      <h1 class="lp-hero__title">
+        <span class="lp-hero__title-muted">Domina tu cocina,</span>
+        <span class="lp-hero__title-strong">simplifica tu vida</span>
       </h1>
-      <p class="hero-subtitle">
-        Planifica tus comidas, gestiona tu despensa y genera listas de la compra en segundos. Todo en un solo lugar.
+
+      <p class="lp-hero__sub">
+        Planifica tus comidas, gestiona tu despensa y genera la lista de la compra en segundos.
       </p>
-      <div class="hero-actions">
-        <a routerLink="/register" class="hero-cta-primary">Empezar gratis</a>
-        <a href="#preview" class="hero-cta-secondary">Ver Tutorial</a>
+
+      <div class="lp-hero__actions">
+        <a routerLink="/register" class="lp-btn lp-btn--solid">
+          Crear cuenta
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+        <a routerLink="/login" class="lp-btn lp-btn--outline">Iniciar sesión</a>
       </div>
-      <p class="hero-login-note">
-        ¿Ya tienes cuenta?
-        <a routerLink="/login" class="text-primary font-medium hover:underline">Iniciar sesión</a>
-      </p>
     </div>
+  </div>
 
-    <!-- Interface preview: today's meal plan card -->
-    <div class="relative px-4 md:px-0">
-      <div class="hero-blob" aria-hidden="true"></div>
-      <div class="hero-card">
-
-        <div class="hero-card-photo">
-          <img
-            src="https://loremflickr.com/800/450/salmon,food?lock=1"
-            alt="Salmón al horno con espárragos, la cena planificada para hoy"
-            class="hero-card-img"
-            width="800" height="450"
-            fetchpriority="high"
-          />
-          <div class="hero-card-overlay"></div>
-          <div class="hero-card-caption">
-            <span class="hero-card-badge">Cena de hoy</span>
-            <h3 class="hero-card-title">Salmón al horno con espárragos</h3>
-          </div>
-        </div>
-
-        <!-- Other meals of the day -->
-        <div class="hero-card-meals">
-          <div class="hero-meal-item">
-            <img
-              src="https://loremflickr.com/96/96/granola,food?lock=25"
-              alt=""
-              class="hero-meal-thumb"
-              loading="lazy" width="48" height="48"
-            />
-            <div class="min-w-0">
-              <p class="hero-meal-name">Avena con frutos rojos</p>
-              <p class="hero-meal-meta">Desayuno · 10 min</p>
-            </div>
-          </div>
-          <div class="hero-meal-item">
-            <img
-              src="https://loremflickr.com/96/96/salad,quinoa?lock=33"
-              alt=""
-              class="hero-meal-thumb"
-              loading="lazy" width="48" height="48"
-            />
-            <div class="min-w-0">
-              <p class="hero-meal-name">Ensalada de quinoa y garbanzos</p>
-              <p class="hero-meal-meta">Almuerzo · 20 min</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Product screenshot: swappable placeholder slot, clipped by the fold -->
+  <div class="lp-container lp-hero__shot">
+    <div class="lp-frame">
+      <img
+        src="/app-preview-placeholder.png"
+        alt="Vista previa de MealMap con el plan semanal de comidas"
+        width="1600"
+        height="1000"
+        fetchpriority="high"
+      />
     </div>
   </div>
 </section>

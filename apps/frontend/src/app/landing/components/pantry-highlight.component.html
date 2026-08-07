@@ -1,0 +1,47 @@
+<section id="despensa" class="lp-section">
+  <div class="lp-container">
+    <div class="lp-split">
+
+      <div appReveal class="lp-split__copy">
+        <h2 class="lp-h2">Sabes lo que te falta antes de salir de casa</h2>
+        <p class="lp-lead mt-5">
+          Cada receta se cruza con tu despensa. MealMap marca los ingredientes que ya tienes y deja
+          a la vista los que hay que comprar.
+        </p>
+
+        <div class="lp-meal-card mt-10">
+          <span class="lp-meal-card__tag">Miércoles · Cena</span>
+          <h3 class="lp-meal-card__title">Salmón al horno con espárragos</h3>
+
+          <div class="lp-meal-card__block">
+            <p class="lp-meal-card__label">Ingredientes faltantes</p>
+            <ul class="lp-lines mt-3">
+              <li class="lp-line">
+                <span class="lp-line__box"></span> Espárragos frescos
+              </li>
+              <li class="lp-line">
+                <span class="lp-line__box"></span> Eneldo fresco
+              </li>
+            </ul>
+          </div>
+
+          <div class="lp-meal-card__block">
+            <p class="lp-meal-card__label">Tiempo estimado</p>
+            <p class="lp-meal-card__value">30 minutos · Dificultad baja</p>
+          </div>
+        </div>
+      </div>
+
+      <div appReveal [appRevealIndex]="1" class="lp-split__panel lp-shot">
+        <img
+          src="/pantry-placeholder.png"
+          alt="Despensa de MealMap con el estado de disponibilidad de cada ingrediente"
+          width="1200"
+          height="1000"
+          loading="lazy"
+        />
+      </div>
+
+    </div>
+  </div>
+</section>

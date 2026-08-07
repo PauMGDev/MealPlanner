@@ -74,6 +74,20 @@
   --color-on-error: var(--hk-on-error);
   --color-error-container: var(--hk-error-container);
   --color-on-error-container: var(--hk-on-error-container);
+
+  /* ── Landing page (lp-*) ──────────────────────────────────
+     Own namespace, light only, never mixed with mm-* or hk-*.
+     Warm neutral base + a single warm accent. */
+  --color-lp-base: #f7f4ef;
+  --color-lp-tray: #edeae2;
+  --color-lp-card: #fffdfa;
+  --color-lp-ink: #221e1a;
+  --color-lp-ink-soft: #6c655d;
+  --color-lp-ink-faint: #756d63;
+  --color-lp-line: #e2dcd2;
+  --color-lp-accent: #d4622a;
+  --color-lp-accent-ink: #9c4419;
+  --color-lp-accent-soft: #fae7db;
 }
 
 /* Harmonic Kitchen Blue (claro) */
@@ -278,114 +292,349 @@
   opacity: 0.55;
 }
 
-/* ── Landing page ───────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   LANDING PAGE
+   Light only. Uses the lp-* token set exclusively: no hk-*,
+   no mm-*, no dark: variants. The <html>.dark class set by the
+   authenticated app must not affect anything below.
 
-/* Navbar */
-.navbar-inner {
-  @apply max-w-7xl mx-auto px-4 md:px-10 flex items-center justify-between h-20 gap-4;
+   Radius system (one rule, applied everywhere):
+     interactive (buttons, pills, chips) → full pill
+     tray (outer bento container)        → 34px
+     card / media frame                  → 20px
+     icon tile                           → 14px
+   ═══════════════════════════════════════════════════════════ */
+
+.lp-page {
+  color-scheme: light;
+  background: var(--color-lp-base);
+  color: var(--color-lp-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
-.navbar-logo      { @apply flex items-center gap-2 shrink-0; }
-.navbar-links     { @apply hidden md:flex items-center gap-8; }
-.navbar-controls  { @apply flex items-center gap-2 md:gap-4; }
-.navbar-link      { @apply font-body text-base text-on-surface-variant font-medium hover:text-primary transition-colors; }
-.navbar-link--active { @apply font-body text-base text-primary font-bold border-b-2 border-primary pb-1 transition-colors; }
-.navbar-login     { @apply hidden md:inline-flex text-on-surface-variant px-4 py-2.5 rounded-full text-sm font-medium hover:text-primary transition-colors; }
-.navbar-register  { @apply hidden md:inline-flex bg-primary text-on-primary px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all; }
-.navbar-icon-btn  { @apply p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors; }
-.navbar-mobile-link     { @apply font-body text-base text-on-surface-variant font-medium py-2; }
-.navbar-mobile-register { @apply bg-primary text-on-primary px-6 py-3 rounded-full text-sm font-semibold text-center mt-1; }
-
-/* Hero */
-.hero-section    { @apply relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24 px-4 md:px-10 bg-surface dark:bg-surface-dim; }
-.hero-text       { @apply relative z-10 space-y-6 text-center md:text-left; }
-.hero-title      { @apply font-sans text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-on-surface dark:text-inverse-surface; }
-.hero-subtitle   { @apply font-body text-lg text-on-surface-variant mx-auto md:mx-0 max-w-lg; }
-.hero-actions    { @apply flex flex-wrap justify-center md:justify-start gap-4 pt-4; }
-.hero-login-note { @apply font-body text-sm text-on-surface-variant text-center md:text-left; }
-.hero-cta-primary   { @apply bg-primary text-on-primary px-8 py-4 rounded-full text-sm font-semibold hover:scale-105 transition-transform shadow-lg shadow-primary/20 w-full sm:w-auto text-center; }
-.hero-cta-secondary { @apply border-2 border-outline text-on-surface-variant px-8 py-4 rounded-full text-sm font-semibold hover:bg-surface-variant/20 transition-colors w-full sm:w-auto text-center; }
-.hero-blob          { @apply absolute -top-20 -right-20 w-96 h-96 bg-primary-container opacity-20 rounded-full blur-3xl hidden md:block; }
-.hero-card          { @apply relative bg-surface-container-lowest dark:bg-surface-container-high rounded-xl shadow-xl border border-outline-variant/30 overflow-hidden; }
-.hero-card-photo    { @apply relative aspect-video overflow-hidden; }
-.hero-card-img      { @apply absolute inset-0 w-full h-full object-cover; }
-.hero-card-overlay  { @apply absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent; }
-.hero-card-caption  { @apply absolute bottom-4 left-4 right-4; }
-.hero-card-badge    { @apply inline-block bg-primary text-on-primary text-xs font-semibold px-3 py-1 rounded-full mb-2; }
-.hero-card-title    { @apply font-sans text-lg md:text-xl font-semibold text-white leading-tight; }
-.hero-card-meals    { @apply p-4 md:p-6 space-y-3; }
-.hero-meal-item     { @apply flex items-center gap-3; }
-.hero-meal-thumb    { @apply w-12 h-12 rounded-lg object-cover shrink-0; }
-.hero-meal-name     { @apply font-sans text-sm font-semibold text-on-surface dark:text-inverse-surface truncate; }
-.hero-meal-meta     { @apply font-body text-xs text-on-surface-variant; }
-
-/* Features section */
-.features-section  { @apply bg-surface-container dark:bg-surface-container py-16 md:py-24 px-4 md:px-10; }
-.features-header   { @apply mb-12 md:mb-16; }
-.features-grid     { @apply grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-5; }
-.section-eyebrow   { @apply text-secondary font-sans text-sm font-semibold uppercase tracking-widest; }
-.section-title     { @apply font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface mt-2; }
-
-/* Feature cards */
-.fc-featured {
-  @apply h-full rounded-2xl p-7 md:p-10 flex flex-col
-         bg-primary-container border border-on-primary-container/10
-         transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl;
+.lp-page :focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-lp-accent) 65%, transparent);
+  outline-offset: 3px;
 }
-.fc-featured__icon-wrap { @apply w-16 h-16 rounded-xl bg-on-primary-container/15 flex items-center justify-center mb-7 shrink-0; }
-.fc-featured__icon      { @apply text-on-primary-container; font-variation-settings: 'FILL' 1; font-size: 38px; }
-.fc-featured__title     { @apply font-sans text-2xl font-bold leading-tight text-on-primary-container mb-3; }
-.fc-featured__desc      { @apply font-body text-base text-on-primary-container/70 leading-relaxed; }
-@media (min-width: 768px) { .fc-featured__title { font-size: 1.75rem; } }
 
-.fc-planner        { @apply mt-8 rounded-xl bg-on-primary-container/10 p-4 shrink-0; }
-.fc-planner__days  { @apply grid grid-cols-7 gap-1.5 mb-2.5; }
-.fc-planner__row   { @apply grid grid-cols-7 gap-1.5 mb-1.5; }
-.fc-planner__row:last-of-type { margin-bottom: 0; }
-.fc-day-label      { @apply font-mono text-center text-on-primary-container/40; font-size: 9px; }
-.fc-cell--filled   { @apply aspect-square rounded-sm bg-on-primary-container/80; }
-.fc-cell--empty    { @apply aspect-square rounded-sm bg-on-primary-container/20; }
-.fc-planner__count { @apply font-mono mt-3 text-on-primary-container/50; font-size: 10px; }
+.lp-container { @apply mx-auto w-full max-w-[1120px] px-5 md:px-8; }
+.lp-section   { @apply py-20 md:py-28; }
 
-.fc-compact { @apply h-full rounded-2xl p-5 md:p-6 flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg; }
-.fc-compact--primary  { @apply bg-surface-container-lowest dark:bg-surface-container-high border border-primary/20 dark:border-outline-variant/20; }
-.fc-compact--secondary { @apply bg-secondary-container/40 dark:bg-surface-container-high border border-secondary/20 dark:border-outline-variant/20; }
-.fc-compact--tertiary  { @apply bg-surface-container-high dark:bg-surface-container-highest border border-outline-variant/40 dark:border-outline-variant/20; }
-.fc-icon-wrap           { @apply w-11 h-11 rounded-lg flex items-center justify-center shrink-0; }
-.fc-icon-wrap--primary  { @apply bg-primary-container; }
-.fc-icon-wrap--secondary { @apply bg-secondary dark:bg-secondary-container; }
-.fc-icon-wrap--tertiary  { @apply bg-tertiary-container dark:bg-tertiary; }
-.fc-icon            { font-variation-settings: 'FILL' 1; font-size: 22px; }
-.fc-icon--primary   { @apply text-on-primary-container; }
-.fc-icon--secondary { @apply text-on-secondary dark:text-on-secondary-container; }
-.fc-icon--tertiary  { @apply text-on-tertiary-container dark:text-on-tertiary; }
-.fc-title { @apply font-sans text-lg font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-1.5; }
-.fc-desc  { @apply font-body text-sm text-on-surface-variant leading-relaxed; }
+/* ── Scroll reveal (IntersectionObserver adds .is-in) ────── */
+.lp-reveal { opacity: 0; transform: translateY(10px); }
+.lp-reveal.is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--lp-reveal-delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal, .lp-reveal.is-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
-/* How it works */
-.hiw-section     { @apply py-16 md:py-24 overflow-hidden bg-surface-container-lowest dark:bg-surface-dim px-4 md:px-10; }
-.hiw-heading     { @apply font-display text-3xl font-semibold leading-tight text-on-surface dark:text-inverse-surface; }
-.hiw-steps       { @apply relative flex flex-col md:flex-row justify-between items-start gap-12 md:gap-8; }
-.hiw-connector   { @apply hidden md:block absolute top-10 left-1/4 right-1/4 h-0.5 border-t-2 border-dashed border-outline-variant/30 -z-10; }
-.hiw-step        { @apply flex-1 w-full flex flex-col items-center text-center; }
-.hiw-number      { @apply w-20 h-20 bg-primary text-on-primary rounded-full flex items-center justify-center font-sans text-2xl font-semibold mb-6; }
-.hiw-step-title  { @apply font-sans text-2xl font-semibold leading-snug text-on-surface dark:text-inverse-surface mb-2; }
-.hiw-step-desc   { @apply font-body text-base text-on-surface-variant max-w-xs px-4; }
+/* ── Shared primitives ──────────────────────────────────── */
+.lp-badge {
+  @apply inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-4
+         text-sm font-medium text-lp-ink;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 1px 2px rgb(34 30 26 / 0.04);
+}
+.lp-badge__tile {
+  @apply flex h-7 w-7 items-center justify-center rounded-full;
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+}
+.lp-badge__tile .material-symbols-outlined { font-size: 16px; }
 
-/* CTA */
-.cta-section  { @apply py-16 md:py-24 px-4 md:px-10; }
-.cta-card     { @apply bg-primary dark:bg-primary-container p-10 md:p-24 rounded-[1.5rem] md:rounded-[2rem] relative overflow-hidden shadow-2xl shadow-primary/20; }
-.cta-content  { @apply relative z-10 space-y-8; }
-.cta-title    { @apply font-sans text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-on-primary dark:text-on-primary-container; }
-.cta-btn      { @apply inline-block bg-surface-container-lowest dark:bg-inverse-surface text-primary dark:text-primary-container px-10 py-5 rounded-full text-sm font-semibold hover:scale-105 transition-transform shadow-lg w-full sm:w-auto; }
+.lp-btn {
+  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full
+         px-6 py-3 text-sm font-semibold transition-all duration-200;
+}
+.lp-btn .material-symbols-outlined { font-size: 18px; }
+.lp-btn--solid {
+  background: var(--color-lp-ink);
+  color: var(--color-lp-base);
+}
+.lp-btn--solid:hover {
+  background: #100e0c;
+  transform: translateY(-1px);
+}
+.lp-btn--solid:active { transform: scale(0.98); }
+.lp-btn--outline {
+  background: var(--color-lp-card);
+  color: var(--color-lp-ink);
+  border: 1px solid var(--color-lp-line);
+}
+.lp-btn--outline:hover { border-color: var(--color-lp-ink-faint); transform: translateY(-1px); }
+.lp-btn--outline:active { transform: scale(0.98); }
 
-/* Footer */
-.footer          { @apply bg-surface-container-highest dark:bg-surface-container w-full; }
-.footer-inner    { @apply max-w-7xl mx-auto px-4 md:px-10 py-12 flex flex-col md:flex-row justify-between gap-12; }
-.footer-brand    { @apply space-y-4 text-center md:text-left; }
-.footer-logo     { @apply flex items-center justify-center md:justify-start gap-2; }
-.footer-tagline  { @apply font-body text-base text-on-surface-variant max-w-xs mx-auto md:mx-0; }
-.footer-links    { @apply grid grid-cols-2 gap-8 text-center md:text-left; }
-.footer-col      { @apply flex flex-col gap-3; }
-.footer-col-heading { @apply font-sans text-sm font-semibold text-on-surface dark:text-inverse-surface; }
-.footer-link     { @apply font-body text-base text-on-surface-variant hover:text-primary transition-colors; }
-.footer-bottom   { @apply max-w-7xl mx-auto px-4 md:px-10 py-8 border-t border-outline-variant/30 flex flex-col sm:flex-row justify-between items-center gap-4 text-on-surface-variant font-data text-xs text-center; }
+.lp-h2 {
+  @apply text-3xl md:text-[2.6rem] font-semibold leading-[1.12] tracking-tight text-lp-ink;
+}
+.lp-lead {
+  @apply text-base md:text-lg leading-relaxed text-lp-ink-soft;
+}
+.lp-head-center { @apply mx-auto max-w-2xl text-center; }
+
+.lp-tray {
+  border-radius: 34px;
+  background: var(--color-lp-tray);
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+}
+.lp-tile {
+  @apply flex h-12 w-12 items-center justify-center;
+  border-radius: 14px;
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+}
+.lp-tile .material-symbols-outlined { font-size: 24px; }
+/* On a tinted cell the tile flips to the card colour so it stays legible. */
+.lp-tile--plain { background: var(--color-lp-card); }
+
+/* Framed product capture used inside sections (hero has its own fold-cut frame). */
+.lp-shot {
+  @apply overflow-hidden;
+  border-radius: 20px;
+  border: 1px solid var(--color-lp-line);
+  background: var(--color-lp-card);
+  box-shadow: 0 14px 40px rgb(34 30 26 / 0.07);
+}
+.lp-shot img { @apply block h-auto w-full; }
+
+/* ── 1. Navigation: floating glass pill ─────────────────── */
+.lp-nav { @apply fixed inset-x-0 top-0 z-50 px-4 pt-3.5; }
+.lp-nav__pill {
+  @apply mx-auto flex h-[60px] w-full max-w-[1080px] items-center gap-4 rounded-full pl-5 pr-2.5;
+  background: color-mix(in srgb, var(--color-lp-base) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-lp-ink) 8%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 10px 30px rgb(34 30 26 / 0.06);
+}
+.lp-nav__brand { @apply flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-lp-ink; }
+.lp-nav__brand .material-symbols-outlined { color: var(--color-lp-accent); font-size: 26px; }
+.lp-nav__links { @apply hidden flex-1 items-center justify-center gap-7 md:flex; }
+.lp-nav__link { @apply text-sm font-medium text-lp-ink-soft transition-colors hover:text-lp-ink; }
+.lp-nav__actions { @apply ml-auto flex shrink-0 items-center gap-1.5 md:ml-0; }
+.lp-nav__login { @apply hidden rounded-full px-4 py-2 text-sm font-medium text-lp-ink-soft transition-colors hover:text-lp-ink md:inline-flex; }
+/* Written as plain rules, not utilities: .lp-btn is unlayered and would win. */
+.lp-nav__cta { display: none; padding: 0.625rem 1.25rem; }
+@media (min-width: 768px) { .lp-nav__cta { display: inline-flex; } }
+.lp-nav__burger {
+  @apply flex h-10 w-10 items-center justify-center rounded-full text-lp-ink md:hidden;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+}
+.lp-nav__panel { @apply mx-auto mt-2 w-full max-w-[1080px] md:hidden; }
+.lp-nav__panel-inner {
+  @apply flex flex-col gap-1 p-3;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 14px 40px rgb(34 30 26 / 0.10);
+}
+.lp-nav__panel-link { @apply rounded-full px-4 py-2.5 text-sm font-medium text-lp-ink-soft; }
+
+@media (prefers-reduced-transparency: reduce) {
+  .lp-nav__pill {
+    background: var(--color-lp-base);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ── 2. Hero: centered stack, screenshot cut by the fold ─── */
+.lp-hero { @apply relative overflow-hidden pt-24 pb-0; }
+.lp-hero__glow {
+  @apply pointer-events-none absolute left-1/2 -top-24 h-[560px] w-[min(1100px,140%)] -translate-x-1/2;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-lp-accent) 11%, transparent) 0%,
+    transparent 62%
+  );
+}
+.lp-hero__inner { @apply relative flex flex-col items-center text-center; }
+.lp-hero__title {
+  @apply mt-6 flex flex-col text-4xl font-semibold leading-[1.08] tracking-tight md:text-6xl;
+  text-wrap: balance;
+}
+.lp-hero__title-muted  { color: var(--color-lp-ink-faint); }
+.lp-hero__title-strong { color: var(--color-lp-ink); }
+.lp-hero__sub { @apply mt-5 max-w-xl text-base leading-relaxed text-lp-ink-soft md:text-lg; }
+.lp-hero__actions { @apply mt-8 flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center; }
+.lp-hero__shot { @apply relative mt-14 md:mt-16; }
+.lp-frame {
+  @apply overflow-hidden;
+  border-radius: 20px 20px 0 0;
+  border: 1px solid var(--color-lp-line);
+  border-bottom: 0;
+  background: var(--color-lp-card);
+  box-shadow: 0 -2px 60px rgb(34 30 26 / 0.10);
+  max-height: 40vh;
+}
+.lp-frame img { @apply block w-full; object-fit: cover; object-position: left top; }
+@media (min-width: 768px) { .lp-frame { max-height: 56vh; } }
+
+/* ── 3. Value band: hairline strip ──────────────────────── */
+.lp-band { border-block: 1px solid var(--color-lp-line); }
+.lp-band__grid { @apply grid grid-cols-1 md:grid-cols-3; }
+.lp-band__item {
+  @apply px-1 py-7 text-center text-sm font-medium text-lp-ink-soft md:px-8 md:py-9 md:text-base;
+  border-bottom: 1px solid var(--color-lp-line);
+}
+.lp-band__item:last-child { border-bottom: 0; }
+@media (min-width: 768px) {
+  .lp-band__item { border-bottom: 0; border-left: 1px solid var(--color-lp-line); }
+  .lp-band__item:first-child { border-left: 0; }
+}
+
+/* ── 4. Features bento ──────────────────────────────────── */
+.lp-bento { @apply grid grid-cols-1 gap-3 md:grid-cols-2; }
+.lp-cell {
+  @apply flex flex-col p-7 md:p-9;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid color-mix(in srgb, var(--color-lp-ink) 6%, transparent);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lp-cell:hover { transform: translateY(-2px); }
+.lp-cell--wide { @apply md:col-span-2; }
+.lp-cell--tinted { background: var(--color-lp-accent-soft); border-color: transparent; }
+.lp-cell--split { @apply gap-8 md:flex-row md:items-center; }
+.lp-cell__body { @apply md:flex-1; }
+.lp-cell__shot { @apply w-full shrink-0 md:w-[380px]; }
+.lp-cell__title { @apply mt-6 text-xl font-semibold leading-snug text-lp-ink; }
+.lp-cell--split .lp-cell__title { @apply mt-6; }
+.lp-cell__desc { @apply mt-2.5 max-w-md text-[0.95rem] leading-relaxed text-lp-ink-soft; }
+
+/* Inner visual: availability chips */
+.lp-chips { @apply mt-7 flex flex-wrap gap-2; }
+.lp-chip {
+  @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium;
+  background: var(--color-lp-base);
+  color: var(--color-lp-ink-soft);
+  border: 1px solid var(--color-lp-line);
+}
+.lp-chip .material-symbols-outlined { font-size: 14px; }
+.lp-chip--out { color: var(--color-lp-accent-ink); border-color: color-mix(in srgb, var(--color-lp-accent) 35%, transparent); }
+
+/* Inner visual: shopping lines */
+.lp-lines { @apply space-y-2.5; }
+.lp-line { @apply flex items-center gap-2.5 text-sm text-lp-ink-soft; }
+.lp-line__box {
+  @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px];
+  border: 1.5px solid var(--color-lp-line);
+}
+.lp-line__box--done { background: var(--color-lp-accent); border-color: var(--color-lp-accent); color: #fff; }
+.lp-line__box--done .material-symbols-outlined { font-size: 12px; }
+.lp-line--done { @apply text-lp-ink-faint line-through; }
+
+/* ── 5. Week rail: horizontal scroll-snap ───────────────── */
+.lp-rail {
+  @apply mt-10 flex gap-3 overflow-x-auto pb-3 md:mt-14;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+.lp-rail__card {
+  @apply flex min-w-[190px] flex-1 flex-col gap-3 p-4;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  scroll-snap-align: start;
+}
+.lp-rail__card--today { border-color: var(--color-lp-accent); background: var(--color-lp-accent-soft); }
+.lp-rail__day { @apply flex items-center justify-between text-xs font-semibold text-lp-ink-faint; }
+.lp-rail__card--today .lp-rail__day { color: var(--color-lp-accent-ink); }
+.lp-rail__today-tag { @apply rounded-full px-2 py-0.5 text-[10px] font-bold; background: var(--color-lp-accent-ink); color: #fff; }
+.lp-rail__meal { @apply text-sm font-semibold leading-snug text-lp-ink; }
+.lp-rail__type { @apply mt-auto text-xs text-lp-ink-soft; }
+/* Desktop fits all seven days without scrolling. */
+@media (min-width: 768px) { .lp-rail__card { min-width: 130px; } }
+
+/* ── 6. Pantry highlight: asymmetric split ──────────────── */
+.lp-split { @apply grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16; }
+.lp-split__copy { @apply lg:col-span-5; }
+.lp-split__panel { @apply lg:col-span-7; }
+.lp-meal-card {
+  @apply overflow-hidden p-6 md:p-8;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 18px 50px rgb(34 30 26 / 0.07);
+}
+.lp-meal-card__tag {
+  @apply inline-flex rounded-full px-3 py-1 text-xs font-semibold;
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+}
+.lp-meal-card__title { @apply mt-3 text-2xl font-semibold leading-snug text-lp-ink; }
+.lp-meal-card__block { @apply mt-6 rounded-2xl p-4; background: var(--color-lp-base); }
+.lp-meal-card__label { @apply text-xs font-semibold text-lp-ink-faint; }
+.lp-meal-card__value { @apply mt-1.5 text-sm text-lp-ink-soft; }
+
+/* ── 7. How it works: vertical timeline ─────────────────── */
+.lp-steps { @apply relative mt-12 md:mt-16 md:pl-10; }
+.lp-steps__rail { @apply absolute left-[7px] top-2 bottom-2 hidden w-px md:block; background: var(--color-lp-line); }
+.lp-step { @apply relative pb-10 last:pb-0 md:pl-0; }
+.lp-step__node {
+  @apply absolute -left-10 top-1.5 hidden h-[15px] w-[15px] rounded-full md:block;
+  background: var(--color-lp-base);
+  border: 2px solid var(--color-lp-accent);
+}
+.lp-step__title { @apply text-2xl font-semibold leading-snug text-lp-ink md:text-[1.75rem]; }
+.lp-step__desc { @apply mt-2 max-w-lg text-base leading-relaxed text-lp-ink-soft; }
+
+/* ── 8. FAQ: accordion rows in a tray (native <details>) ── */
+.lp-faq { @apply space-y-2; }
+.lp-faq__item {
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid color-mix(in srgb, var(--color-lp-ink) 6%, transparent);
+}
+.lp-faq__q {
+  @apply flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5
+         text-base font-semibold text-lp-ink md:px-8;
+}
+.lp-faq__q::-webkit-details-marker { display: none; }
+.lp-faq__sign {
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-lp-ink-soft;
+  background: var(--color-lp-base);
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lp-faq__item[open] .lp-faq__sign { transform: rotate(45deg); }
+.lp-faq__a { @apply px-6 pb-6 text-[0.95rem] leading-relaxed text-lp-ink-soft md:px-8 md:pb-7; max-width: 62ch; }
+@media (prefers-reduced-motion: reduce) { .lp-faq__sign { transition: none; } }
+
+/* ── 9. Final CTA ───────────────────────────────────────── */
+.lp-cta {
+  @apply relative overflow-hidden px-6 py-16 text-center md:px-16 md:py-24;
+  border-radius: 34px;
+  background: var(--color-lp-accent-soft);
+}
+.lp-cta__inner { @apply relative mx-auto max-w-2xl; }
+.lp-cta__title { @apply text-3xl font-semibold leading-tight tracking-tight text-lp-ink md:text-5xl; }
+.lp-cta__actions { @apply mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center; }
+
+/* ── 10. Footer ─────────────────────────────────────────── */
+.lp-footer { border-top: 1px solid var(--color-lp-line); }
+.lp-footer__top { @apply grid grid-cols-1 gap-10 py-14 sm:grid-cols-3 md:py-16; }
+.lp-footer__brand { @apply flex items-center gap-2 text-lg font-bold tracking-tight text-lp-ink; }
+.lp-footer__brand .material-symbols-outlined { color: var(--color-lp-accent); font-size: 26px; }
+.lp-footer__tagline { @apply mt-4 max-w-xs text-sm leading-relaxed text-lp-ink-soft; }
+.lp-footer__col { @apply flex flex-col gap-3; }
+.lp-footer__heading { @apply text-sm font-semibold text-lp-ink; }
+.lp-footer__link { @apply text-sm text-lp-ink-soft transition-colors hover:text-lp-ink; }
+.lp-footer__bottom {
+  @apply flex flex-col items-center justify-between gap-3 py-6 text-xs text-lp-ink-faint sm:flex-row;
+  border-top: 1px solid var(--color-lp-line);
+}
+.lp-footer__locale { @apply flex items-center gap-1.5; }
+.lp-footer__locale .material-symbols-outlined { font-size: 14px; }
+

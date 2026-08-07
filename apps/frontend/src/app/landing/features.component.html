@@ -1,48 +1,107 @@
-<section id="features" class="features-section">
-  <div class="max-w-7xl mx-auto">
+<section id="caracteristicas" class="lp-section">
+  <div class="lp-container">
 
-    <!-- Section header -->
-    <div appReveal class="features-header">
-      <span class="section-eyebrow">Características</span>
-      <h2 class="section-title">Todo lo que necesitas para organizarte</h2>
+    <div appReveal class="lp-head-center">
+      <span class="lp-badge">
+        <span class="lp-badge__tile">
+          <span class="material-symbols-outlined">grid_view</span>
+        </span>
+        Características
+      </span>
+      <h2 class="lp-h2 mt-6">Todo lo que necesitas para organizarte</h2>
+      <p class="lp-lead mt-4">
+        Cuatro piezas que trabajan juntas: el calendario, la despensa, el recetario y la lista de
+        la compra.
+      </p>
     </div>
 
-    <!-- Asymmetric bento: [3fr] tall featured | [2fr] three compact stacked -->
-    <div appReveal [appRevealDelay]="0.08" class="features-grid">
+    <div class="lp-tray mt-12 md:mt-16">
+      <div class="lp-bento">
 
-      <!-- Featured: Planificación Visual — spans left 3 columns, 3 rows -->
-      <app-feature-card
-        class="lg:col-span-3 lg:row-span-3"
-        icon="calendar_month"
-        title="Planificación Visual"
-        description="Calendario semanal interactivo con función de arrastrar y soltar para organizar tus menús sin esfuerzo."
-        variant="primary"
-        [featured]="true" />
+        <!-- Planificación Visual: wide, with the calendar capture -->
+        <article appReveal class="lp-cell lp-cell--wide lp-cell--split">
+          <div class="lp-cell__body">
+            <div class="lp-tile">
+              <span class="material-symbols-outlined icon-fill">calendar_month</span>
+            </div>
+            <h3 class="lp-cell__title">Planificación visual</h3>
+            <p class="lp-cell__desc">
+              Calendario semanal interactivo con función de arrastrar y soltar para organizar tus
+              menús sin esfuerzo.
+            </p>
+          </div>
 
-      <!-- Compact: Recetario Inteligente -->
-      <app-feature-card
-        class="lg:col-span-2"
-        icon="menu_book"
-        title="Recetario Inteligente"
-        description="Guarda tus platos favoritos y descubre nuevas ideas basadas en lo que ya tienes en casa."
-        variant="secondary" />
+          <div class="lp-cell__shot lp-shot">
+            <img
+              src="/calendar-placeholder.png"
+              alt="Calendario semanal de MealMap con las comidas colocadas por día"
+              width="1600"
+              height="1000"
+              loading="lazy"
+            />
+          </div>
+        </article>
 
-      <!-- Compact: Despensa Conectada -->
-      <app-feature-card
-        class="lg:col-span-2"
-        icon="kitchen"
-        title="Despensa Conectada"
-        description="Control total sobre tus ingredientes. Te avisamos cuando algo se está agotando o va a caducar."
-        variant="tertiary" />
+        <!-- Despensa Conectada: availability chips -->
+        <article appReveal [appRevealIndex]="1" class="lp-cell">
+          <div class="lp-tile">
+            <span class="material-symbols-outlined icon-fill">kitchen</span>
+          </div>
+          <h3 class="lp-cell__title">Despensa conectada</h3>
+          <p class="lp-cell__desc">
+            Control total sobre tus ingredientes. Te avisamos cuando algo se está agotando o va a
+            caducar.
+          </p>
+          <div class="lp-chips" aria-hidden="true">
+            <span class="lp-chip">
+              <span class="material-symbols-outlined">check</span> Arroz basmati
+            </span>
+            <span class="lp-chip">
+              <span class="material-symbols-outlined">check</span> Garbanzos
+            </span>
+            <span class="lp-chip lp-chip--out">
+              <span class="material-symbols-outlined">priority_high</span> Espárragos frescos
+            </span>
+          </div>
+        </article>
 
-      <!-- Compact: Lista de la compra -->
-      <app-feature-card
-        class="lg:col-span-2"
-        icon="shopping_cart"
-        title="Lista de la compra"
-        description="Generada automáticamente a partir del plan semanal y de lo que ya tienes en despensa."
-        variant="primary" />
+        <!-- Lista de la compra: checklist visual -->
+        <article appReveal [appRevealIndex]="2" class="lp-cell">
+          <div class="lp-tile">
+            <span class="material-symbols-outlined icon-fill">shopping_cart</span>
+          </div>
+          <h3 class="lp-cell__title">Lista de la compra</h3>
+          <p class="lp-cell__desc">
+            Generada automáticamente a partir del plan semanal y de lo que ya tienes en despensa.
+          </p>
+          <div class="lp-lines mt-7" aria-hidden="true">
+            <div class="lp-line lp-line--done">
+              <span class="lp-line__box lp-line__box--done">
+                <span class="material-symbols-outlined">check</span>
+              </span>
+              Pan integral
+            </div>
+            <div class="lp-line">
+              <span class="lp-line__box"></span> Espárragos frescos
+            </div>
+            <div class="lp-line">
+              <span class="lp-line__box"></span> Eneldo fresco
+            </div>
+          </div>
+        </article>
 
+        <!-- Recetario Inteligente: wide, tinted -->
+        <article appReveal [appRevealIndex]="3" class="lp-cell lp-cell--wide lp-cell--tinted">
+          <div class="lp-tile lp-tile--plain">
+            <span class="material-symbols-outlined icon-fill">menu_book</span>
+          </div>
+          <h3 class="lp-cell__title">Recetario inteligente</h3>
+          <p class="lp-cell__desc">
+            Guarda tus platos favoritos y descubre nuevas ideas basadas en lo que ya tienes en casa.
+          </p>
+        </article>
+
+      </div>
     </div>
   </div>
 </section>

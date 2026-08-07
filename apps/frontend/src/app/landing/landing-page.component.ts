@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NavbarComponent } from './navbar.component';
 import { HeroComponent } from './hero.component';
+import { ValueBandComponent } from './components/value-band.component';
 import { FeaturesComponent } from './features.component';
+import { WeekRailComponent } from './components/week-rail.component';
+import { PantryHighlightComponent } from './components/pantry-highlight.component';
 import { HowItWorksComponent } from './components/how-it-works.component';
-import { AppPreviewComponent } from './components/app-preview.component';
+import { FaqComponent } from './components/faq.component';
 import { CtaComponent } from './cta.component';
 import { FooterComponent } from './footer.component';
 
@@ -14,27 +17,33 @@ import { FooterComponent } from './footer.component';
   imports: [
     NavbarComponent,
     HeroComponent,
+    ValueBandComponent,
     FeaturesComponent,
+    WeekRailComponent,
+    PantryHighlightComponent,
     HowItWorksComponent,
-    AppPreviewComponent,
+    FaqComponent,
     CtaComponent,
     FooterComponent,
   ],
   template: `
-    <app-navbar />
-    <main class="bg-surface dark:bg-surface-dim text-on-surface dark:text-on-surface-variant font-body antialiased overflow-x-hidden transition-colors duration-200">
-      <app-hero />
-      <app-features />
-      <app-how-it-works />
-      <app-app-preview />
-      <app-cta />
-    </main>
-    <app-footer />
+    <div class="lp-page">
+      <app-navbar />
+      <main>
+        <app-hero />
+        <app-value-band />
+        <app-features />
+        <app-week-rail />
+        <app-pantry-highlight />
+        <app-how-it-works />
+        <app-faq />
+        <app-cta />
+      </main>
+      <app-footer />
+    </div>
   `,
   styles: [`
-    :host {
-      display: block;
-    }
+    :host { display: block; }
   `],
 })
 export class LandingPageComponent {}

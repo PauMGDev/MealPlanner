@@ -1,0 +1,30 @@
+<section id="preguntas" class="lp-section">
+  <div class="lp-container">
+
+    <div appReveal class="lp-head-center">
+      <span class="lp-badge">
+        <span class="lp-badge__tile">
+          <span class="material-symbols-outlined">help</span>
+        </span>
+        Preguntas frecuentes
+      </span>
+      <h2 class="lp-h2 mt-6">Lo que suelen preguntarnos</h2>
+    </div>
+
+    <div class="lp-tray mt-12 md:mt-16">
+      <div class="lp-faq">
+        @for (item of questions; track item.q; let i = $index) {
+          <details appReveal [appRevealIndex]="i" class="lp-faq__item">
+            <summary class="lp-faq__q">
+              {{ item.q }}
+              <span class="lp-faq__sign" aria-hidden="true">
+                <span class="material-symbols-outlined">add</span>
+              </span>
+            </summary>
+            <p class="lp-faq__a">{{ item.a }}</p>
+          </details>
+        }
+      </div>
+    </div>
+  </div>
+</section>

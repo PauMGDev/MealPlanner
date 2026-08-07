@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ScrollRevealDirective } from '../scroll-reveal.directive';
 
+/** Asymmetric split: pantry copy on the left, a real meal detail panel on the right. */
 @Component({
-  selector: 'app-app-preview',
+  selector: 'app-pantry-highlight',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ScrollRevealDirective],
-  templateUrl: './app-preview.component.html',
+  templateUrl: './pantry-highlight.component.html',
 })
-export class AppPreviewComponent {}
+export class PantryHighlightComponent {}
