@@ -37,31 +37,26 @@ export function computeAvailability(recipe: Recipe, pantryMap: Map<string, Pantr
   };
 }
 
+/** Complete class literals, never concatenated: Tailwind only sees whole names. */
 export function dotClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'bg-success';
-  if (status === 'depleted') return 'bg-warning';
-  return 'bg-danger';
+  if (status === 'available') return 'lp-dot lp-dot--ok';
+  if (status === 'depleted') return 'lp-dot lp-dot--warn';
+  if (status === 'missing') return 'lp-dot lp-dot--danger';
+  return 'lp-dot lp-dot--none';
 }
 
 export function accentBarClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'bg-success/60';
-  if (status === 'depleted') return 'bg-warning/60';
-  if (status === 'missing') return 'bg-danger/40';
-  return 'bg-white/[0.04]';
+  if (status === 'available') return 'bg-lp-ok';
+  if (status === 'depleted') return 'bg-lp-warn';
+  if (status === 'missing') return 'bg-lp-danger';
+  return 'bg-lp-line';
 }
 
 export function cardBorderClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'border-success/30 hover:border-success/50';
-  if (status === 'depleted') return 'border-warning/30 hover:border-warning/50';
-  if (status === 'missing') return 'border-danger/20 hover:border-danger/30';
-  return 'border-white/[0.06] hover:border-white/10';
-}
-
-export function cardGradientStyle(status: AvailabilityStatus): string {
-  if (status === 'available') return 'background: linear-gradient(135deg, #0f1e28 0%, #0d2018 100%)';
-  if (status === 'depleted') return 'background: linear-gradient(135deg, #1a1a0a 0%, #1e1a06 100%)';
-  if (status === 'missing') return 'background: linear-gradient(135deg, #1e0f0f 0%, #200c0c 100%)';
-  return 'background: linear-gradient(135deg, #0f1628 0%, #131a2e 100%)';
+  if (status === 'available') return 'border-lp-ok/35 hover:border-lp-ok/60';
+  if (status === 'depleted') return 'border-lp-warn/35 hover:border-lp-warn/60';
+  if (status === 'missing') return 'border-lp-danger/25 hover:border-lp-danger/45';
+  return 'border-lp-line hover:border-lp-ink-faint';
 }
 
 export function statusLabel(status: AvailabilityStatus): string {
@@ -71,9 +66,3 @@ export function statusLabel(status: AvailabilityStatus): string {
   return 'Sin ingredientes vinculados';
 }
 
-export function statusTextClass(status: AvailabilityStatus): string {
-  if (status === 'available') return 'text-success';
-  if (status === 'depleted') return 'text-warning';
-  if (status === 'missing') return 'text-danger';
-  return 'text-mm-text3';
-}

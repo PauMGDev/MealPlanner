@@ -12,8 +12,10 @@ no tailwind.config file). No NgModules, no SSR.
 - Async: `toObservable(signal).pipe(switchMap(...))` for reactive reloads (see
   `weekly-calendar.component.ts`), `takeUntilDestroyed(this.destroyRef)` on every
   subscribe inside methods.
-- Mutations use optimistic update + snapshot rollback on error (see `removeSlot` /
-  `onDetailRemoved` in weekly-calendar). Keep that pattern for new mutations.
+- Mutations write optimistically and, on error, refetch the affected aggregate instead
+  of restoring a snapshot (see the slot mutations in `dashboard.component.ts`). A
+  snapshot taken while another mutation is in flight already contains that mutation's
+  unconfirmed state, so restoring it silently drops it.
 - Routes are lazy (`loadComponent`) except the landing. New feature pages hang off
   `/app` behind `authGuard`.
 
@@ -24,7 +26,7 @@ src/app/
 ├── core/        → services (HTTP, one per API resource), guards, interceptors, models
 ├── landing/     → public landing (lp-* tokens, light only)
 ├── auth/        → login, register, oauth callback
-├── shell/       → authenticated app (mm-* tokens, dark only)
+├── shell/       → authenticated app (lp-* tokens, light only)
 │   └── <feature>/  → feature component + components/ + <feature>.types.ts (+ spec)
 └── shared/      → icons, reusable UI
 ```
@@ -37,13 +39,15 @@ src/app/
 
 ## Styling
 
-- App shell: `mm-*` tokens (bg-mm-base, text-mm-text1/2/3, bg-mm-card...), semantic
-  `success/warning/caution/danger`, meal-type colors `meal-breakfast|almuerzo|lunch|snack|dinner`.
-- Landing and future public surfaces: `lp-*` tokens, light only, never a `dark:`
-  variant. **The design source of truth is the `mealmap-design-system` skill**
+- Every surface (landing, auth, app shell) uses the `lp-*` tokens, light only, never a
+  `dark:` variant. **The design source of truth is the `mealmap-design-system` skill**
   (`.claude/skills/mealmap-design-system/SKILL.md`): read it before any visual or UI
-  change, and update it in the same commit when a design decision changes.
-- Auth pages: `hk-*` mapped Material-ish tokens (`bg-surface`, `text-on-surface`...).
+  change, and update it in the same commit when a design decision changes. The shell
+  specifics live in its "Application surface" chapter.
+- `lp-*` component classes are unlayered, so they beat Tailwind utilities. Never fight
+  one with a utility; add a modifier class.
+- `[class]="expr"` replaces the whole class attribute in Angular. Static classes on the
+  same element are dropped silently.
 - Tailwind classes must be complete literals (JIT): build full class strings in TS
   constants like `MEAL_ROWS`, never concatenate fragments.
 - Fonts loaded from Google Fonts in index.html: Work Sans (display), Source Sans 3

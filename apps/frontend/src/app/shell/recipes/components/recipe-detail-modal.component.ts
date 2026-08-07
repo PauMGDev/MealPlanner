@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { Recipe } from '../../../core/services/recipes.service';
-import { accentBarClass, cardGradientStyle, dotClass, statusLabel, statusTextClass, type RecipeAvailability } from '../recipes.types';
+import { accentBarClass, dotClass, statusLabel, type RecipeAvailability } from '../recipes.types';
 
 @Component({
   selector: 'app-recipe-detail-modal',
@@ -18,7 +18,5 @@ export class RecipeDetailModalComponent {
 
   protected readonly dotClass = dotClass;
   protected readonly accentBarClass = accentBarClass;
-  protected readonly cardGradientStyle = cardGradientStyle;
   protected readonly statusLabel = statusLabel;
-  protected readonly statusTextClass = statusTextClass;
 }

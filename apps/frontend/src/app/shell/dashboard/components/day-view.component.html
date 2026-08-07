@@ -1,0 +1,64 @@
+<div class="lp-panel p-4">
+  <div class="lp-dayrail" role="tablist" aria-label="Día de la semana">
+    @for (day of weekDays; track toISODate(day); let i = $index) {
+      <button type="button" class="lp-daypill" role="tab"
+              [class.is-selected]="isSelected(day)"
+              [class.is-today]="isToday(day)"
+              [attr.aria-selected]="isSelected(day)"
+              [attr.aria-label]="formatDayLong(day)"
+              (click)="selectDay.emit(day)">
+        {{ dayInitials[i] }}
+      </button>
+    }
+  </div>
+
+  <p class="mt-5 text-sm font-semibold text-lp-ink first-letter:uppercase">
+    @if (selectedDay && isToday(selectedDay)) { Hoy, }{{ selectedDay ? formatDayLong(selectedDay) : '' }}
+  </p>
+
+  <div class="mt-3 space-y-2.5">
+    @if (loading) {
+      @for (row of mealRows; track row.type) {
+        <div class="lp-skel h-[88px] w-full"></div>
+      }
+    } @else {
+      @for (row of mealRows; track row.type; let i = $index) {
+        @let meal = getMeal(row.type);
+
+        @if (meal) {
+          @let slot = getAvailability(meal);
+          <div class="lp-daycard" appReveal [appRevealIndex]="i">
+            <div class="min-w-0 flex-1">
+              <p class="lp-daycard__slot">{{ row.label }}</p>
+              <p class="lp-daycard__name">{{ meal.recipe.name }}</p>
+              <p class="mt-2 flex items-center gap-2 text-xs text-lp-ink-soft">
+                <span [class]="dotClass(slot.level)"></span>
+                {{ availabilityLabel(slot) }}
+              </p>
+            </div>
+            <div class="flex shrink-0 items-center gap-1">
+              <button type="button" class="lp-icon-btn" (click)="openPicker.emit(slotRef(row.type))"
+                      [attr.aria-label]="'Cambiar la receta de ' + row.label">
+                <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+              </button>
+              <button type="button" class="lp-icon-btn lp-icon-btn--danger" (click)="removeSlot.emit(slotRef(row.type))"
+                      [attr.aria-label]="'Quitar ' + row.label">
+                <span class="material-symbols-outlined text-[18px]">close</span>
+              </button>
+              <button type="button" class="lp-icon-btn" (click)="openDetail.emit(meal)"
+                      [attr.aria-label]="'Ver ' + meal.recipe.name">
+                <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        } @else {
+          <button type="button" class="lp-daycard lp-daycard--empty" appReveal [appRevealIndex]="i"
+                  (click)="openPicker.emit(slotRef(row.type))">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            {{ row.label }}
+          </button>
+        }
+      }
+    }
+  </div>
+</div>

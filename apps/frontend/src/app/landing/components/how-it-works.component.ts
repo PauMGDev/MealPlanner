@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrollRevealDirective } from '../scroll-reveal.directive';
+import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 
 /** Vertical timeline: the three things a user actually does, in order. */
 @Component({

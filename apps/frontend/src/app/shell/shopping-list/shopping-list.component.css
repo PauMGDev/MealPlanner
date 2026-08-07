@@ -1,4 +1,4 @@
 .notebook-divider {
   height: 2.25rem;
-  border-bottom: 1px solid rgba(248, 113, 113, 0.22);
+  border-bottom: 1px solid var(--color-lp-line);
 }

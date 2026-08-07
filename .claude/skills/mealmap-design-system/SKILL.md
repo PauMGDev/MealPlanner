@@ -1,6 +1,6 @@
 ---
 name: mealmap-design-system
-description: The MealMap visual language (lp-* token family) for designing or restyling any UI surface in this project. Use whenever a task touches the look of the landing or any future public page: layout, colour, type, spacing, radii, motion, imagery, or a new marketing section. Also use before adding a token, a component class, or an animation to apps/frontend/src/styles.css, and when reviewing UI work for visual consistency.
+description: The MealMap visual language (lp-* token family) for designing or restyling any UI surface in this project, public or authenticated. Use whenever a task touches the look of the landing, the auth screens or the app shell: layout, colour, type, spacing, radii, motion, imagery, navigation, the weekly matrix, or a new section or screen. Also use before adding a token, a component class, or an animation to apps/frontend/src/styles.css, and when reviewing UI work for visual consistency.
 ---
 
 # MealMap design system (lp-*)
@@ -10,16 +10,20 @@ roles, ratios and rules. Never duplicate hex values here; read the token block.
 
 ## Scope
 
-Governs the `lp-*` visual family: every public surface. That is the landing
+Governs the `lp-*` visual family, which is now the whole product: the landing
 (`apps/frontend/src/app/landing/`), the auth screens (`apps/frontend/src/app/auth/`:
-login, register and the OAuth callback) and any future public or marketing page. Auth
-belongs to this family because it is reached logged out, from the landing.
+login, register and the OAuth callback) and the authenticated shell
+(`apps/frontend/src/app/shell/`). Light only everywhere, including inside `/app`.
 
-Out of scope: the authenticated shell (`apps/frontend/src/app/shell/`), which uses `mm-*`
-tokens and is dark only. Do not apply this system inside `/app` without an explicit
-decision. Never mix families in one component.
+The old `mm-*` dark app palette is gone: the tokens were deleted from `styles.css` and
+every shell component migrated. Do not reintroduce it. A dark variant of the product,
+if it happens, will be a variant of `lp-*` and not a second family.
 
-The `hk-*` set is legacy. Nothing in the `lp-*` family may reference it.
+The `hk-*` set is legacy and unused by any component. Nothing in the `lp-*` family may
+reference it.
+
+The application surface adds roles and components the landing never needed. They live in
+their own chapter at the end of this file, "Application surface".
 
 ## Design read and dials
 
@@ -53,6 +57,9 @@ Semantic roles in the `@theme` block of `styles.css`:
 | `lp-accent-soft` | Accent tint background: icon tiles, tags, the tinted bento cell, the final CTA panel. |
 | `lp-danger` | Field errors and the alert icon. Text only, never a fill. |
 | `lp-danger-soft` | Background of the inline error alert. Text over it is `lp-ink`. |
+| `lp-hover` | Hover fill for a control sitting on `base` or `card`. One step between the two. App surface only. |
+| `lp-ok` | Availability semaphore, green. Dot fill only, never text. App surface only. |
+| `lp-warn` | Availability semaphore, amber. Dot fill only, never text. App surface only. |
 
 ### Combination rules
 
@@ -64,7 +71,8 @@ Semantic roles in the `@theme` block of `styles.css`:
 - `lp-ink-faint` is only legible over `lp-base` and `lp-card`. Do not place it over
   `lp-tray`.
 - One accent for the whole page. If a surface needs a second colour, it needs a reason
-  written into this file first.
+  written into this file first. There is exactly one such exception, the availability
+  semaphore, and it is bounded: see "Application surface".
 
 ### Contrast floors (measured, WCAG AA)
 
@@ -81,6 +89,10 @@ non text graphics need 3:1.
 - `base` over `ink` 15.1 (the primary button).
 - White over `accent-ink` 6.5 (the today pill). White over `accent` is only 3.8, which is
   why text on a raw accent fill is banned and only graphics are allowed there.
+- `ink` over `hover` 14.3, `ink-soft` over `hover` 5.0, `ink-faint` over `hover` 4.4.
+- `ok` over `base` 4.6, over `card` 5.0, over `tray` 4.2. `warn` over `base` 4.1, over
+  `card` 4.4, over `tray` 3.7. Both clear the 3:1 non text floor on every surface and
+  `warn` misses the 4.5 text floor, which is why the semaphore is dot only.
 
 Recompute before changing any token value. A token change that drops a pair below its
 floor is not shippable.
@@ -223,9 +235,9 @@ What this design deliberately does not do:
 
 - No feature gradient. The only gradient on the page is the near flat hero glow.
 - No glass outside the nav pill.
-- No dark mode on public surfaces. The landing is light only, `lp-*` are defined on
-  `:root` with no dark override, and no `dark:` variant appears in `landing/`. The
-  authenticated app keeps its dark theme, untouched.
+- No dark mode anywhere. `lp-*` are defined on `:root` with no dark override, and no
+  `dark:` variant appears in `landing/`, `auth/` or `shell/`. The old dark app theme was
+  removed on purpose; a dark variant, if it ever ships, is a variant of these tokens.
 - No purple or blue SaaS gradient, no neon, no outer glows.
 - No three column equal icon card rows, no emoji as iconography.
 - No recognisable but irrelevant photography. A seeded Picsum texture was tried behind the
@@ -258,3 +270,151 @@ commit that implements it. That includes new tokens, new component classes, a ch
 radius or spacing rule, a new motion behaviour, and rejected options with the reason they
 were rejected. A commit that changes the visual language without updating this file is
 incomplete.
+
+## Application surface
+
+The authenticated shell (`apps/frontend/src/app/shell/`) runs on this same family. It is
+denser than the landing, so it adds roles and components, but it never adds a second
+palette, a second font or a dark variant. `VISUAL_DENSITY` rises from 3 to about 6 inside
+`/app`: tighter padding, more elements per screen, but the same radii and the same type
+scale.
+
+### Tokens the app added
+
+Three, all listed in the token table above: `lp-hover`, `lp-ok`, `lp-warn`.
+
+`lp-hover` exists because the landing only ever needed `base` then `tray` then `card`,
+while a control on a card needs a hover fill that is not a full surface step.
+
+`lp-ok` and `lp-warn` are the documented exception to the one accent rule. The reason: the
+availability semaphore encodes three ordered states and the accent alone cannot carry
+order. The exception is bounded by three rules:
+
+- The semaphore is a **dot only**. `lp-ok` and `lp-warn` never colour text, never fill a
+  surface, never colour a border. `lp-warn` measures 4.1 over `base`, below the small text
+  floor, so text next to it stays `lp-ink-soft`.
+- Every dot is paired with a label or a `title`, so colour is never the only signal.
+- The fourth state, `none` (a recipe with no linked ingredients), is `lp-line`, not a
+  fourth colour.
+
+Class shape: `.lp-dot` plus one of `--ok`, `--warn`, `--danger`, `--none`. The mapping
+functions (`dotClass` in `weekly-calendar.types.ts` and `recipes.types.ts`) return complete
+class literals, never concatenated fragments, because Tailwind only sees whole names.
+
+### Navigation
+
+Two shapes, one component (`shell/shell-nav/`). No screen knows how navigation works; the
+layout renders `<app-shell-nav />` and nothing else does.
+
+**From `md` up: the pill** (`lp-shell-nav`, `lp-shell-nav__pill`). Same 60px glass pill as
+the landing nav, same blur, same reduced transparency fallback. Differences: the four
+destinations are centred as pills rather than plain links, the active one gets an
+`accent-soft` fill with `accent-ink` label, and the right slot is the account avatar
+instead of two CTAs. It is fixed, and `.lp-app__main` reserves `92px` of top padding so it
+never overlaps anything interactive.
+
+**Below `md`: a 56px mini header plus a bottom tab bar** (`lp-shell-topbar`, `lp-tabbar`).
+The header carries only the brand and the avatar. The tab bar carries the same four
+destinations as icon plus label, the active one in `accent-ink` with a filled icon.
+`.lp-app__main` reserves `96px` at the bottom, and the bar respects
+`env(safe-area-inset-bottom)`. **There is no burger on any breakpoint.** A four
+destination app does not need a drawer, and a burger would hide the whole product.
+
+**The account menu** (`lp-avatar`, `lp-menu`) is the only dropdown in the shell. It holds
+what used to live in the sidebar foot: name and email, the settings section, and logout. It
+closes on outside click and on `Escape`. The same markup is rendered inside the pill and
+inside the mobile header; only one is ever visible.
+
+### The weekly matrix
+
+Anatomy, top to bottom (`shell/dashboard/components/calendar-grid.component.*`):
+
+- One 34px radius `card` panel, the largest radius in the app, because it is the largest
+  object on the screen.
+- A CSS grid of `6.5rem repeat(7, 1fr)`: a row label column plus seven day columns.
+- A day header row of full pills. Today's pill is `accent-soft` with `accent-ink`.
+- Three to five slot rows, one per active meal type, in the fixed chronological order of
+  the enum. Never a row per day, never a scrollable body.
+- Filled cell (`lp-meal`): `tray` fill, 16px radius, recipe name clamped to two lines, then
+  the availability dot. It floats 2px on hover and reveals a remove button.
+- Empty cell (`lp-empty`): a dashed `lp-line` border and a centred `+`. On hover it turns
+  into an accent affordance.
+- Today's column gets a 4 percent accent wash behind every cell, and the filled cells in it
+  take an accent border.
+
+**Cell height is computed, not fixed.** The whole matrix has to sit above the fold on a
+900px viewport with five rows, so `.lp-matrix` sets
+`--lp-slot-h: clamp(56px, calc((100vh - 470px) / var(--lp-rows)), 116px)` and the component
+writes `--lp-rows`. Adding a row shortens every cell instead of adding a scrollbar. If a
+future change makes the matrix taller, adjust the `470px` chrome allowance, do not add
+`overflow`.
+
+Reassignment is native HTML5 drag and drop between cells. Dropping on an occupied cell
+swaps the two meals, dropping on an empty one moves. Both are optimistic with snapshot
+rollback. The drop target is marked by `.lp-slot--over`, which turns the target's border
+dashed and accent. No drag and drop library.
+
+### Mobile: the day view
+
+Below `md` the matrix is replaced, not squeezed (`day-view.component.*`): a horizontal day
+selector of seven round pills (today in `accent-ink`, the selected one filled with
+`accent-soft`), the long date in sentence case, and the active slots of that day stacked as
+`tray` cards. Drag and drop does not apply on touch, so each card carries its own reassign,
+remove and open actions.
+
+Rules for the shell below `md`: no horizontal scrolling of primary content, no data table
+squeezed into a phone, and no interaction that needs a pointer without a tap equivalent.
+
+### Dashboard module
+
+A row of three `lp-module` cards under the matrix: 20px radius, `card` fill, hairline
+border, title, one line of subtext, a short list, and a single action pinned to the bottom
+with `lp-module__foot` so the three cards line up. At most three list rows plus a
+"+ N más" line. The action is a full width `lp-btn`, solid for the primary module and
+outlined for the rest, so a row of three never shows three solid buttons.
+
+With five meal rows the module row can fall below the fold. That is correct: the matrix is
+the screen's job and the modules are secondary.
+
+### Page chrome
+
+Every shell screen opens with `lp-page-head` inside `lp-container`: title in
+`lp-page-title`, one line of context in `lp-page-sub`, and at most one action on the right.
+No full bleed coloured header bands, no border under the title. The week control
+(`lp-week-nav`) is a segmented pill of previous, "Hoy", next, and "Hoy" is disabled when
+the current week is already shown.
+
+Other primitives the app uses: `lp-panel` (a plain card container), `lp-icon-btn` (round
+36px icon button, with a `--danger` variant), `lp-btn--sm`, `lp-app-alert` (inline error on
+`danger-soft`), `lp-skel` (the only loading shimmer; it pulses opacity and stops under
+reduced motion), `lp-modal` plus `lp-modal-backdrop`, and `lp-pick` for the recipe picker.
+
+### Motion in the app
+
+Same recipe as the landing and the same directive, now at
+`apps/frontend/src/app/shared/scroll-reveal.directive.ts` because both families use it.
+The matrix staggers by row index, not by cell, so a full week never runs 35 delays. The
+modules stagger 0, 1, 2. Everything else is hover and active feedback plus the drag state.
+No animation library, and `prefers-reduced-motion` disables the reveal, the cell lift, the
+picker lift and the skeleton pulse.
+
+### Meal slot settings
+
+The rows of the matrix are the user's `activeMealTypes`, stored on the profile
+(`PATCH /api/users/me/settings`, minimum 3, maximum 5, default breakfast, lunch, dinner).
+They are edited from the account menu and nowhere else.
+
+Turning a slot off never deletes meals. If the hidden slot still holds meals in the visible
+week, its row comes back and the page says so in one sentence. Hiding data the user
+created is worse than an extra row.
+
+### Pitfalls found while building this
+
+- **Class names are one global namespace.** `.lp-cell` already meant "bento cell" on the
+  landing, so the matrix cell had to be renamed `.lp-slot`. Grep `styles.css` before
+  claiming a new `lp-` name.
+- **`lp-*` classes are unlayered and beat Tailwind utilities.** `lg:hidden` on an element
+  that also carries `.lp-dot` loses, because `.lp-dot` sets `display` outright. Same trap
+  the landing hit with `.lp-btn`. Write a modifier class instead of fighting it.
+- **`[class]="expr"` replaces the whole class attribute in Angular.** Static classes on the
+  same element are silently dropped. Put everything in the expression or use `[class.x]`.

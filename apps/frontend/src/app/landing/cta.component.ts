@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ScrollRevealDirective } from './scroll-reveal.directive';
+import { ScrollRevealDirective } from '../shared/scroll-reveal.directive';
 
 @Component({
   selector: 'app-cta',

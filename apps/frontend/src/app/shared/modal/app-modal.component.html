@@ -1,9 +1,8 @@
 @if (open) {
-  <div class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 modal-backdrop-enter
-              flex justify-center p-0 sm:p-4"
+  <div class="lp-modal-backdrop modal-backdrop-enter flex justify-center p-0 sm:p-4"
        [class]="backdropClasses"
        (click)="closed.emit()">
-    <div class="bg-mm-surface border border-white/[0.07] w-full shadow-2xl modal-enter flex flex-col"
+    <div class="lp-modal modal-enter flex w-full flex-col"
          [class]="panelClasses"
          (click)="$event.stopPropagation()">
       <ng-content />

@@ -12,7 +12,6 @@ import { type DisplayItem, type PantryGroup } from '../pantry.types';
 })
 export class PantryGroupComponent {
   @Input({ required: true }) group!: PantryGroup;
-  @Input() categoryColor = '#374151';
   @Input() isCollapsed = false;
 
   @Output() toggle = new EventEmitter<string>();
@@ -21,7 +20,7 @@ export class PantryGroupComponent {
   @Output() delete = new EventEmitter<DisplayItem>();
 
   get chevronClass(): string {
-    const base = 'w-3.5 h-3.5 text-mm-text3 flex-shrink-0 transition-transform duration-200';
+    const base = 'w-3.5 h-3.5 text-lp-ink-faint flex-shrink-0 transition-transform duration-200';
     return this.isCollapsed ? `${base} -rotate-90` : base;
   }
 

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrollRevealDirective } from '../scroll-reveal.directive';
+import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 
 /** Asymmetric split: pantry copy on the left, a real meal detail panel on the right. */
 @Component({

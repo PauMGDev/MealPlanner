@@ -4,12 +4,21 @@ import type { PantryItem } from '../../core/services/pantry.service';
 
 const makeRecipe = (ingredientIds: string[]): Recipe => ({
   id: 'r1', name: 'Test', description: null, imageUrl: null,
-  recipeIngredients: ingredientIds.map(id => ({ ingredientId: id, ingredientName: id, quantity: 1, unit: 'g' })),
-} as Recipe);
+  prepTime: 10, servings: 2, steps: [], createdAt: '', updatedAt: '',
+  recipeIngredients: ingredientIds.map(id => ({
+    id: `ri-${id}`,
+    ingredientId: id,
+    quantity: 1,
+    ingredient: { id, name: id, unit: 'g', caloriesPer100g: null },
+  })),
+});
 
 const makePantryEntry = (id: string, quantity: number): [string, PantryItem] => [
   id,
-  { id: `p-${id}`, name: id, quantity, unit: 'g', ingredientId: id } as PantryItem,
+  {
+    id: `p-${id}`, name: id, quantity, unit: 'g', ingredientId: id,
+    expiresAt: null, categoryId: null, category: null, createdAt: '', updatedAt: '',
+  },
 ];
 
 describe('computeAvailability', () => {

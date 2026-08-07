@@ -1,0 +1,100 @@
+<!-- Account button + dropdown. Rendered inside the desktop pill and inside the
+     mobile mini header; only one of the two is ever visible. -->
+<ng-template #account>
+  <div class="relative">
+    <button type="button" class="lp-avatar" (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()" aria-haspopup="menu"
+            [attr.aria-label]="'Cuenta de ' + displayName()">
+      {{ initial() }}
+    </button>
+
+    @if (menuOpen()) {
+      <div class="lp-menu" role="menu">
+        <div class="lp-menu__head">
+          <p class="lp-menu__name">{{ displayName() }}</p>
+          <p class="lp-menu__mail">{{ email() }}</p>
+        </div>
+
+        <div class="lp-menu__sep"></div>
+
+        <button type="button" class="lp-menu__item" role="menuitem"
+                (click)="settingsOpen.set(!settingsOpen())"
+                [attr.aria-expanded]="settingsOpen()">
+          <span class="material-symbols-outlined">tune</span>
+          Ajustes
+          <span class="material-symbols-outlined ml-auto">
+            {{ settingsOpen() ? 'expand_less' : 'expand_more' }}
+          </span>
+        </button>
+
+        @if (settingsOpen()) {
+          <p class="lp-menu__label">Franjas de comida</p>
+          @for (row of mealRows; track row.type) {
+            <button type="button" class="lp-menu__check" role="menuitemcheckbox"
+                    [attr.aria-checked]="isSlotActive(row.type)"
+                    [disabled]="isSlotLocked(row.type)"
+                    [class.opacity-45]="isSlotLocked(row.type)"
+                    (click)="toggleSlot(row.type)">
+              <span class="lp-menu__box" [class.lp-menu__box--on]="isSlotActive(row.type)">
+                @if (isSlotActive(row.type)) {
+                  <span class="material-symbols-outlined">check</span>
+                }
+              </span>
+              {{ row.label }}
+            </button>
+          }
+          <p class="lp-menu__hint">
+            Entre {{ minSlots }} y {{ maxSlots }} franjas. Las comidas ya asignadas no se borran.
+          </p>
+          @if (settingsError()) {
+            <p class="lp-menu__hint text-lp-danger">{{ settingsError() }}</p>
+          }
+        }
+
+        <div class="lp-menu__sep"></div>
+
+        <button type="button" class="lp-menu__item" role="menuitem" (click)="logout()">
+          <span class="material-symbols-outlined">logout</span>
+          Cerrar sesión
+        </button>
+      </div>
+    }
+  </div>
+</ng-template>
+
+<!-- Desktop: floating pill -->
+<header class="lp-shell-nav">
+  <nav class="lp-shell-nav__pill" aria-label="Navegación principal">
+    <a routerLink="/app/dashboard" class="lp-shell-nav__brand">
+      <span class="material-symbols-outlined icon-fill">restaurant_menu</span>
+      MealMap
+    </a>
+
+    <div class="lp-shell-nav__links">
+      @for (destination of destinations; track destination.path) {
+        <a [routerLink]="destination.path" routerLinkActive="is-active"
+           class="lp-shell-nav__link">{{ destination.label }}</a>
+      }
+    </div>
+
+    <ng-container *ngTemplateOutlet="account" />
+  </nav>
+</header>
+
+<!-- Mobile: mini header + bottom tab bar, no burger -->
+<header class="lp-shell-topbar">
+  <a routerLink="/app/dashboard" class="lp-shell-nav__brand">
+    <span class="material-symbols-outlined icon-fill">restaurant_menu</span>
+    MealMap
+  </a>
+  <ng-container *ngTemplateOutlet="account" />
+</header>
+
+<nav class="lp-tabbar" aria-label="Navegación principal">
+  @for (destination of destinations; track destination.path) {
+    <a [routerLink]="destination.path" routerLinkActive="is-active" class="lp-tabbar__item">
+      <span class="material-symbols-outlined">{{ destination.icon }}</span>
+      {{ destination.label }}
+    </a>
+  }
+</nav>

@@ -3,33 +3,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-mm-base: #070b14;
-  --color-mm-surface: #0f1628;
-  --color-mm-card: #151d33;
-  --color-mm-elevated: #1a2340;
-  --color-mm-text1: #e8ecf4;
-  --color-mm-text2: #8898b5;
-  --color-mm-text3: #4a5875;
-
-  /* MealMap — accent (brand) */
-  --color-accent: #3b66e0;
-  --color-accent-hover: #5681f5;
-  --color-accent-soft: #8fb4ff;
-  --color-accent-deep: #2748b0;
-
-  /* MealMap — semantic status */
-  --color-success: #3ddc97;
-  --color-warning: #ffb454;
-  --color-caution: #ffd968;
-  --color-danger: #ff6b6b;
-
-  /* MealMap — meal-type categorical arc (sunrise → night) */
-  --color-meal-breakfast: #ff9966;
-  --color-meal-almuerzo: #ffc44d;
-  --color-meal-lunch: #4fc8ed;
-  --color-meal-snack: #5fdba3;
-  --color-meal-dinner: #bb96f5;
-
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-display: "Work Sans", system-ui, sans-serif;
   --font-body: "Source Sans 3", system-ui, sans-serif;
@@ -75,8 +48,9 @@
   --color-error-container: var(--hk-error-container);
   --color-on-error-container: var(--hk-on-error-container);
 
-  /* ── Landing page (lp-*) ──────────────────────────────────
-     Own namespace, light only, never mixed with mm-* or hk-*.
+  /* ── MealMap (lp-*) ───────────────────────────────────────
+     The whole product runs on this one family: landing, auth and
+     the authenticated shell. Light only, never mixed with hk-*.
      Warm neutral base + a single warm accent. */
   --color-lp-base: #f7f4ef;
   --color-lp-tray: #edeae2;
@@ -90,6 +64,14 @@
   --color-lp-accent-soft: #fae7db;
   --color-lp-danger: #b3261e;
   --color-lp-danger-soft: #fbe7e4;
+
+  /* Application surface additions (see the design system skill, "application
+     surface"). Roles the landing never needed: a hover step between base and
+     tray, and the availability semaphore. The semaphore is the one place with
+     colours beyond the accent, and it is dot-only: labels stay ink-soft. */
+  --color-lp-hover: #f2eee6;
+  --color-lp-ok: #4e7a29;
+  --color-lp-warn: #a8690a;
 }
 
 /* Harmonic Kitchen Blue (claro) */
@@ -179,28 +161,15 @@
   font-variation-settings: 'FILL' 1;
 }
 
+/* The one primary button across the app: ink fill, never the accent. */
 .btn-primary {
-  @apply inline-flex items-center justify-center font-semibold rounded-[10px]
-         bg-accent text-white transition-all duration-200;
-  box-shadow: 0 2px 12px rgba(59, 102, 224, 0.3);
+  @apply inline-flex items-center justify-center rounded-full font-semibold transition-all duration-200;
+  background: var(--color-lp-ink);
+  color: var(--color-lp-base);
 }
-.btn-primary:hover {
-  @apply bg-accent-hover -translate-y-px;
-  box-shadow: 0 6px 24px rgba(86, 129, 245, 0.4);
-}
-
-.meal-enter {
-  opacity: 0;
-  animation: mealIn 0.5s ease forwards;
-}
-
-@keyframes mealIn {
-  to { opacity: var(--meal-opacity, 0.82); }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+.btn-primary:hover { background: #100e0c; transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
 /* ── Smooth collapse via CSS grid trick ─────────────────── */
 .collapsible {
@@ -220,13 +189,6 @@
   min-height: 0;
 }
 
-/* ── Calendar cell entrance animation ───────────────────── */
-@keyframes cellIn {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1); }
-}
-.cell-enter { animation: cellIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
 /* ── Modal entrance animations ──────────────────────────── */
 @keyframes slideUp {
   from { transform: translateY(12px); opacity: 0; }
@@ -241,16 +203,13 @@
 
 /* ── Focus-visible ring (keyboard nav) ──────────────────── */
 :focus-visible {
-  outline: 2px solid rgba(59, 102, 224, 0.55);
+  outline: 2px solid color-mix(in srgb, var(--color-lp-accent) 65%, transparent);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ticket-sway, .ticket-enter, .ticket--tilt-l, .ticket--tilt-r, .day-ticket {
-    animation: none !important;
-    transition: none !important;
-  }
+  .modal-enter, .modal-backdrop-enter { animation: none; }
 }
 
 /* ── Shopping list: handwritten notebook page ───────────── */
@@ -287,8 +246,7 @@
 /* ═══════════════════════════════════════════════════════════
    LANDING PAGE
    Light only. Uses the lp-* token set exclusively: no hk-*,
-   no mm-*, no dark: variants. The <html>.dark class set by the
-   authenticated app must not affect anything below.
+   no dark: variants.
 
    Radius system (one rule, applied everywhere):
      interactive (buttons, pills, chips) → full pill
@@ -732,3 +690,315 @@
 @media (prefers-reduced-motion: reduce) {
   .lp-spinner { animation-duration: 2s; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   APPLICATION SURFACE (the authenticated shell, /app)
+   Same lp-* family and same light-only rule as the landing.
+   What the landing did not need and this adds: a hover step
+   between base and tray, dense grid surfaces, and the
+   availability semaphore (dot-only, labels stay ink-soft).
+   ═══════════════════════════════════════════════════════════ */
+
+.lp-app {
+  color-scheme: light;
+  @apply min-h-[100dvh];
+  background: var(--color-lp-base);
+  color: var(--color-lp-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+.lp-app :focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-lp-accent) 65%, transparent);
+  outline-offset: 3px;
+}
+/* The nav is fixed at both breakpoints, so the main column reserves its space:
+   a mini top bar plus a bottom tab bar on mobile, the pill on desktop. */
+.lp-app__main { @apply pb-24 pt-[68px] md:pb-14 md:pt-[92px]; }
+
+/* ── Navigation: desktop pill ───────────────────────────── */
+.lp-shell-nav { @apply fixed inset-x-0 top-0 z-40 hidden px-4 pt-3.5 md:block; }
+.lp-shell-nav__pill {
+  @apply mx-auto flex h-[60px] w-full max-w-[1080px] items-center gap-4 rounded-full pl-5 pr-2.5;
+  background: color-mix(in srgb, var(--color-lp-base) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-lp-ink) 8%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 10px 30px rgb(34 30 26 / 0.06);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lp-shell-nav__pill {
+    background: var(--color-lp-base);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+.lp-shell-nav__brand { @apply flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight text-lp-ink; }
+.lp-shell-nav__brand .material-symbols-outlined { color: var(--color-lp-accent); font-size: 26px; }
+.lp-shell-nav__links { @apply flex flex-1 items-center justify-center gap-1; }
+.lp-shell-nav__link {
+  @apply rounded-full px-4 py-2 text-sm font-medium text-lp-ink-soft;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+.lp-shell-nav__link:hover { color: var(--color-lp-ink); }
+.lp-shell-nav__link.is-active {
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+  font-weight: 600;
+}
+
+/* ── Navigation: mobile mini header + bottom tab bar ─────── */
+.lp-shell-topbar {
+  @apply fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between px-5 md:hidden;
+  background: color-mix(in srgb, var(--color-lp-base) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid var(--color-lp-line);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lp-shell-topbar { background: var(--color-lp-base); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+.lp-tabbar {
+  @apply fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 md:hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--color-lp-card);
+  border-top: 1px solid var(--color-lp-line);
+}
+.lp-tabbar__item {
+  @apply flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] font-medium text-lp-ink-soft;
+  transition: color 180ms ease;
+}
+.lp-tabbar__item .material-symbols-outlined { font-size: 22px; }
+.lp-tabbar__item.is-active { color: var(--color-lp-accent-ink); font-weight: 600; }
+.lp-tabbar__item.is-active .material-symbols-outlined { font-variation-settings: 'FILL' 1; }
+
+/* ── Account: avatar and its menu ───────────────────────── */
+.lp-avatar {
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold;
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+  border: 1px solid color-mix(in srgb, var(--color-lp-accent) 22%, transparent);
+}
+.lp-menu {
+  @apply absolute right-0 top-full z-50 mt-2 w-[268px] p-2;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 18px 50px rgb(34 30 26 / 0.14);
+}
+.lp-menu__head { @apply px-3 pb-2 pt-1.5; }
+.lp-menu__name { @apply truncate text-sm font-semibold text-lp-ink; }
+.lp-menu__mail { @apply truncate text-xs text-lp-ink-faint; }
+.lp-menu__sep { @apply my-1.5 h-px; background: var(--color-lp-line); }
+.lp-menu__label { @apply px-3 pb-1 pt-1 text-xs font-semibold text-lp-ink-faint; }
+.lp-menu__item {
+  @apply flex w-full items-center gap-2.5 rounded-full px-3 py-2 text-left text-sm font-medium text-lp-ink-soft;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.lp-menu__item:hover { background: var(--color-lp-hover); color: var(--color-lp-ink); }
+.lp-menu__item .material-symbols-outlined { font-size: 18px; }
+.lp-menu__item:disabled { opacity: 0.45; cursor: not-allowed; }
+.lp-menu__check { @apply flex w-full items-center gap-2.5 rounded-full px-3 py-2 text-left text-sm text-lp-ink-soft; }
+.lp-menu__check:hover { background: var(--color-lp-hover); }
+.lp-menu__box {
+  @apply flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px];
+  border: 1.5px solid var(--color-lp-line);
+}
+.lp-menu__box--on { background: var(--color-lp-accent); border-color: var(--color-lp-accent); color: #fff; }
+.lp-menu__box .material-symbols-outlined { font-size: 12px; }
+.lp-menu__hint { @apply px-3 pb-1 pt-1.5 text-xs leading-relaxed text-lp-ink-faint; }
+
+/* ── Page chrome shared by every shell screen ───────────── */
+.lp-page-head { @apply flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between; }
+.lp-page-title { @apply text-3xl font-semibold leading-tight tracking-tight text-lp-ink md:text-[2.1rem]; }
+.lp-page-sub { @apply mt-1 text-sm text-lp-ink-soft tabular-nums; }
+
+/* Segmented week control: prev / Hoy / next */
+.lp-week-nav {
+  @apply flex items-center gap-1 self-start rounded-full p-1;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 1px 2px rgb(34 30 26 / 0.04);
+}
+.lp-week-nav__arrow {
+  @apply flex h-9 w-9 items-center justify-center rounded-full text-lp-ink-soft;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.lp-week-nav__arrow:hover { background: var(--color-lp-hover); color: var(--color-lp-ink); }
+.lp-week-nav__arrow .material-symbols-outlined { font-size: 20px; }
+.lp-week-nav__today {
+  @apply rounded-full px-4 py-2 text-sm font-semibold text-lp-ink;
+  transition: background-color 160ms ease;
+}
+.lp-week-nav__today:hover { background: var(--color-lp-hover); }
+.lp-week-nav__today:disabled { color: var(--color-lp-ink-faint); cursor: default; background: none; }
+
+/* Generic panel: the app equivalent of a landing card. */
+.lp-panel {
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+}
+.lp-icon-btn {
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lp-ink-soft;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.lp-icon-btn:hover { background: var(--color-lp-hover); color: var(--color-lp-ink); }
+.lp-icon-btn--danger:hover { background: var(--color-lp-danger-soft); color: var(--color-lp-danger); }
+.lp-btn--sm { padding: 0.5rem 1rem; font-size: 0.8125rem; }
+
+/* ── Availability semaphore ─────────────────────────────── */
+.lp-dot { @apply inline-block h-2.5 w-2.5 shrink-0 rounded-full; }
+.lp-dot--ok     { background: var(--color-lp-ok); }
+.lp-dot--warn   { background: var(--color-lp-warn); }
+.lp-dot--danger { background: var(--color-lp-danger); }
+.lp-dot--none   { background: var(--color-lp-line); }
+
+/* ── Weekly matrix ──────────────────────────────────────── */
+/* Rows are 3 to 5, so the cell height adapts instead of scrolling: the whole
+   matrix has to fit above the fold on a 900px viewport with five rows.
+   --lp-rows is written by the component. */
+.lp-matrix {
+  border-radius: 34px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  padding: clamp(0.75rem, 1.6vw, 1.5rem);
+  --lp-rows: 3;
+  --lp-slot-h: clamp(56px, calc((100vh - 470px) / var(--lp-rows)), 116px);
+}
+.lp-matrix__grid { @apply grid gap-2; grid-template-columns: 6.5rem repeat(7, minmax(0, 1fr)); }
+.lp-matrix__corner { @apply h-11; }
+.lp-matrix__day {
+  @apply flex h-11 items-center justify-center rounded-full text-xs font-semibold uppercase tracking-wide text-lp-ink-soft;
+}
+.lp-matrix__day--today { background: var(--color-lp-accent-soft); color: var(--color-lp-accent-ink); }
+.lp-matrix__rowlabel { @apply flex items-center pr-3 text-sm font-medium text-lp-ink-soft; }
+
+.lp-slot { height: var(--lp-slot-h); }
+.lp-slot--today { background: color-mix(in srgb, var(--color-lp-accent) 4%, transparent); border-radius: 16px; }
+
+.lp-meal {
+  @apply relative flex h-full w-full cursor-grab flex-col items-start gap-1.5 overflow-hidden p-3 text-left;
+  border-radius: 16px;
+  background: var(--color-lp-tray);
+  border: 1px solid transparent;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 160ms ease;
+}
+.lp-meal:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgb(34 30 26 / 0.08); }
+.lp-meal--today { border-color: var(--color-lp-accent); }
+.lp-meal--dragging { opacity: 0.45; cursor: grabbing; }
+.lp-meal__name { @apply line-clamp-2 text-[0.8125rem] font-medium leading-snug text-lp-ink; }
+.lp-meal__remove {
+  @apply absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-lp-ink-faint opacity-0;
+  background: var(--color-lp-card);
+  transition: opacity 180ms ease, color 160ms ease;
+}
+.lp-meal__remove .material-symbols-outlined { font-size: 15px; }
+.lp-meal:hover .lp-meal__remove, .lp-meal:focus-within .lp-meal__remove { opacity: 1; }
+.lp-meal__remove:hover { color: var(--color-lp-danger); }
+
+.lp-empty {
+  @apply flex h-full w-full items-center justify-center text-lp-ink-faint;
+  border-radius: 16px;
+  border: 1px dashed var(--color-lp-line);
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+.lp-empty:hover { border-color: var(--color-lp-accent); background: var(--color-lp-accent-soft); color: var(--color-lp-accent-ink); }
+.lp-empty .material-symbols-outlined { font-size: 20px; }
+
+/* Drop target while a meal card is being dragged over it. */
+.lp-slot--over .lp-meal,
+.lp-slot--over .lp-empty {
+  border-color: var(--color-lp-accent);
+  border-style: dashed;
+  background: var(--color-lp-accent-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-meal, .lp-meal:hover { transition: none; transform: none; }
+}
+
+/* ── Mobile day view (below md) ─────────────────────────── */
+.lp-dayrail { @apply flex items-center justify-between gap-1; }
+.lp-daypill {
+  @apply flex h-11 w-11 flex-col items-center justify-center rounded-full text-sm font-semibold text-lp-ink-soft;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.lp-daypill.is-selected { background: var(--color-lp-accent-soft); color: var(--color-lp-accent-ink); }
+.lp-daypill.is-today:not(.is-selected) { color: var(--color-lp-accent-ink); }
+.lp-daycard {
+  @apply flex w-full items-start gap-3 p-4 text-left;
+  border-radius: 20px;
+  background: var(--color-lp-tray);
+}
+.lp-daycard__slot { @apply text-xs font-medium text-lp-ink-faint; }
+.lp-daycard__name { @apply mt-1 text-base font-semibold leading-snug text-lp-ink; }
+.lp-daycard--empty {
+  background: transparent;
+  border: 1px dashed var(--color-lp-line);
+  @apply items-center justify-center gap-2 text-sm font-medium text-lp-ink-faint;
+}
+
+/* ── Dashboard modules ──────────────────────────────────── */
+.lp-modules { @apply grid grid-cols-1 gap-3 md:grid-cols-3; }
+.lp-module {
+  @apply flex flex-col p-6;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+}
+.lp-module__title { @apply text-base font-semibold text-lp-ink; }
+.lp-module__sub { @apply mt-1 text-sm text-lp-ink-soft; }
+.lp-module__list { @apply mt-4 space-y-2.5; }
+.lp-module__row { @apply flex items-center gap-2.5 text-sm text-lp-ink-soft; }
+.lp-module__more { @apply mt-2.5 text-sm text-lp-ink-faint; }
+.lp-module__foot { @apply mt-auto pt-5; }
+.lp-module__tag {
+  @apply inline-flex rounded-full px-3 py-1 text-xs font-semibold;
+  background: var(--color-lp-accent-soft);
+  color: var(--color-lp-accent-ink);
+}
+.lp-module__lead { @apply mt-3 text-xl font-semibold leading-snug text-lp-ink; }
+
+/* ── Inline alert used across shell screens ─────────────── */
+.lp-app-alert {
+  @apply flex items-center justify-between gap-3 px-4 py-3 text-sm text-lp-ink;
+  border-radius: 14px;
+  background: var(--color-lp-danger-soft);
+}
+.lp-app-alert .material-symbols-outlined { font-size: 18px; color: var(--color-lp-danger); }
+
+/* ── Skeletons ──────────────────────────────────────────── */
+.lp-skel { background: var(--color-lp-tray); border-radius: 12px; animation: lp-pulse 1.6s ease-in-out infinite; }
+@keyframes lp-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .lp-skel { animation: none; } }
+
+/* ── Modals ─────────────────────────────────────────────── */
+.lp-modal-backdrop {
+  @apply fixed inset-0 z-50;
+  background: color-mix(in srgb, var(--color-lp-ink) 45%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.lp-modal {
+  color-scheme: light;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  box-shadow: 0 30px 70px rgb(34 30 26 / 0.18);
+  font-family: var(--font-sans);
+  color: var(--color-lp-ink);
+}
+
+/* Recipe picker entry */
+.lp-pick {
+  @apply flex flex-col gap-1 p-4 text-left;
+  border-radius: 14px;
+  background: var(--color-lp-base);
+  border: 1px solid var(--color-lp-line);
+  transition: border-color 160ms ease, transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lp-pick:hover { border-color: var(--color-lp-accent); transform: translateY(-1px); }
+.lp-pick__name { @apply text-sm font-semibold leading-snug text-lp-ink; }
+.lp-pick__meta { @apply text-xs tabular-nums text-lp-ink-faint; }
+@media (prefers-reduced-motion: reduce) { .lp-pick, .lp-pick:hover { transform: none; transition: none; } }

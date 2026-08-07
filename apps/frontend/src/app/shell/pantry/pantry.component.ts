@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
 import { type IngredientResult, IngredientsService } from '../../core/services/ingredients.service';
 import { type IngredientCategory, type PantryItem, PantryService } from '../../core/services/pantry.service';
-import { CAT_PALETTE, type DisplayItem, type PantryItemSaveIntent, buildGroupedItems, buildMergedItems, expiryBadgeOf, getExpiryMs } from './pantry.types';
+import { type DisplayItem, type PantryItemSaveIntent, buildGroupedItems, buildMergedItems, expiryBadgeOf, getExpiryMs } from './pantry.types';
 import { PantryFiltersComponent } from './components/pantry-filters.component';
 import { PantryGroupComponent } from './components/pantry-group.component';
 import { PantryDepletedComponent } from './components/pantry-depleted.component';
@@ -52,11 +52,6 @@ export class PantryComponent implements OnInit {
   private inStockGroups = computed(() => this.groupedItems().filter(g => !g.isDepleted));
   private depletedGroup = computed(() => this.groupedItems().find(g => g.isDepleted) ?? null);
 
-  private catColorMap = computed(() => {
-    const map = new Map<string, string>();
-    this.categories().forEach((cat, i) => map.set(cat.id, CAT_PALETTE[i % CAT_PALETTE.length]));
-    return map;
-  });
 
   filteredInStockGroups = computed(() => {
     const q = this.searchQuery().trim().toLowerCase();
@@ -70,8 +65,7 @@ export class PantryComponent implements OnInit {
           if (q && !item.name.toLowerCase().includes(q)) return false;
           if (expiry) {
             const b = item.virtual ? null : expiryBadgeOf(item as PantryItem);
-            if (expiry === 'expired' && (!b || !b.cls.includes('red'))) return false;
-            if (expiry === 'soon' && (!b || b.cls.includes('red'))) return false;
+            if (b?.level !== expiry) return false;
           }
           return true;
         }).sort((a, b) => {
@@ -111,11 +105,6 @@ export class PantryComponent implements OnInit {
     this.pantryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({ next: items => { this.items.set(items); this.loading.set(false); }, error: () => this.loading.set(false) });
   }
 
-  categoryColor(groupId: string): string {
-    if (groupId === '__depleted__') return '#ca8a04';
-    if (groupId === '__none__') return '#374151';
-    return this.catColorMap().get(groupId) ?? CAT_PALETTE[0];
-  }
 
   isGroupCollapsed(id: string): boolean { return !this.isFiltering() && this.collapsedGroups().has(id); }
 

@@ -17,7 +17,7 @@ export class PantryDepletedComponent {
   @Output() delete = new EventEmitter<DisplayItem>();
 
   get chevronClass(): string {
-    const base = 'w-3.5 h-3.5 text-mm-text3 flex-shrink-0 transition-transform duration-200';
+    const base = 'w-3.5 h-3.5 text-lp-ink-faint flex-shrink-0 transition-transform duration-200';
     return this.isCollapsed ? `${base} -rotate-90` : base;
   }
 

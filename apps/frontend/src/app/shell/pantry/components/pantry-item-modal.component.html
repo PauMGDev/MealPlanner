@@ -1,11 +1,11 @@
 <app-modal [open]="show" (closed)="closed.emit()">
 
   <div class="flex items-center justify-between px-6 pt-6 pb-0 flex-shrink-0">
-    <h2 class="text-lg font-bold text-mm-text1">
+    <h2 class="text-lg font-bold text-lp-ink">
       {{ editMode ? 'Editar ingrediente' : 'Añadir ingrediente' }}
     </h2>
     <button (click)="closed.emit()"
-            class="p-1.5 rounded-xl text-mm-text3 hover:text-mm-text1 hover:bg-white/[0.04] transition-colors">
+            class="p-1.5 rounded-xl text-lp-ink-faint hover:text-lp-ink hover:bg-lp-hover transition-colors">
       <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
       </svg>
@@ -16,7 +16,7 @@
     <form [formGroup]="form" (ngSubmit)="submit()">
 
       <div class="mb-4">
-        <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">
+        <label class="block text-xs font-semibold text-lp-ink-faint mb-2">
           Ingrediente
         </label>
         <input type="text"
@@ -26,11 +26,11 @@
                (blur)="onNameBlur()"
                [attr.readonly]="editMode || null"
                placeholder="Buscar o escribir nombre…"
-               class="w-full px-4 py-3 rounded-xl border bg-mm-card text-mm-text1 text-sm
-                      outline-none transition-colors placeholder:text-mm-text3
-                      border-white/[0.06] focus:border-accent" />
+               class="w-full px-4 py-3 rounded-xl border bg-lp-card text-lp-ink text-sm
+                      outline-none transition-colors placeholder:text-lp-ink-faint
+                      border-lp-line focus:border-lp-accent" />
         @if (selectedCatalog() && !editMode) {
-          <p class="text-[11px] text-accent-soft/60 mt-1 flex items-center gap-1">
+          <p class="text-[11px] text-lp-accent-ink/60 mt-1 flex items-center gap-1">
             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
                     d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
@@ -39,30 +39,30 @@
           </p>
         }
         @if (showCatalogDropdown()) {
-          <div class="mt-1 bg-mm-card border border-white/[0.07] rounded-xl overflow-hidden shadow-xl">
+          <div class="mt-1 bg-lp-card border border-lp-line rounded-xl overflow-hidden shadow-xl">
             @for (r of catalogResults(); track r.id) {
               <button type="button"
                       (mousedown)="selectCatalog(r)"
                       class="w-full flex items-center justify-between px-4 py-2.5
-                             hover:bg-white/[0.04] text-left transition-colors
-                             border-b border-white/[0.04] last:border-0">
-                <span class="text-sm text-mm-text1">{{ r.name }}</span>
-                <span class="text-xs text-mm-text3 ml-3 flex-shrink-0">{{ r.unit }}</span>
+                             hover:bg-lp-hover text-left transition-colors
+                             border-b border-lp-line last:border-0">
+                <span class="text-sm text-lp-ink">{{ r.name }}</span>
+                <span class="text-xs text-lp-ink-faint ml-3 flex-shrink-0">{{ r.unit }}</span>
               </button>
             }
           </div>
         }
         @if (nameTouched() && !ingredientName().trim()) {
-          <p class="text-danger text-xs mt-1.5">El nombre es obligatorio</p>
+          <p class="text-lp-danger text-xs mt-1.5">El nombre es obligatorio</p>
         }
         @if (!editMode && existingMatch(); as match) {
-          <div class="flex items-center gap-1.5 mt-2 px-3 py-2 rounded-lg bg-accent/[0.08] border border-accent/20">
-            <svg class="w-3.5 h-3.5 text-accent-soft flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <div class="flex items-center gap-1.5 mt-2 px-3 py-2 rounded-lg bg-lp-accent/[0.08] border border-lp-accent/20">
+            <svg class="w-3.5 h-3.5 text-lp-accent-ink flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
             </svg>
-            <p class="text-xs text-white">
+            <p class="text-xs text-lp-ink">
               Se sumará a <span class="font-semibold">{{ match.name }}</span>
-              <span class="text-accent-soft/60 ml-1">({{ match.quantity }} {{ match.unit }} actuales)</span>
+              <span class="text-lp-accent-ink/60 ml-1">({{ match.quantity }} {{ match.unit }} actuales)</span>
             </p>
           </div>
         }
@@ -70,21 +70,21 @@
 
       <div class="flex gap-3 mb-4">
         <div class="flex-1">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">Cantidad</label>
+          <label class="block text-xs font-semibold text-lp-ink-faint mb-2">Cantidad</label>
           <input formControlName="quantity" type="number" placeholder="0" min="0" step="any"
-                 class="w-full px-4 py-3 rounded-xl border border-white/[0.06]
-                        bg-mm-card text-mm-text1 text-sm outline-none
-                        transition-colors focus:border-accent placeholder:text-mm-text3" />
+                 class="w-full px-4 py-3 rounded-xl border border-lp-line
+                        bg-lp-card text-lp-ink text-sm outline-none
+                        transition-colors focus:border-lp-accent placeholder:text-lp-ink-faint" />
           @if (form.get('quantity')?.touched && form.get('quantity')?.invalid) {
-            <p class="text-danger text-xs mt-1">Cantidad inválida</p>
+            <p class="text-lp-danger text-xs mt-1">Cantidad inválida</p>
           }
         </div>
         <div class="w-32">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-mm-text3 mb-2">Unidad</label>
+          <label class="block text-xs font-semibold text-lp-ink-faint mb-2">Unidad</label>
           <div class="relative">
             <select formControlName="unit"
-                    class="appearance-none w-full pl-3 pr-8 py-3 rounded-xl border border-white/[0.06]
-                           bg-mm-card text-mm-text1 text-sm outline-none transition-colors focus:border-accent">
+                    class="appearance-none w-full pl-3 pr-8 py-3 rounded-xl border border-lp-line
+                           bg-lp-card text-lp-ink text-sm outline-none transition-colors focus:border-lp-accent">
               <option value="" disabled>—</option>
               <option value="g">g</option>
               <option value="kg">kg</option>
@@ -96,7 +96,7 @@
               <option value="botes">bote(s)</option>
               <option value="bolsas">bolsa(s)</option>
             </select>
-            <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-mm-text3"
+            <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-lp-ink-faint"
                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
             </svg>
@@ -104,41 +104,41 @@
         </div>
       </div>
 
-      <div class="border-t border-white/[0.05] pt-4 mb-5 space-y-3">
-        <p class="text-xs font-semibold uppercase tracking-wider text-mm-text3">
-          Caducidad <span class="font-normal normal-case tracking-normal opacity-60">(opcional)</span>
+      <div class="border-t border-lp-line pt-4 mb-5 space-y-3">
+        <p class="text-xs font-semibold text-lp-ink-faint">
+          Caducidad <span class="font-normal opacity-60">(opcional)</span>
         </p>
         <div class="relative">
           <select formControlName="categoryId"
-                  class="appearance-none w-full pl-4 pr-8 py-2.5 rounded-xl border border-white/[0.06]
-                         bg-mm-card text-mm-text1 text-sm outline-none transition-colors focus:border-accent">
+                  class="appearance-none w-full pl-4 pr-8 py-2.5 rounded-xl border border-lp-line
+                         bg-lp-card text-lp-ink text-sm outline-none transition-colors focus:border-lp-accent">
             <option value="">Sin categoría</option>
             @for (cat of _categories(); track cat.id) {
               <option [value]="cat.id">{{ cat.name }} — ~{{ cat.defaultDays }} día{{ cat.defaultDays !== 1 ? 's' : '' }}</option>
             }
           </select>
-          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-mm-text3"
+          <svg class="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-lp-ink-faint"
                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
           </svg>
         </div>
         @if (selectedCategory()) {
-          <p class="text-accent-soft text-xs">Caduca aprox. el {{ categoryExpiryPreview() }}</p>
+          <p class="text-lp-accent-ink text-xs">Caduca aprox. el {{ categoryExpiryPreview() }}</p>
         }
         <input formControlName="expiresAt" type="date"
-               class="w-full px-4 py-2.5 rounded-xl border border-white/[0.06]
-                      bg-mm-card text-mm-text1 text-sm outline-none
-                      transition-colors focus:border-accent [color-scheme:dark]" />
+               class="w-full px-4 py-2.5 rounded-xl border border-lp-line
+                      bg-lp-card text-lp-ink text-sm outline-none
+                      transition-colors focus:border-lp-accent" />
       </div>
 
       @if (saveError()) {
-        <p class="text-danger text-xs mb-4 bg-danger/10 px-3 py-2 rounded-lg">{{ saveError() }}</p>
+        <p class="text-lp-danger text-xs mb-4 bg-lp-danger/10 px-3 py-2 rounded-lg">{{ saveError() }}</p>
       }
 
       <div class="flex gap-2.5">
         <button type="button" (click)="closed.emit()"
-                class="flex-1 py-2.5 rounded-xl border border-white/[0.07]
-                       text-mm-text2 hover:text-mm-text1 hover:border-white/10
+                class="flex-1 py-2.5 rounded-xl border border-lp-line
+                       text-lp-ink-soft hover:text-lp-ink hover:border-lp-line
                        transition-colors text-sm font-medium">
           Cancelar
         </button>

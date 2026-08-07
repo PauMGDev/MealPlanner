@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { catchError, forkJoin, of } from 'rxjs';
 import { type PantryItem, PantryService } from '../../core/services/pantry.service';
 import { type Recipe, RecipesService } from '../../core/services/recipes.service';
@@ -21,6 +22,7 @@ import { SkeletonComponent } from '../../shared/skeleton/skeleton.component';
 export class RecipesComponent implements OnInit {
   private readonly recipesService = inject(RecipesService);
   private readonly pantryService = inject(PantryService);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
   recipes = signal<Recipe[]>([]);
@@ -61,7 +63,14 @@ export class RecipesComponent implements OnInit {
     });
   });
 
-  ngOnInit(): void { this.loadAll(); }
+  ngOnInit(): void {
+    this.loadAll();
+    // Reacts to later navigations too: the router reuses this component when only
+    // the query param changes, so ngOnInit alone would miss the second click.
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => this.openRequestedRecipe(params.get('recipe')));
+  }
 
   private loadAll(): void {
     this.loading.set(true);
@@ -72,7 +81,15 @@ export class RecipesComponent implements OnInit {
       this.recipes.set(recipes);
       this.pantryItems.set(pantryItems);
       this.loading.set(false);
+      this.openRequestedRecipe(this.route.snapshot.queryParamMap.get('recipe'));
     });
+  }
+
+  /** `?recipe=<id>` opens that recipe straight away: the dashboard links here. */
+  private openRequestedRecipe(id: string | null): void {
+    if (!id) return;
+    const recipe = this.recipes().find(r => r.id === id);
+    if (recipe) this.detailRecipe.set(recipe);
   }
 
   getAvailability(recipeId: string): RecipeAvailability {

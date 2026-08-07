@@ -1,28 +1,28 @@
-<section class="bg-mm-card border border-white/[0.06] rounded-2xl p-5">
+<section class="bg-lp-card border border-lp-line rounded-2xl p-5">
   <div class="flex items-center gap-2.5">
-    <span class="w-2 h-2 rounded-full bg-warning/70 flex-shrink-0"></span>
-    <h2 class="text-xs font-semibold uppercase tracking-widest text-warning/60">
+    <span class="w-2 h-2 rounded-full bg-lp-warn/70 flex-shrink-0"></span>
+    <h2 class="text-sm font-semibold text-lp-ink">
       Agotados para tu plan
     </h2>
   </div>
-  <p class="text-xs text-mm-text3 mt-1.5 mb-4">Ingredientes que necesitas y no tienes</p>
+  <p class="text-xs text-lp-ink-faint mt-1.5 mb-4">Ingredientes que necesitas y no tienes</p>
 
   @if (loading) {
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       @for (i of [0, 1, 2, 3]; track i) {
-        <div class="h-12 rounded-xl bg-mm-surface animate-pulse"></div>
+        <div class="h-12 rounded-xl bg-lp-tray animate-pulse"></div>
       }
     </div>
   } @else if (suggestions.length === 0) {
-    <p class="text-sm text-mm-text3 py-1">Nada pendiente, ¡vas bien!</p>
+    <p class="text-sm text-lp-ink-faint py-1">Nada pendiente, ¡vas bien!</p>
   } @else {
     <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       @for (s of suggestions; track s.ingredientId) {
         <li class="flex items-center justify-between gap-3 pl-3 pr-2 py-2 rounded-xl
-                    bg-mm-surface border border-white/[0.05]">
+                    bg-lp-tray border border-lp-line">
           <div class="min-w-0">
-            <p class="text-sm text-mm-text1 truncate">{{ s.name }}</p>
-            <p class="text-xs text-mm-text3 truncate">{{ s.recipeNames.join(', ') }}</p>
+            <p class="text-sm text-lp-ink truncate">{{ s.name }}</p>
+            <p class="text-xs text-lp-ink-faint truncate">{{ s.recipeNames.join(', ') }}</p>
           </div>
           <button type="button" (click)="add.emit(s)"
                   title="Añadir a la lista" aria-label="Añadir a la lista"

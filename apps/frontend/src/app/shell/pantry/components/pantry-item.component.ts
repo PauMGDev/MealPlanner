@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { PantryItem } from '../../../core/services/pantry.service';
-import { expiryBadgeOf, type DisplayItem } from '../pantry.types';
+import { expiryBadgeOf, type DisplayItem, type ExpiryBadge } from '../pantry.types';
 
 @Component({
   selector: 'app-pantry-item',
@@ -17,7 +17,7 @@ export class PantryItemComponent {
   @Output() setDepleted = new EventEmitter<DisplayItem>();
   @Output() delete = new EventEmitter<DisplayItem>();
 
-  get badge(): { label: string; cls: string } | null {
+  get badge(): ExpiryBadge | null {
     return this.item.virtual ? null : expiryBadgeOf(this.item as PantryItem);
   }
 }

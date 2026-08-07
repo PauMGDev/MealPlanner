@@ -1,0 +1,94 @@
+<div class="lp-modules">
+
+  <!-- 1. What the visible week is short of -->
+  <section class="lp-module" appReveal [appRevealIndex]="0">
+    <h2 class="lp-module__title">Tu compra de la semana</h2>
+
+    @if (loading) {
+      <div class="lp-skel mt-4 h-4 w-40"></div>
+      <div class="lp-skel mt-3 h-4 w-full"></div>
+      <div class="lp-skel mt-2 h-4 w-5/6"></div>
+    } @else if (needs.length === 0) {
+      <p class="lp-module__sub">Tienes en la despensa todo lo que necesitan las recetas de esta semana.</p>
+    } @else {
+      <p class="lp-module__sub">
+        Faltan {{ needs.length }} ingrediente{{ needs.length === 1 ? '' : 's' }}
+        en {{ recipeCount }} receta{{ recipeCount === 1 ? '' : 's' }}
+      </p>
+
+      <ul class="lp-module__list">
+        @for (need of topNeeds; track need.ingredientId) {
+          <li class="lp-module__row">
+            <span class="lp-dot lp-dot--warn"></span>
+            {{ need.name }}
+          </li>
+        }
+      </ul>
+
+      @if (extraNeeds > 0) {
+        <p class="lp-module__more">+ {{ extraNeeds }} más</p>
+      }
+
+      <div class="lp-module__foot">
+        <button type="button" class="lp-btn lp-btn--solid lp-btn--block"
+                [disabled]="addingToList"
+                (click)="addNeedsToList.emit(needs)">
+          {{ addingToList ? 'Añadiendo...' : 'Añadir todo a la lista' }}
+        </button>
+      </div>
+    }
+  </section>
+
+  <!-- 2. What is coming next today -->
+  <section class="lp-module" appReveal [appRevealIndex]="1">
+    <h2 class="lp-module__title">Próxima comida</h2>
+
+    @if (loading) {
+      <div class="lp-skel mt-4 h-6 w-24"></div>
+      <div class="lp-skel mt-3 h-6 w-3/4"></div>
+    } @else if (!todayInWeek) {
+      <p class="lp-module__sub">Estás viendo otra semana.</p>
+      <div class="lp-module__foot">
+        <button type="button" class="lp-btn lp-btn--outline lp-btn--block" (click)="goToToday.emit()">
+          Ir a la semana actual
+        </button>
+      </div>
+    } @else if (!nextMeal) {
+      <p class="lp-module__sub">Hoy no tienes ninguna comida planificada.</p>
+    } @else {
+      <p class="mt-3"><span class="lp-module__tag">Hoy {{ nextMeal.time }}</span></p>
+      <p class="lp-module__lead">{{ nextMeal.meal.recipe.name }}</p>
+      <p class="mt-3 flex items-center gap-2 text-sm text-lp-ink-soft">
+        <span [class]="dotClass(nextMeal.availability.level)"></span>
+        {{ availabilityLabel(nextMeal.availability) }}
+      </p>
+
+      <div class="lp-module__foot">
+        <a class="lp-btn lp-btn--outline lp-btn--block" routerLink="/app/recipes"
+           [queryParams]="{ recipe: nextMeal.meal.recipeId }">Ver receta</a>
+      </div>
+    }
+  </section>
+
+  <!-- 3. Cookable right now. Placeholder: see COOKABLE_PLACEHOLDER. -->
+  <section class="lp-module" appReveal [appRevealIndex]="2">
+    <p class="flex items-center gap-2">
+      <span class="lp-module__title">Cocinable ahora</span>
+      <span class="lp-module__tag">Próximamente</span>
+    </p>
+    <p class="lp-module__sub">
+      Aquí verás las recetas que puedes cocinar hoy sin comprar nada. Este es un ejemplo,
+      todavía no lee tu despensa.
+    </p>
+
+    <ul class="lp-module__list" aria-hidden="true">
+      @for (name of cookablePlaceholder; track name) {
+        <li class="lp-module__row opacity-55">
+          <span class="lp-dot lp-dot--none"></span>
+          {{ name }}
+        </li>
+      }
+    </ul>
+  </section>
+
+</div>

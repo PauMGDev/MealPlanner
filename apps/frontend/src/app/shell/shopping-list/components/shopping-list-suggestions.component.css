@@ -5,11 +5,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 0.5rem;
-  color: #eab308;
-  background-color: rgba(234, 179, 8, 0.1);
+  color: var(--color-lp-accent-ink);
+  background-color: var(--color-lp-accent-soft);
   transition: background-color 0.15s ease;
 }
 
 .suggestion-add:hover {
-  background-color: rgba(234, 179, 8, 0.2);
+  background-color: color-mix(in srgb, var(--color-lp-accent) 28%, transparent);
 }

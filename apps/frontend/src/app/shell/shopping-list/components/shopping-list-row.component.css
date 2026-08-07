@@ -1,6 +1,6 @@
 .notebook-row {
   height: 2.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--color-lp-line);
 }
 
 .notebook-checkbox {
@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--color-mm-text3);
+  border: 2px solid var(--color-lp-line);
   border-radius: 3px;
   transform: rotate(-2deg);
   color: transparent;
@@ -18,7 +18,7 @@
 }
 
 .notebook-checkbox--checked {
-  border-color: #60a5fa;
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  border-color: var(--color-lp-accent);
+  background-color: var(--color-lp-accent);
+  color: #fff;
 }

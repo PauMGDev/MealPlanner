@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import type { Meal, MealType } from '../../../core/services/meal-plans.service';
+import type { Meal } from '../../../core/services/meal-plans.service';
 import { type Recipe } from '../../../core/services/recipes.service';
-import { MEAL_ROWS, SKELETON_ROWS, formatSlotDate, type MealRowDef } from '../weekly-calendar.types';
+import { AppModalComponent } from '../../../shared/modal/app-modal.component';
+import { MEAL_ROWS, formatSlotDate } from '../weekly-calendar.types';
+import type { SlotRef } from './calendar-grid.component';
 
 @Component({
   selector: 'app-meal-detail-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [AppModalComponent],
   templateUrl: './meal-detail-modal.component.html',
-  styleUrl: './meal-detail-modal.component.css',
 })
 export class MealDetailModalComponent {
   @Input() meal: Meal | null = null;
@@ -16,24 +18,31 @@ export class MealDetailModalComponent {
   @Input() set loadingRecipe(v: boolean) { this.loading.set(v); }
 
   @Output() closed = new EventEmitter<void>();
-  @Output() switchRecipe = new EventEmitter<{ date: string; mealType: MealType }>();
-  @Output() removed = new EventEmitter<{ date: string; mealType: MealType }>();
+  @Output() switchRecipe = new EventEmitter<SlotRef>();
+  @Output() removed = new EventEmitter<SlotRef>();
 
   recipe = signal<Recipe | null>(null);
   loading = signal(false);
 
-  readonly skeletonRows = SKELETON_ROWS;
   protected readonly formatSlotDate = formatSlotDate;
 
-  get rowDef(): MealRowDef {
-    return MEAL_ROWS.find(r => r.type === this.meal?.mealType)!;
+  get slotLabel(): string {
+    return MEAL_ROWS.find(r => r.type === this.meal?.mealType)?.label ?? '';
+  }
+
+  private get slot(): SlotRef | null {
+    return this.meal
+      ? { date: this.meal.date.slice(0, 10), mealType: this.meal.mealType }
+      : null;
   }
 
   onSwitchRecipe(): void {
-    if (this.meal) this.switchRecipe.emit({ date: this.meal.date.slice(0, 10), mealType: this.meal.mealType });
+    const slot = this.slot;
+    if (slot) this.switchRecipe.emit(slot);
   }
 
   onRemove(): void {
-    if (this.meal) this.removed.emit({ date: this.meal.date.slice(0, 10), mealType: this.meal.mealType });
+    const slot = this.slot;
+    if (slot) this.removed.emit(slot);
   }
 }

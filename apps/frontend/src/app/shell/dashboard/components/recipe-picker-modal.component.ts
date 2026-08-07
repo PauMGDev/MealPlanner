@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, signal } from '@angular/core';
-import type { MealType } from '../../../core/services/meal-plans.service';
 import { type Recipe } from '../../../core/services/recipes.service';
-import { RecipeCardsIconComponent } from '../../../shared/icons/recipe-cards-icon.component';
-import { MEAL_ROWS, SKELETON_ROWS, formatSlotDate, type MealRowDef } from '../weekly-calendar.types';
+import { AppModalComponent } from '../../../shared/modal/app-modal.component';
+import { MEAL_ROWS, formatSlotDate } from '../weekly-calendar.types';
+import type { SlotRef } from './calendar-grid.component';
 
 @Component({
   selector: 'app-recipe-picker-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RecipeCardsIconComponent],
+  imports: [AppModalComponent],
   templateUrl: './recipe-picker-modal.component.html',
-  styleUrl: './recipe-picker-modal.component.css',
 })
 export class RecipePickerModalComponent implements OnChanges {
   @Input() show = false;
-  @Input() slot: { date: string; mealType: MealType } | null = null;
+  @Input() slot: SlotRef | null = null;
   @Input() set recipes(v: Recipe[]) { this.allRecipes.set(v); }
   @Input() set loadingRecipes(v: boolean) { this.isLoading.set(v); }
 
@@ -30,14 +29,14 @@ export class RecipePickerModalComponent implements OnChanges {
     return q ? this.allRecipes().filter(r => r.name.toLowerCase().includes(q)) : this.allRecipes();
   });
 
-  readonly skeletonRows = SKELETON_ROWS;
+  readonly skeletonRows = [0, 1, 2, 3];
   protected readonly formatSlotDate = formatSlotDate;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['show']?.currentValue === true) this.query.set('');
   }
 
-  get rowDef(): MealRowDef | null {
-    return this.slot ? MEAL_ROWS.find(r => r.type === this.slot!.mealType) ?? null : null;
+  get slotLabel(): string {
+    return MEAL_ROWS.find(r => r.type === this.slot?.mealType)?.label ?? '';
   }
 }

@@ -48,10 +48,10 @@ after any schema change.
 - The `MealType` enum has FIVE values including both `ALMUERZO` and `LUNCH` ("Almuerzo"
   = mid-morning, "Comida" = lunch, Spanish meal culture). Do not "fix" this to 3 meals.
 - Dates travel as ISO strings; day comparisons use `date.slice(0, 10)`. Keep consistent.
-- Three separate design token sets in `styles.css`: `mm-*` (app shell, dark), `lp-*`
-  (landing and public surfaces, light only) and `hk-*` (auth pages, light/dark). Never
-  mix them across those boundaries. The `lp-*` family is documented in the
-  `mealmap-design-system` skill.
+- One design token set for the whole product: `lp-*` in `styles.css`, light only,
+  documented in the `mealmap-design-system` skill (read it before any UI change and
+  update it in the same commit when a design decision changes). The old `mm-*` dark app
+  palette was removed; `hk-*` is legacy and unused.
 - All user-facing copy is in Spanish. Code, comments and commits in English.
 
 ## Verification before claiming done
@@ -59,8 +59,8 @@ after any schema change.
 1. `npm run build` passes in the app(s) you touched.
 2. `npm test` passes in the app(s) you touched — no skipped/commented tests.
 3. If the schema changed: migration created, `prisma generate` ran, seed still works.
-4. UI changes: check both empty states and populated states; the app is dark-themed,
-   the landing is not.
+4. UI changes: check both empty states and populated states, and check mobile at 375px;
+   every surface is light.
 
 ## Known landmines
 

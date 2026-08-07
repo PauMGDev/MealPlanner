@@ -1,122 +1,69 @@
-@if (loadingPlan) {
-  <div class="rounded-2xl bg-mm-card border border-white/[0.06] overflow-hidden">
-    <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
-      <div class="p-4 h-20"></div>
-      @for (i of skeletonDays; track i) {
-        <div class="p-4 flex flex-col items-center gap-2">
-          <div class="h-2.5 w-5 bg-mm-elevated rounded-full animate-pulse"></div>
-          <div class="h-7 w-7 bg-mm-elevated rounded-full animate-pulse"></div>
-        </div>
-      }
-    </div>
-    @for (i of skeletonRows; track i) {
-      <div class="grid border-b border-white/[0.04] last:border-0" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
-        <div class="p-4 flex items-center gap-2">
-          <div class="h-2 w-2 rounded-full bg-mm-elevated animate-pulse"></div>
-          <div class="h-2.5 w-14 bg-mm-elevated rounded-full animate-pulse"></div>
-        </div>
-        @for (j of skeletonDays; track j) {
-          <div class="p-1.5">
-            @if ((i + j) % 2 === 0) {
-              <div class="h-[84px] rounded-xl bg-mm-elevated/40 animate-pulse"></div>
-            } @else {
-              <div class="skeleton-cell--ring h-[84px] rounded-xl border border-white/[0.04]">
-                <div class="skeleton-cell--ring__inner animate-pulse"></div>
-              </div>
-            }
-          </div>
-        }
+<div class="lp-matrix" [style.--lp-rows]="mealRows.length || 1">
+  <div class="lp-matrix__grid">
+
+    <div class="lp-matrix__corner"></div>
+    @for (day of weekDays; track toISODate(day); let i = $index) {
+      <div class="lp-matrix__day" [class.lp-matrix__day--today]="isToday(day)">
+        {{ dayLabels[i] }} {{ day.getDate() }}
       </div>
     }
-  </div>
-} @else {
-  <div class="overflow-x-auto">
-    <div class="min-w-[640px] rounded-2xl bg-mm-card border border-white/[0.06] overflow-hidden">
-      <div class="grid border-b border-white/[0.06]" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
-        <div class="p-4"></div>
-        @for (day of weekDays; track toISODate(day); let i = $index) {
-          <div class="relative p-4 flex flex-col items-center gap-1.5">
-            @if (isToday(day)) {
-              <span class="today-hairline absolute top-0 left-3 right-3 h-px"></span>
+
+    @if (loading) {
+      @for (row of mealRows; track row.type) {
+        <div class="lp-matrix__rowlabel">{{ row.label }}</div>
+        @for (day of weekDays; track toISODate(day)) {
+          <div class="lp-slot"><div class="lp-skel h-full w-full"></div></div>
+        }
+      }
+    } @else {
+      @for (row of mealRows; track row.type; let rowIndex = $index) {
+        <div class="lp-matrix__rowlabel" appReveal [appRevealIndex]="rowIndex">{{ row.label }}</div>
+
+        @for (day of weekDays; track toISODate(day)) {
+          @let key = slotKey(day, row.type);
+          @let meal = getMeal(day, row.type);
+
+          <div class="lp-slot"
+               appReveal [appRevealIndex]="rowIndex"
+               [class.lp-slot--today]="isToday(day)"
+               [class.lp-slot--over]="dragOver() === key"
+               (dragover)="onDragOver($event, key)"
+               (dragleave)="onDragLeave(key)"
+               (drop)="onDrop($event, day, row.type)">
+
+            @if (meal) {
+              @let slot = getAvailability(meal);
+              <div class="lp-meal"
+                   [class.lp-meal--today]="isToday(day)"
+                   [class.lp-meal--dragging]="dragSource() === key"
+                   draggable="true"
+                   (dragstart)="onDragStart($event, key)"
+                   (dragend)="onDragEnd()"
+                   (click)="openDetail.emit(meal)"
+                   (keydown.enter)="openDetail.emit(meal)"
+                   tabindex="0" role="button"
+                   [attr.aria-label]="row.label + ' del ' + dayLabels[$index] + ': ' + meal.recipe.name">
+                <p class="lp-meal__name">{{ meal.recipe.name }}</p>
+                <span [class]="dotClass(slot.level)" [attr.title]="availabilityLabel(slot)"></span>
+                <span class="sr-only">{{ availabilityLabel(slot) }}</span>
+
+                <button type="button" class="lp-meal__remove"
+                        (click)="onRemove($event, day, row.type)"
+                        [attr.aria-label]="'Quitar ' + meal.recipe.name">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+            } @else {
+              <button type="button" class="lp-empty"
+                      (click)="openPicker.emit({ date: toISODate(day), mealType: row.type })"
+                      [attr.aria-label]="'Añadir ' + row.label">
+                <span class="material-symbols-outlined">add</span>
+              </button>
             }
-            <span class="text-[10px] font-bold uppercase tracking-widest text-mm-text3">{{ dayLabels[i] }}</span>
-            <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors"
-                  [class]="isToday(day) ? 'today-marker text-amber-300' : 'text-mm-text1'">
-              {{ day.getDate() }}
-            </span>
           </div>
         }
-      </div>
-      @for (row of filteredMealRows; track row.type) {
-        <div class="grid border-b border-white/[0.04] last:border-0" [style.grid-template-columns]="'6.5rem repeat(7, 1fr)'">
-          <div class="px-4 py-3 flex items-center gap-2 border-r border-white/[0.04]">
-            <span class="w-2 h-2 rounded-full flex-shrink-0" [class]="row.dot"></span>
-            <span class="text-[11px] font-bold uppercase tracking-wider" [class]="row.color">{{ row.label }}</span>
-          </div>
-          @for (day of weekDays; track toISODate(day)) {
-            @let meal = getMeal(day, row.type);
-            <div class="p-1.5">
-              @if (meal) {
-                <div class="cell-enter meal-card group relative min-h-[84px] rounded-xl border border-white/[0.06] overflow-hidden cursor-pointer flex transition-all duration-200 hover:border-white/[0.14]"
-                     [class]="row.leftBorder + ' ' + row.accentBg" (click)="openDetail.emit(meal)">
-                  <div class="relative flex-1 p-3 flex flex-col justify-between min-w-0 z-10">
-                    <p class="text-xs font-semibold text-mm-text1 leading-snug line-clamp-2">{{ meal.recipe.name }}</p>
-                    <p class="text-[10px] tabular-nums mt-2" [class]="row.color">
-                      <span class="opacity-70">{{ meal.recipe.prepTime }} min</span>
-                    </p>
-                  </div>
-                  @if (meal.recipe.imageUrl) {
-                    <div class="meal-card__media relative w-20 flex-shrink-0 overflow-hidden rounded-r-xl">
-                      <img [src]="meal.recipe.imageUrl" [alt]="meal.recipe.name"
-                           class="w-full h-full object-cover opacity-80 group-hover:opacity-95 transition-opacity duration-200" />
-                      <span class="meal-card__media-fade absolute inset-y-0 left-0 w-6"></span>
-                    </div>
-                  }
-                  <button (click)="onRemoveSlot(toISODate(day), row.type, $event)"
-                          title="Quitar comida"
-                          class="meal-card__remove absolute bottom-1.5 right-2 text-[10px] font-semibold uppercase tracking-wide opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-200 z-10"
-                          [class]="row.color">
-                    Quitar
-                  </button>
-                </div>
-              } @else {
-                <button (click)="openPicker.emit({ date: toISODate(day), mealType: row.type })"
-                        class="cell-enter group/cell empty-slot w-full min-h-[84px] rounded-xl border border-dashed border-white/[0.06] flex items-center justify-center transition-all duration-200"
-                        [class]="row.emptyHover">
-                  <span class="relative w-9 h-9 flex items-center justify-center">
-                    <span class="empty-slot__ring absolute inset-0 rounded-full border border-dashed border-mm-text3/30 opacity-60 group-hover/cell:opacity-100 transition-all duration-200"
-                          [class]="row.emptyHoverRing"></span>
-                    <svg class="empty-slot__cutlery w-4 h-4 opacity-0 group-hover/cell:opacity-90"
-                         [class]="row.emptyHoverIcon"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                      <path d="M8 3v6a1.5 1.5 0 003 0V3"/>
-                      <path d="M9.5 9v12"/>
-                      <path d="M16 3c-1.1 1.1-1.5 2.5-1.5 4s.6 3 1.5 4v8"/>
-                    </svg>
-                  </span>
-                </button>
-              }
-            </div>
-          }
-        </div>
       }
-      @if (filteredMealRows.length === 0) {
-        <div class="py-12 flex flex-col items-center justify-center text-center gap-3">
-          <div class="flex items-center gap-2">
-            @for (row of allMealRows; track row.type) {
-              <svg class="w-4 h-4 opacity-30" [class]="row.color" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                @for (path of row.iconPaths; track path) {
-                  <path [attr.d]="path" />
-                }
-              </svg>
-            }
-          </div>
-          <div>
-            <p class="text-sm text-mm-text2">Todas las franjas están ocultas.</p>
-            <p class="text-xs text-mm-text3 mt-1">Activa alguna desde los filtros de arriba para ver tu plan.</p>
-          </div>
-        </div>
-      }
-    </div>
+    }
+
   </div>
-}
+</div>

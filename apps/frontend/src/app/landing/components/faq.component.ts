@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrollRevealDirective } from '../scroll-reveal.directive';
+import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 
 /** Accordion rows inside the bento tray. Native <details>, no JS state. */
 @Component({

@@ -1,107 +1,50 @@
-@if (show) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm modal-backdrop-enter"
-       (click)="closed.emit()">
-    <div class="bg-mm-surface border border-white/[0.08] rounded-2xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[85vh] modal-enter"
-         (click)="$event.stopPropagation()">
-
-      <div class="px-5 pt-5 pb-4 border-b border-white/[0.06] flex-shrink-0">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-semibold text-mm-text1">Elegir receta</h3>
-          <button (click)="closed.emit()" class="w-7 h-7 rounded-lg bg-mm-card text-mm-text3 hover:text-mm-text1 flex items-center justify-center transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        <div class="flex items-center gap-3">
-          @if (slot && rowDef) {
-            <div class="flex items-center gap-2 px-2.5 py-2 bg-mm-card rounded-xl flex-shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full" [class]="rowDef.dot"></span>
-              <span class="text-xs font-semibold" [class]="rowDef.color">{{ rowDef.label }}</span>
-              <span class="text-mm-text3 text-xs">·</span>
-              <span class="text-xs text-mm-text2 whitespace-nowrap">{{ formatSlotDate(slot.date) }}</span>
-            </div>
-          }
-          <div class="relative flex-1">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mm-text3 pointer-events-none"
-                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
-            </svg>
-            <input type="text" placeholder="Buscar receta..." autofocus
-                   class="w-full bg-mm-card border border-white/[0.06] rounded-xl pl-9 pr-4 py-2 text-sm text-mm-text1 placeholder-mm-text3 focus:outline-none focus:border-accent/50 transition-colors"
-                   [value]="query()"
-                   (input)="query.set($any($event.target).value)">
-          </div>
-        </div>
-        @if (!isLoading()) {
-          <p class="text-[11px] text-mm-text3 mt-2.5">
-            {{ filteredRecipes().length }} receta{{ filteredRecipes().length !== 1 ? 's' : '' }}
+<app-modal [open]="show" maxWidth="sm:max-w-2xl" (closed)="closed.emit()">
+  <header class="border-b border-lp-line px-6 py-5">
+    <div class="flex items-start justify-between gap-4">
+      <div class="min-w-0">
+        <h2 class="text-xl font-semibold text-lp-ink">Elegir receta</h2>
+        @if (slot) {
+          <p class="mt-1 text-xs font-medium text-lp-ink-faint">
+            {{ slotLabel }} · <span class="first-letter:uppercase">{{ formatSlotDate(slot.date) }}</span>
           </p>
         }
       </div>
+      <button type="button" class="lp-icon-btn" (click)="closed.emit()" aria-label="Cerrar">
+        <span class="material-symbols-outlined text-[18px]">close</span>
+      </button>
+    </div>
 
-      <div class="overflow-y-auto flex-1 p-4">
-        @if (isLoading()) {
-          <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(170px, 1fr))">
-            @for (i of skeletonRows; track i) {
-              <div class="rounded-xl bg-mm-card border border-white/[0.06] animate-pulse p-3 space-y-2.5">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-11 h-11 rounded-lg bg-mm-elevated flex-shrink-0"></div>
-                  <div class="flex-1 space-y-1.5 pt-1">
-                    <div class="h-2.5 bg-mm-elevated rounded-full w-full"></div>
-                    <div class="h-2.5 bg-mm-elevated rounded-full w-2/3"></div>
-                  </div>
-                </div>
-                <div class="h-2 bg-mm-elevated rounded-full w-1/2"></div>
-              </div>
-            }
-          </div>
-        } @else if (filteredRecipes().length === 0) {
-          <div class="flex flex-col items-center justify-center py-16">
-            <div class="w-12 h-12 rounded-2xl bg-mm-card border border-white/[0.06] flex items-center justify-center mb-3">
-              <svg class="w-5 h-5 text-mm-text3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="8.25" />
-                <circle cx="12" cy="9" r="0.6" fill="currentColor" stroke="none" />
-                <circle cx="9" cy="11.5" r="0.6" fill="currentColor" stroke="none" />
-                <circle cx="15" cy="11.5" r="0.6" fill="currentColor" stroke="none" />
-                <circle cx="9.5" cy="14.5" r="0.6" fill="currentColor" stroke="none" />
-                <circle cx="14.5" cy="14.5" r="0.6" fill="currentColor" stroke="none" />
-                <circle cx="12" cy="16.5" r="0.6" fill="currentColor" stroke="none" />
-              </svg>
-            </div>
-            @if (query().trim()) {
-              <p class="text-sm font-medium text-mm-text2">Ningún plato coincide con «{{ query() }}»</p>
-              <p class="text-xs text-mm-text3 mt-1">Prueba otro ingrediente o término de búsqueda</p>
-            } @else {
-              <p class="text-sm font-medium text-mm-text2">Tu recetario está vacío</p>
-              <p class="text-xs text-mm-text3 mt-1">Crea tu primera receta para verla aquí</p>
-            }
-          </div>
+    <div class="mt-4">
+      <label class="sr-only" for="recipe-picker-search">Buscar receta</label>
+      <input id="recipe-picker-search" type="text" class="auth-input" placeholder="Buscar receta"
+             [value]="query()" (input)="query.set($any($event.target).value)" />
+    </div>
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+    @if (isLoading()) {
+      <div class="grid gap-3 sm:grid-cols-2">
+        @for (i of skeletonRows; track i) { <div class="lp-skel h-20 w-full"></div> }
+      </div>
+    } @else if (filteredRecipes().length === 0) {
+      <p class="py-10 text-center text-sm text-lp-ink-soft">
+        @if (query().trim()) {
+          Ninguna receta coincide con "{{ query() }}"
         } @else {
-          <div class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(170px, 1fr))">
-            @for (recipe of filteredRecipes(); track recipe.id; let i = $index) {
-              <button (click)="selected.emit(recipe)"
-                      class="recipe-ticket group/recipe text-left bg-mm-card border border-white/[0.06] rounded-xl hover:border-accent/40 hover:shadow-lg hover:shadow-accent/[0.08] transition-colors duration-200 flex flex-col p-3 gap-2.5"
-                      [class.recipe-ticket--tilt]="i % 3 === 1">
-                <div class="flex items-start gap-2.5">
-                  @if (recipe.imageUrl) {
-                    <img [src]="recipe.imageUrl" [alt]="recipe.name"
-                         class="w-11 h-11 rounded-lg object-cover -rotate-2 flex-shrink-0 border border-white/[0.08] shadow-sm" />
-                  } @else {
-                    <div class="w-11 h-11 rounded-lg -rotate-2 flex-shrink-0 border border-white/[0.08] bg-mm-elevated flex items-center justify-center group-hover/recipe:bg-accent/[0.08] transition-colors duration-200">
-                      <app-recipe-cards-icon class="w-5 h-5 text-mm-text3 opacity-50 group-hover/recipe:opacity-70 transition-opacity" />
-                    </div>
-                  }
-                  <p class="text-xs font-semibold text-mm-text1 line-clamp-2 leading-snug pt-0.5 group-hover/recipe:text-white transition-colors duration-150">{{ recipe.name }}</p>
-                </div>
-                <p class="text-[10px] text-mm-text3 tabular-nums mt-auto">
-                  {{ recipe.prepTime }} min · {{ recipe.servings === 1 ? '1 ración' : recipe.servings + ' raciones' }}
-                </p>
-              </button>
-            }
-          </div>
+          Tu recetario está vacío. Crea una receta para asignarla aquí.
+        }
+      </p>
+    } @else {
+      <div class="grid gap-3 sm:grid-cols-2">
+        @for (recipe of filteredRecipes(); track recipe.id) {
+          <button type="button" class="lp-pick" (click)="selected.emit(recipe)">
+            <span class="lp-pick__name">{{ recipe.name }}</span>
+            <span class="lp-pick__meta">
+              {{ recipe.prepTime }} min · {{ recipe.servings === 1 ? '1 ración' : recipe.servings + ' raciones' }}
+            </span>
+          </button>
         }
       </div>
-    </div>
+    }
   </div>
-}
+</app-modal>

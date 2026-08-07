@@ -14,11 +14,11 @@
   </button>
 
   <span class="flex-1 truncate inline-block"
-        [class.text-mm-text3]="item.checked"
+        [class.text-lp-ink-faint]="item.checked"
         [class.notebook-strike]="item.checked">
     <span class="font-handwritten text-xl inline-block"
-          [class.text-mm-text1]="!item.checked"
-          [class.text-mm-text3]="item.checked"
+          [class.text-lp-ink]="!item.checked"
+          [class.text-lp-ink-faint]="item.checked"
           [style.transform]="'rotate(' + rotation + ')'">
       {{ item.name }}
     </span>
@@ -29,16 +29,16 @@
          (change)="onQuantityChange($any($event.target).value)"
          placeholder="cant."
          aria-label="Cantidad"
-         class="font-handwritten w-14 text-right bg-transparent border-b border-dashed border-white/15
-                text-mm-text2 text-lg outline-none focus:border-accent-soft/60 transition-colors
-                placeholder:text-mm-text3 placeholder:text-sm" />
+         class="font-handwritten w-14 text-right bg-transparent border-b border-dashed border-lp-line
+                text-lp-ink-soft text-lg outline-none focus:border-lp-accent-ink/60 transition-colors
+                placeholder:text-lp-ink-faint placeholder:text-sm" />
 
   @if (item.unit) {
-    <span class="font-handwritten text-mm-text3 text-base w-10 truncate">{{ item.unit }}</span>
+    <span class="font-handwritten text-lp-ink-faint text-base w-10 truncate">{{ item.unit }}</span>
   }
 
   <button type="button" (click)="removed.emit(item.id)"
-          class="opacity-0 group-hover:opacity-100 text-mm-text3 hover:text-danger
+          class="opacity-0 group-hover:opacity-100 text-lp-ink-faint hover:text-lp-danger
                  transition-opacity p-1 flex-shrink-0"
           aria-label="Eliminar de la lista">
     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

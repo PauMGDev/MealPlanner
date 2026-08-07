@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { Recipe } from '../../../core/services/recipes.service';
-import { accentBarClass, cardBorderClass, cardGradientStyle, dotClass, type RecipeAvailability } from '../recipes.types';
+import { accentBarClass, cardBorderClass, dotClass, type RecipeAvailability } from '../recipes.types';
 
 @Component({
   selector: 'app-recipe-card',
@@ -22,5 +22,4 @@ export class RecipeCardComponent {
   protected readonly dotClass = dotClass;
   protected readonly accentBarClass = accentBarClass;
   protected readonly cardBorderClass = cardBorderClass;
-  protected readonly cardGradientStyle = cardGradientStyle;
 }

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScrollRevealDirective } from '../scroll-reveal.directive';
+import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 
 interface PlannedDay {
   readonly day: string;

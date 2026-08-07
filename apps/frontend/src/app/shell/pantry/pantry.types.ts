@@ -10,11 +10,6 @@ export interface PantryGroup {
   isDepleted: boolean;
 }
 
-export const CAT_PALETTE = [
-  '#ff9966', '#ffc44d', '#4fc8ed', '#5fdba3',
-  '#bb96f5', '#ff7a93', '#5fd0c0', '#d9b27c',
-];
-
 export function buildMergedItems(items: PantryItem[], catalog: IngredientResult[]): DisplayItem[] {
   const now = new Date().toISOString();
   const linkedIds = new Set(items.map(i => i.ingredientId).filter((id): id is string => !!id));
@@ -51,7 +46,16 @@ export function buildGroupedItems(merged: DisplayItem[]): PantryGroup[] {
   return groups;
 }
 
-export function expiryBadgeOf(item: PantryItem): { label: string; cls: string } | null {
+export type ExpiryLevel = 'expired' | 'soon';
+
+export interface ExpiryBadge {
+  level: ExpiryLevel;
+  label: string;
+  /** Complete Tailwind literal, never concatenated. */
+  cls: string;
+}
+
+export function expiryBadgeOf(item: PantryItem): ExpiryBadge | null {
   let ms: number | null = null;
   if (item.expiresAt) {
     ms = new Date(item.expiresAt).getTime();
@@ -61,9 +65,8 @@ export function expiryBadgeOf(item: PantryItem): { label: string; cls: string } 
   if (ms === null) return null;
   const days = (ms - Date.now()) / 86_400_000;
   const date = new Date(ms).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-  if (days < 0)  return { label: 'Caducado',       cls: 'bg-danger/15 text-danger' };
-  if (days <= 3) return { label: `Caduca ${date}`,  cls: 'bg-warning/15 text-warning' };
-  if (days <= 7) return { label: `Caduca ${date}`,  cls: 'bg-caution/15 text-caution' };
+  if (days < 0)  return { level: 'expired', label: 'Caducado',      cls: 'bg-lp-danger-soft text-lp-danger' };
+  if (days <= 7) return { level: 'soon',    label: `Caduca ${date}`, cls: 'bg-lp-warn/20 text-lp-ink' };
   return null;
 }
 

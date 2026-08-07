@@ -1,6 +1,6 @@
-<div class="sticky top-0 z-10 -mx-8 px-8 pt-3 pb-4 mb-4 bg-mm-base/90 backdrop-blur-md border-b border-white/[0.04]">
+<div class="sticky top-0 z-10 -mx-8 px-8 pt-3 pb-4 mb-4 bg-lp-base/90 backdrop-blur-md border-b border-lp-line">
   <div class="relative mb-2.5">
-    <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mm-text3 pointer-events-none"
+    <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-lp-ink-faint pointer-events-none"
          fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round"
             d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607"/>
@@ -9,12 +9,12 @@
            [value]="searchQuery"
            (input)="searchQueryChange.emit($any($event.target).value)"
            placeholder="Buscar receta…"
-           class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-white/[0.06]
-                  bg-mm-surface text-mm-text1 text-sm outline-none
-                  transition-colors focus:border-accent/50 placeholder:text-mm-text3" />
+           class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-lp-line
+                  bg-lp-tray text-lp-ink text-sm outline-none
+                  transition-colors focus:border-lp-accent/50 placeholder:text-lp-ink-faint" />
     @if (searchQuery) {
       <button (click)="searchQueryChange.emit('')"
-              class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-mm-text3 hover:text-mm-text1 transition-colors">
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-lp-ink-faint hover:text-lp-ink transition-colors">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
@@ -24,16 +24,16 @@
   <div class="flex items-center gap-2">
     <button (click)="onlyAvailableChange.emit(!onlyAvailable)"
             [class]="onlyAvailable
-              ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-success/20 text-success border-success/30'
-              : 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-mm-surface border-white/[0.06] text-mm-text2 hover:border-white/10 hover:text-mm-text1'">
-      <span class="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0"></span>
+              ? 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-lp-accent-soft text-lp-accent-ink border-lp-accent/30'
+              : 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors border bg-lp-tray border-lp-line text-lp-ink-soft hover:border-lp-line hover:text-lp-ink'">
+      <span class="w-1.5 h-1.5 rounded-full bg-lp-ok flex-shrink-0"></span>
       Listo para cocinar
     </button>
     @if (isFiltering) {
       <button (click)="clearFilters.emit()"
               class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs
-                     text-mm-text3 hover:text-mm-text1 transition-colors
-                     border border-white/[0.06] hover:border-white/10 ml-auto">
+                     text-lp-ink-faint hover:text-lp-ink transition-colors
+                     border border-lp-line hover:border-lp-line ml-auto">
         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
