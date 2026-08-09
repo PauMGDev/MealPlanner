@@ -1,4 +1,4 @@
-<app-modal [open]="show" [mobileBottom]="false" maxWidth="max-w-xl" rounded="rounded-3xl" (closed)="closed.emit()">
+<app-modal [open]="show" [mobileBottom]="false" maxWidth="max-w-xl" (closed)="closed.emit()">
 
   <div class="flex items-center justify-between px-8 pt-7 pb-0 flex-shrink-0">
     <h2 class="text-xl font-bold text-lp-ink">{{ recipe ? 'Editar receta' : 'Nueva receta' }}</h2>

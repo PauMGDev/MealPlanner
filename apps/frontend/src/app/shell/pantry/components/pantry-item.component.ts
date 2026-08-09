@@ -11,7 +11,6 @@ import { expiryBadgeOf, type DisplayItem, type ExpiryBadge } from '../pantry.typ
 })
 export class PantryItemComponent {
   @Input({ required: true }) item!: DisplayItem;
-  @Input() isLast = false;
 
   @Output() rowClick = new EventEmitter<DisplayItem>();
   @Output() setDepleted = new EventEmitter<DisplayItem>();

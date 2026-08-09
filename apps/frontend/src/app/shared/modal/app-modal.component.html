@@ -1,9 +1,14 @@
-@if (open) {
+@if (isOpen) {
   <div class="lp-modal-backdrop modal-backdrop-enter flex justify-center p-0 sm:p-4"
        [class]="backdropClasses"
        (click)="closed.emit()">
     <div class="lp-modal modal-enter flex w-full flex-col"
          [class]="panelClasses"
+         data-modal-panel
+         tabindex="-1"
+         role="dialog"
+         aria-modal="true"
+         (keydown.escape)="closed.emit()"
          (click)="$event.stopPropagation()">
       <ng-content />
     </div>

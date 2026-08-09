@@ -1,10 +1,7 @@
-<div class="flex items-center gap-3 px-4 py-2.5 group/row transition-colors
-            hover:bg-lp-hover cursor-pointer"
-     [class.border-b]="!isLast"
-     [class.border-lp-line]="!isLast"
+<div class="lp-row lp-row--inset group/row cursor-pointer transition-colors hover:bg-lp-hover"
      (click)="rowClick.emit(item)">
 
-  <span class="flex-1 text-sm text-lp-ink truncate min-w-0" [title]="item.name">{{ item.name }}</span>
+  <span class="lp-row__name" [title]="item.name">{{ item.name }}</span>
 
   @if (!item.virtual && badge; as b) {
     <span class="flex-shrink-0 rounded-md px-1.5 py-0.5 text-xs font-medium" [class]="b.cls">

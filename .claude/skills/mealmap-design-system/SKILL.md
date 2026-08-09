@@ -248,6 +248,13 @@ What this design deliberately does not do:
 - No em dash or en dash anywhere in user facing copy. Use a hyphen, a comma, or two
   sentences. This holds for Spanish copy too.
 - No accent coloured primary button. The primary CTA is ink.
+- No status colour used structurally, and no second reading of the same status. The
+  availability semaphore appears **once per surface**, as a dot plus text, and never as a
+  border, a top rail, a tinted background or a card outline. Green is the default state
+  and is never drawn: only the exceptions are flagged, so an all in stock item gets a
+  neutral dot and a plain count. Rendering the same status twice on one screen (a card
+  border and a footer line, a header badge and a per row list) is the same mistake as
+  colouring structure with it. See "Application surface" for the exact anatomy.
 - No repeated layout family. Each section uses a different one. The landing currently runs
   ten: glass pill nav, centred hero with fold cut media, hairline value band, bento tray,
   horizontal scroll snap rail, asymmetric split, vertical timeline, accordion stack,
@@ -287,19 +294,26 @@ Three, all listed in the token table above: `lp-hover`, `lp-ok`, `lp-warn`.
 while a control on a card needs a hover fill that is not a full surface step.
 
 `lp-ok` and `lp-warn` are the documented exception to the one accent rule. The reason: the
-availability semaphore encodes three ordered states and the accent alone cannot carry
-order. The exception is bounded by three rules:
+availability semaphore encodes ordered states and the accent alone cannot carry order. The
+exception is bounded:
 
-- The semaphore is a **dot only**. `lp-ok` and `lp-warn` never colour text, never fill a
-  surface, never colour a border. `lp-warn` measures 4.1 over `base`, below the small text
-  floor, so text next to it stays `lp-ink-soft`.
+- **Once per surface.** A screen states availability in exactly one place. A recipe card
+  says it in its foot; the detail modal says it in the ingredient rows; the matrix says it
+  in the cell dot. Never twice on the same screen.
+- **A dot plus text, never structure.** `lp-ok` and `lp-warn` never colour a border, a
+  rail, a background or a card outline, and never colour text: `lp-warn` measures 4.1 over
+  `base`, below the small text floor, so the label next to a dot stays `lp-ink-soft`.
+- **Green is the default and is not drawn.** Having the ingredient is the expected state,
+  so it carries no mark: an all in stock item shows a neutral `--none` dot and a plain
+  count, and an available ingredient row shows an empty gutter that only keeps names
+  aligned. Only what the user has to act on is coloured.
 - Every dot is paired with a label or a `title`, so colour is never the only signal.
-- The fourth state, `none` (a recipe with no linked ingredients), is `lp-line`, not a
-  fourth colour.
 
 Class shape: `.lp-dot` plus one of `--ok`, `--warn`, `--danger`, `--none`. The mapping
-functions (`dotClass` in `weekly-calendar.types.ts` and `recipes.types.ts`) return complete
-class literals, never concatenated fragments, because Tailwind only sees whole names.
+functions (`dotClass` in `weekly-calendar.types.ts`, `availabilitySummary` in
+`recipes.types.ts`) return complete class literals, never concatenated fragments, because
+Tailwind only sees whole names. `--ok` survives for the matrix cell, where a filled slot
+genuinely benefits from a positive read at a glance; nothing else uses it.
 
 ### Navigation
 
@@ -375,6 +389,78 @@ outlined for the rest, so a row of three never shows three solid buttons.
 
 With five meal rows the module row can fall below the fold. That is correct: the matrix is
 the screen's job and the modules are secondary.
+
+### Recipe card
+
+Five fixed zones, in this order, so a grid of cards lines up whatever the content
+(`lp-rcard`):
+
+1. **Media**, `aspect-ratio: 16 / 10`, `object-fit: cover`, `tray` behind it. A recipe with
+   no picture gets a Material Symbols glyph, not a stretched image.
+2. **Title**, clamped to two lines with `min-height` reserving both, so a one line and a
+   two line title produce the same card height.
+3. **Description**, clamped to two lines with the same reservation. It stays even when
+   empty; the reserved space is what keeps the feet aligned.
+4. **Chips** (`lp-chip`): time, servings, step count.
+5. **Foot**, pushed down by `margin-top: auto` and separated by a hairline. It carries the
+   single availability read and the disclosure caret.
+
+Edit and delete live in `lp-rcard__actions`, an overlay in the top right corner of the
+photo built from `lp-overlay-btn`. They are hidden at rest and revealed on `:hover` **or
+`:focus-within`**, so they are reachable with the keyboard alone. They never sit in the
+title row: a destructive control next to a name is easy to hit by accident and it steals
+the width the name needs.
+
+The foot line is the only place the card mentions availability, and it is actionable:
+`5/5 en despensa` with a neutral dot, or `Te falta 1` / `Te faltan N` with an amber or red
+one. Per ingredient marks live one level down, in the disclosure and in the modal.
+
+### Recipe detail modal
+
+Built on the shared `app-modal`, no colour rail, no status header.
+
+- **Head** is a two column grid, text left and the picture right at 38 percent, and only
+  when there is a picture. The grid covers the head only, so the lists below span the full
+  width and the picture never leaves an empty column hanging beside them.
+- **Picture** (`lp-modal-media`) is capped in height with `object-fit: cover`, never
+  stretched to the height of the panel: a portrait crop of a wide photo is worse than a
+  short one. It bleeds to the panel edge rather than floating inside it, and its inner
+  edges dissolve into the card colour with a gradient overlay, so it reads as part of the
+  surface instead of a pasted thumbnail. Negative margins undo the scroll column's padding;
+  `.lp-modal`'s clipping is what rounds its outer corner.
+- **Close** is an `lp-overlay-btn` pinned to the panel corner, because it can land over the
+  photo.
+- **Ingredients** are flat rows (`lp-row`), the same pattern as Despensa: hairline
+  separator, name left, quantity right. Available ingredients carry no mark, only an empty
+  `lp-row__gutter` that keeps the names aligned. Missing ones get an amber dot and a note:
+  "no está en tu despensa" when it is absent, "se te ha agotado" when it is there at zero.
+  The dot collapses the two states; the words must not.
+- **Footer** follows the dashboard meal modal: actions grouped on the right, primary last
+  ("Añadir al plan"), secondary outlined ("Editar receta"), and the destructive one demoted
+  to a text action (`lp-link-danger`) that asks for confirmation in place before firing.
+  Never a footer of three equally weighted buttons.
+
+### Modal patterns
+
+- **Any full-bleed band inside a rounded container needs explicit clipping.** A footer or
+  header that runs edge to edge paints over the panel's rounded corners unless the panel
+  sets `overflow: hidden`. `.lp-modal` does. Check the scrolling column is the inner one,
+  not the panel, or clipping kills the scroll.
+- **Class names in a modal's chrome must be complete literals.** `.lp-modal` panels once
+  built their radius as `sm:${rounded}`; Tailwind never sees a concatenated name, so every
+  panel shipped with square bottom corners, which is what made the footer look broken.
+- **A second decision is a step of the modal, not a second modal and not a popover.**
+  Stacking a dialog over a dialog hides the thing the user is deciding about, and an
+  anchored popover cannot be trusted inside a clipped panel: the panel sizes to its
+  content, so on a short recipe the popover is taller than the space above the footer and
+  `overflow: hidden` cuts it. The step replaces the body and the footer, keeps its own way
+  back, and hides the panel's close button while it is showing. It takes focus when it
+  opens, and Escape unwinds one level at a time (the step stops the event on its own
+  subtree; the modal listens on the document).
+- **A timed auto-close belongs to one action only.** Any other decision the user starts
+  while it is pending must cancel it, or the modal is yanked away mid-answer.
+- **An upsert endpoint is not permission to overwrite silently.** When the target slot is
+  taken, name what is there and what will replace it, and require a confirmation.
 
 ### Page chrome
 

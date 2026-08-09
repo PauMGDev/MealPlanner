@@ -983,6 +983,11 @@
 }
 .lp-modal {
   color-scheme: light;
+  position: relative;
+  /* The footer is a full-bleed band: without clipping its background paints
+     over the rounded bottom corners. The panel's own scrolling lives on the
+     inner column, so hiding overflow here costs nothing. */
+  overflow: hidden;
   background: var(--color-lp-card);
   border: 1px solid var(--color-lp-line);
   box-shadow: 0 30px 70px rgb(34 30 26 / 0.18);
@@ -1002,3 +1007,154 @@
 .lp-pick__name { @apply text-sm font-semibold leading-snug text-lp-ink; }
 .lp-pick__meta { @apply text-xs tabular-nums text-lp-ink-faint; }
 @media (prefers-reduced-motion: reduce) { .lp-pick, .lp-pick:hover { transform: none; transition: none; } }
+
+/* ── Flat list row (pantry items, modal ingredient lists) ─ */
+/* No horizontal padding of its own: .lp-* classes are unlayered and would beat
+   a px-* utility, so insets come from the --inset modifier. */
+.lp-row {
+  @apply flex items-center gap-3 py-2.5 text-sm;
+  border-bottom: 1px solid var(--color-lp-line);
+}
+/* The trailing hairline is dropped from the parent, not with `.lp-row:last-child`:
+   a row rendered by its own component is an only child of its host, so
+   `:last-child` would match every row and erase every separator. The second
+   selector covers rows wrapped in a component host. */
+.lp-rows > .lp-row:last-child,
+.lp-rows > :last-child .lp-row { border-bottom: 0; }
+.lp-row--inset { padding-inline: 1rem; }
+/* .lp-row is unlayered, so a text-* or py-* utility on it would lose. */
+.lp-row--compact { font-size: 0.8125rem; padding-block: 0.5rem; }
+.lp-row__name { @apply min-w-0 flex-1 truncate text-lp-ink; }
+.lp-row__note { @apply shrink-0 text-xs text-lp-ink-soft; }
+.lp-row__meta { @apply shrink-0 tabular-nums text-xs text-lp-ink-faint; }
+/* Keeps names aligned when a row carries no dot. Alignment, not a mark. */
+.lp-row__gutter { @apply block h-2.5 w-2.5 shrink-0; }
+
+/* Round control that has to stay legible over a photo. */
+.lp-overlay-btn {
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-lp-ink-soft;
+  background: color-mix(in srgb, var(--color-lp-card) 90%, transparent);
+  border: 1px solid var(--color-lp-line);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: color 160ms ease, background-color 160ms ease;
+}
+.lp-overlay-btn .material-symbols-outlined { font-size: 17px; }
+.lp-overlay-btn:hover { background: var(--color-lp-card); color: var(--color-lp-ink); }
+.lp-overlay-btn--danger:hover { color: var(--color-lp-danger); }
+
+/* ── Recipe card ────────────────────────────────────────── */
+/* Fixed zones so a grid of cards lines up: media, two-line title, two-line
+   description, chips, foot. Availability is read once, in the foot. */
+.lp-rcard {
+  @apply flex cursor-pointer flex-col overflow-hidden text-left;
+  border-radius: 20px;
+  background: var(--color-lp-card);
+  border: 1px solid var(--color-lp-line);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 160ms ease;
+}
+.lp-rcard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgb(34 30 26 / 0.07);
+  border-color: color-mix(in srgb, var(--color-lp-ink) 14%, transparent);
+}
+.lp-rcard__media { @apply relative overflow-hidden; aspect-ratio: 16 / 10; background: var(--color-lp-tray); }
+.lp-rcard__media img { @apply block h-full w-full object-cover; }
+.lp-rcard__placeholder { @apply flex h-full w-full items-center justify-center text-lp-ink-faint; }
+.lp-rcard__placeholder .material-symbols-outlined { font-size: 40px; opacity: 0.35; }
+
+/* Reveals on hover or when anything inside takes keyboard focus, so the
+   actions stay reachable without a pointer. */
+.lp-rcard__actions { @apply absolute right-2 top-2 flex gap-1 opacity-0; transition: opacity 160ms ease; }
+.lp-rcard:hover .lp-rcard__actions,
+.lp-rcard__actions:focus-within { opacity: 1; }
+
+.lp-rcard__body { @apply flex flex-1 flex-col p-5; }
+/* min-height reserves the clamped line count so titles of 1 and 2 lines align. */
+.lp-rcard__title {
+  @apply block w-full overflow-hidden text-left text-[0.9375rem] font-semibold text-lp-ink;
+  line-height: 1.35;
+  min-height: 2.7em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.lp-rcard__desc {
+  @apply mt-1.5 overflow-hidden text-[0.8125rem] text-lp-ink-soft;
+  line-height: 1.5;
+  min-height: 3em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.lp-rcard__chips { @apply mt-4 flex flex-wrap gap-1.5; }
+.lp-rcard__foot {
+  @apply mt-auto flex w-full items-center gap-2 pt-4 text-[0.8125rem] text-lp-ink-soft;
+  border-top: 1px solid var(--color-lp-line);
+  margin-top: 1rem;
+}
+.lp-rcard__caret { @apply ml-auto shrink-0 text-lp-ink-faint; transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1); }
+.lp-rcard__caret .material-symbols-outlined { font-size: 18px; }
+.lp-rcard__caret--open { transform: rotate(180deg); }
+.lp-rcard__detail { @apply mt-3 border-t pt-3; border-color: var(--color-lp-line); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-rcard, .lp-rcard:hover, .lp-rcard__caret { transition: none; transform: none; }
+}
+
+
+/* ── Day and slot picker (add to plan step) ─────────────── */
+.lp-slot-option {
+  @apply flex w-full items-center gap-3 px-4 py-3 text-left text-sm;
+  border-radius: 14px;
+  background: var(--color-lp-base);
+  border: 1px solid var(--color-lp-line);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+.lp-slot-option:hover { border-color: var(--color-lp-accent); background: var(--color-lp-accent-soft); }
+.lp-slot-option:disabled { opacity: 0.55; cursor: not-allowed; }
+.lp-slot-option__taken { @apply min-w-0 truncate text-xs text-lp-ink-soft; }
+.lp-slot-option__free { @apply text-xs text-lp-ink-faint; }
+
+/* Inline notice inside a step: states a consequence before it happens. */
+.lp-app-note {
+  @apply p-4 text-sm;
+  border-radius: 14px;
+  background: var(--color-lp-accent-soft);
+}
+
+/* Discreet text action for something destructive. */
+.lp-link-danger {
+  @apply rounded-full px-3 py-2 text-sm font-medium text-lp-ink-faint;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+.lp-link-danger:hover { color: var(--color-lp-danger); background: var(--color-lp-danger-soft); }
+
+/* ── Modal media: bled to the panel edge, faded into it ──── */
+/* The picture keeps the capped height of the inset version but sits flush with
+   the panel instead of floating in it, and its inner edges dissolve into the
+   card colour so it reads as part of the surface, not as a pasted thumbnail.
+   `.lp-modal` clips it, which is what rounds its outer corner. */
+.lp-modal-media { @apply relative overflow-hidden; }
+.lp-modal-media img { @apply block h-full w-full object-cover; }
+.lp-modal-media::after {
+  content: "";
+  @apply pointer-events-none absolute inset-0;
+}
+/* Phone: full width band at the top, fading downwards into the content. */
+.lp-modal-media { height: 11rem; }
+.lp-modal-media::after {
+  background: linear-gradient(to top, var(--color-lp-card) 0%, transparent 38%);
+}
+@media (min-width: 640px) {
+  /* From sm the picture is the right hand column: fade on its left edge, and
+     along the bottom where it stops short of the panel. */
+  .lp-modal-media { height: 15rem; }
+  .lp-modal-media::after {
+    background:
+      linear-gradient(to right, var(--color-lp-card) 0%, transparent 30%),
+      linear-gradient(to top, var(--color-lp-card) 0%, transparent 32%);
+  }
+}

@@ -91,6 +91,7 @@
   [availability]="detailRecipe() ? getAvailability(detailRecipe()!.id) : null"
   (closed)="closeDetail()"
   (editRequested)="openEditModal($event)"
+  (deleteRequested)="onDetailDelete($event)"
 />
 
 <app-recipe-form-modal

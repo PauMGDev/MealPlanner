@@ -1,0 +1,72 @@
+<!-- A step inside the modal, not a layer over it: the panel clips its own
+     content so an anchored popover would be cut off on a short recipe, and a
+     dialog over a dialog would hide the recipe being decided about. -->
+<div class="p-6 sm:p-8">
+  <div class="flex items-start justify-between gap-3">
+    <div>
+      <p class="text-lg font-semibold text-lp-ink">Añadir al plan</p>
+      <p class="mt-1 text-sm text-lp-ink-soft">{{ recipe.name }}</p>
+    </div>
+    <button type="button" class="lp-icon-btn" (click)="goBack()" aria-label="Volver a la receta">
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    </button>
+  </div>
+
+  @if (pendingReplace(); as slot) {
+    <div class="lp-app-note mt-6">
+      <p class="font-semibold text-lp-ink">Ese hueco ya está ocupado</p>
+      <p class="mt-1.5 leading-relaxed text-lp-ink-soft">
+        <span class="first-letter:uppercase">{{ selectedDayLabel }}</span>, {{ slot.row.label }}:
+        ahora hay <strong class="font-semibold text-lp-ink">{{ slot.taken!.recipe.name }}</strong>.
+        Se sustituirá por <strong class="font-semibold text-lp-ink">{{ recipe.name }}</strong>.
+      </p>
+    </div>
+    <div class="mt-5 flex justify-end gap-2">
+      <button type="button" class="lp-btn lp-btn--outline lp-btn--sm" data-confirm-cancel
+              (click)="cancelReplace()">Cancelar</button>
+      <button type="button" class="lp-btn lp-btn--solid lp-btn--sm" [disabled]="saving()" (click)="confirmReplace()">
+        {{ saving() ? 'Sustituyendo...' : 'Sustituir' }}
+      </button>
+    </div>
+  } @else {
+    <div class="lp-dayrail mt-6 max-w-sm" role="group" aria-label="Día">
+      @for (day of days(); track toISODate(day); let i = $index) {
+        <button type="button" class="lp-daypill"
+                [class.is-selected]="selectedDate() === toISODate(day)"
+                [class.is-today]="isToday(day)"
+                [attr.aria-pressed]="selectedDate() === toISODate(day)"
+                [attr.aria-label]="formatDayLong(day)"
+                (click)="selectDay(day)">
+          {{ dayInitials[i] }}
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="lp-skel mt-5 h-12 w-full"></div>
+      <div class="lp-skel mt-2 h-12 w-full"></div>
+      <div class="lp-skel mt-2 h-12 w-full"></div>
+    } @else {
+      <ul class="mt-5 space-y-2">
+        @for (slot of slots(); track slot.row.type) {
+          <li>
+            <button type="button" class="lp-slot-option" [disabled]="saving()" (click)="pick(slot)"
+                    [attr.aria-label]="'Añadir a ' + slot.row.label + ' del ' + selectedDayLabel">
+              <span class="font-medium text-lp-ink">{{ slot.row.label }}</span>
+              @if (slot.taken) {
+                <span class="lp-slot-option__taken">Ahora: {{ slot.taken.recipe.name }}</span>
+              } @else {
+                <span class="lp-slot-option__free">Libre</span>
+              }
+              <span class="material-symbols-outlined ml-auto text-[18px] text-lp-ink-faint">add</span>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (error()) {
+      <p class="mt-4 text-sm font-medium text-lp-danger">{{ error() }}</p>
+    }
+  }
+</div>

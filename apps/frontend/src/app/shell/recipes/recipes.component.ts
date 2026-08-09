@@ -93,7 +93,7 @@ export class RecipesComponent implements OnInit {
   }
 
   getAvailability(recipeId: string): RecipeAvailability {
-    return this.recipeAvailabilities().get(recipeId) ?? { status: 'none', availableSummary: '', ingredientStatuses: new Map() };
+    return this.recipeAvailabilities().get(recipeId) ?? { status: 'none', ingredientStatuses: new Map() };
   }
 
   deleteRecipe(id: string): void {
@@ -110,5 +110,6 @@ export class RecipesComponent implements OnInit {
   openEditModal(recipe: Recipe): void { this.detailRecipe.set(null); this.editingRecipe.set(recipe); this.showFormModal.set(true); }
   openDetail(recipe: Recipe): void { this.expandedId.set(null); this.detailRecipe.set(recipe); }
   closeDetail(): void { this.detailRecipe.set(null); }
+  onDetailDelete(id: string): void { this.closeDetail(); this.deleteRecipe(id); }
   onRecipeSaved(): void { this.loadAll(); this.closeModal(); }
 }

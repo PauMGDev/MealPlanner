@@ -18,11 +18,10 @@
 
   <div [class]="isCollapsed ? 'collapsible collapsed' : 'collapsible'">
     <div>
-      <div class="rounded-r-2xl border-l-2 border-l-lp-line overflow-hidden bg-lp-tray">
-        @for (item of group.items; track item.id; let last = $last) {
+      <div class="lp-rows rounded-r-2xl border-l-2 border-l-lp-line overflow-hidden bg-lp-tray">
+        @for (item of group.items; track item.id) {
           <app-pantry-item
             [item]="item"
-            [isLast]="last"
             (rowClick)="rowClick.emit($event)"
             (setDepleted)="setDepleted.emit($event)"
             (delete)="delete.emit($event)" />

@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { Recipe } from '../../../core/services/recipes.service';
-import { accentBarClass, cardBorderClass, dotClass, type RecipeAvailability } from '../recipes.types';
+import { availabilitySummary, isMissing, type AvailabilitySummary, type RecipeAvailability } from '../recipes.types';
 
 @Component({
   selector: 'app-recipe-card',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './recipe-card.component.html',
-  styleUrl: './recipe-card.component.css',
 })
 export class RecipeCardComponent {
   @Input({ required: true }) recipe!: Recipe;
@@ -19,7 +18,12 @@ export class RecipeCardComponent {
   @Output() delete = new EventEmitter<string>();
   @Output() toggleExpand = new EventEmitter<string>();
 
-  protected readonly dotClass = dotClass;
-  protected readonly accentBarClass = accentBarClass;
-  protected readonly cardBorderClass = cardBorderClass;
+
+  get summary(): AvailabilitySummary {
+    return availabilitySummary(this.availability);
+  }
+
+  isIngredientMissing(ingredientId: string): boolean {
+    return isMissing(this.availability.ingredientStatuses.get(ingredientId));
+  }
 }

@@ -6,6 +6,7 @@ import { type PantryItem, PantryService } from '../../core/services/pantry.servi
 import { type Recipe, RecipesService } from '../../core/services/recipes.service';
 import { ShoppingListService } from '../../core/services/shopping-list.service';
 import { SettingsService } from '../../core/services/settings.service';
+import { PlanWeekService } from '../../core/services/plan-week.service';
 import {
   MEAL_HOURS,
   MEAL_ROWS,
@@ -51,9 +52,11 @@ export class DashboardComponent {
   private readonly pantryService = inject(PantryService);
   private readonly shoppingList = inject(ShoppingListService);
   private readonly settings = inject(SettingsService);
+  private readonly planWeek = inject(PlanWeekService);
   private readonly destroyRef = inject(DestroyRef);
 
-  currentWeekStart = signal<Date>(getThisMonday());
+  /** Shared, so the recipe modal can offer the days the user is looking at. */
+  readonly currentWeekStart = this.planWeek.weekStart;
   weeklyPlan = signal<WeeklyPlan | null>(null);
   loadingPlan = signal(true);
   calendarError = signal('');
@@ -64,7 +67,9 @@ export class DashboardComponent {
   loadingContext = signal(true);
   addingToList = signal(false);
 
-  selectedDay = signal<Date>(new Date());
+  /** The week now outlives the screen, so the mobile day view has to start
+      inside whatever week is showing, not blindly on today. */
+  selectedDay = signal<Date>(this.dayInVisibleWeek());
 
   detailMeal = signal<Meal | null>(null);
   detailRecipe = signal<Recipe | null>(null);
@@ -75,9 +80,9 @@ export class DashboardComponent {
 
   // ─── Derived view state ───────────────────────────────────────────────────
 
-  weekDays = computed(() => Array.from({ length: 7 }, (_, i) => addDays(this.currentWeekStart(), i)));
+  readonly weekDays = this.planWeek.days;
   weekRangeLabel = computed(() => formatWeekRange(this.currentWeekStart()));
-  isCurrentWeek = computed(() => toISODate(this.currentWeekStart()) === toISODate(getThisMonday()));
+  readonly isCurrentWeek = this.planWeek.isCurrentWeek;
 
   private readonly meals = computed(() => this.weeklyPlan()?.meals ?? []);
   private readonly plannedTypes = computed(() => new Set(this.meals().map(m => m.mealType)));
@@ -168,13 +173,19 @@ export class DashboardComponent {
 
   goToThisWeek(): void {
     this.calendarError.set('');
-    this.currentWeekStart.set(getThisMonday());
+    this.planWeek.goToThisWeek();
     this.selectedDay.set(new Date());
+  }
+
+  /** Today when the visible week contains it, otherwise that week's Monday. */
+  private dayInVisibleWeek(): Date {
+    const days = this.planWeek.days();
+    return days.find(isToday) ?? days[0];
   }
 
   private shiftWeek(days: number): void {
     this.calendarError.set('');
-    this.currentWeekStart.update(d => addDays(d, days));
+    this.planWeek.shift(days);
     this.selectedDay.update(d => addDays(d, days));
   }
 
