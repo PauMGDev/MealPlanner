@@ -39,7 +39,18 @@ export class RegisterComponent implements OnInit {
     const { name, email, password } = this.form.value;
     this.auth.register(name!, email!, password!).subscribe({
       next: () => this.router.navigate(['/app/dashboard']),
-      error: err => { this.error.set(err.error?.message ?? 'No se pudo crear la cuenta'); this.loading.set(false); },
+      error: err => { this.error.set(this.messageFor(err, 'No se pudo crear la cuenta')); this.loading.set(false); },
     });
   }
+
+  /**
+   * status 0 means the response never arrived (server down, CORS rejected the
+   * origin). Reporting that as bad credentials sends people hunting for the
+   * wrong problem.
+   */
+  private messageFor(err: { status: number; error?: { message?: string } }, fallback: string): string {
+    if (err.status === 0) return 'No se pudo conectar con el servidor. Comprueba que el backend está en marcha.';
+    return err.error?.message ?? fallback;
+  }
+
 }
