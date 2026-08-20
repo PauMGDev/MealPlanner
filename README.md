@@ -1,5 +1,10 @@
 # MealPlanner
 
+[![CI](https://github.com/PauMGDev/MealPlanner/actions/workflows/ci.yml/badge.svg)](https://github.com/PauMGDev/MealPlanner/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](./LICENSE)
+
+**[Ver la aplicación en producción](https://meal-planner-azure-ten.vercel.app)**
+
 Aplicación web de planificación semanal de comidas. Permite crear recetas con sus ingredientes, llevar un control de la despensa personal y organizar el menú de la semana en un calendario, comprobando en todo momento qué recetas se pueden cocinar con lo que ya tienes en casa.
 
 ## Características
@@ -28,6 +33,11 @@ Aplicación web de planificación semanal de comidas. Permite crear recetas con 
 - Catálogo global de ingredientes (nombre, unidad, calorías/100g) compartido entre recetas y despensa.
 - Autocompletado con búsqueda difusa (extensión `pg_trgm` de PostgreSQL) para evitar duplicados y unificar nomenclatura.
 
+### 🛒 Lista de la compra
+- Lista de la compra por usuario, con marcado de artículos comprados y borrado de los ya marcados.
+- Sugerencias a partir de la despensa: los ingredientes agotados o próximos a caducar se proponen para añadir.
+- Añadir un artículo suelto o enlazarlo al catálogo de ingredientes.
+
 ### 🔐 Autenticación
 - Registro y login con email + contraseña (bcrypt + JWT).
 - Login con Google OAuth 2.0.
@@ -35,7 +45,7 @@ Aplicación web de planificación semanal de comidas. Permite crear recetas con 
 
 ### 🎨 Interfaz
 - Landing page pública con hero, secciones de características, roadmap "en desarrollo" y CTA.
-- Sistema de diseño oscuro propio sobre Tailwind CSS 4.
+- Sistema de diseño propio (tokens `lp-*`) sobre Tailwind CSS 4, en modo claro.
 - Componentes standalone con Angular Signals y `OnPush` change detection.
 - Animaciones de scroll-reveal, modales con transición de entrada y skeletons de carga.
 
@@ -43,13 +53,15 @@ Aplicación web de planificación semanal de comidas. Permite crear recetas con 
 
 | Capa | Tecnología |
 |---|---|
-| Frontend | Angular 21 (standalone components, signals) + Tailwind CSS 4 |
+| Frontend | Angular 22 (standalone components, signals) + Tailwind CSS 4 |
 | Backend | NestJS 11 + Passport (JWT y Google OAuth2) |
 | ORM | Prisma 7 (`prisma-client` con `@prisma/adapter-pg`) |
 | Base de datos | PostgreSQL (con extensión `pg_trgm`) |
 | Documentación API | Swagger en `/api/docs` |
 | Tests | Vitest (frontend) y Jest (backend) |
-| Infraestructura | Docker Compose + nginx |
+| Despliegue | Vercel (frontend) y Railway (backend + PostgreSQL) |
+| Entorno local | Docker Compose |
+| CI | GitHub Actions: build y tests de ambas apps en cada pull request |
 
 ## Estructura del monorepo
 
@@ -63,6 +75,7 @@ MealPlanner/
 │   │   │   ├── pantry/      → Despensa personal del usuario
 │   │   │   ├── ingredients/ → Catálogo global de ingredientes
 │   │   │   ├── meal-plans/  → Planificación semanal
+│   │   │   ├── shopping-list/ → Lista de la compra y sugerencias
 │   │   │   └── users/       → Gestión de usuarios
 │   │   └── prisma/          → Schema, migraciones y seed
 │   └── frontend/           → SPA Angular (puerto 4200)
@@ -86,7 +99,6 @@ docker compose up -d
 | Frontend | http://localhost:4200 |
 | Backend API | http://localhost:3000/api |
 | Documentación Swagger | http://localhost:3000/api/docs |
-| Prisma Studio | http://localhost:5555 |
 | PostgreSQL | localhost:5432 |
 
 ### Desarrollo local
@@ -122,8 +134,8 @@ Copia `apps/backend/.env.example` a `.env` y ajusta los valores:
 # Backend
 cd apps/backend
 npm run test       # unitarios
-npm run test:e2e   # end-to-end
 npm run test:cov   # cobertura
+npm run lint       # ESLint (también en CI)
 
 # Frontend
 cd apps/frontend
@@ -132,9 +144,17 @@ npm test
 
 ## Roadmap
 
-- [ ] Lista de la compra automática a partir del plan semanal y la despensa
+- [x] Lista de la compra con sugerencias a partir de la despensa
+- [ ] Generar la lista de la compra directamente desde el plan semanal
 - [ ] Control de macros nutricionales
+- [ ] Tests end to end: hoy no arrancan porque Jest compila a CommonJS y el cliente
+      Prisma generado es ESM (ver `apps/backend/CLAUDE.md`)
 
 ## Historial de cambios
 
-Ver [CHANGELOG.md](./CHANGELOG.md) para el detalle de cada feature implementada.
+Cada versión está publicada en [Releases](https://github.com/PauMGDev/MealPlanner/releases),
+con las notas generadas a partir de los commits.
+
+## Licencia
+
+[MIT](./LICENSE)
