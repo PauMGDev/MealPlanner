@@ -1,6 +1,6 @@
 # apps/frontend — CLAUDE.md
 
-Angular 21, standalone components only, Tailwind CSS 4 (CSS-first config in `styles.css`,
+Angular 22, standalone components only, Tailwind CSS 4 (CSS-first config in `styles.css`,
 no tailwind.config file). No NgModules, no SSR.
 
 ## Component conventions (follow the existing code, it is consistent)
