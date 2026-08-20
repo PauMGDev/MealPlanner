@@ -42,9 +42,14 @@ src/<feature>/
 
 - Unit: `npm test` (`*.spec.ts` next to sources). `npm run lint` reports, `npm run lint:fix`
   fixes; CI runs the reporting one, so keep it at zero errors.
-- E2E (`npm run test:e2e`, `test/jest-e2e.json`) does NOT run today: ts-jest compiles it
-  to CommonJS and the generated Prisma client is ESM-only, so importing AppModule throws.
-  Fixing it means running Jest in ESM mode; until then, e2e is not in CI.
+- E2E: `npm run test:e2e` (`test/api.e2e-spec.ts`). Jest runs in ESM mode
+  (`NODE_OPTIONS=--experimental-vm-modules` plus `useESM` in ts-jest), which is what lets
+  it import the ESM-only generated Prisma client. It needs a real database:
+  docker-compose Postgres locally, a service container in CI. The suite registers a
+  throwaway user and deletes it in `afterAll`, so it is safe to re-run.
+- `configureApp()` in `src/app-setup.ts` holds the global prefix and the ValidationPipe,
+  and both `main.ts` and the e2e suite call it. Anything the e2e must exercise the same
+  way the server does belongs there, not in `main.ts`.
 - Mock `PrismaService` at the service boundary in unit tests; do not spin up the DB
   for unit specs.
 

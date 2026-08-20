@@ -33,9 +33,23 @@ jobs:
     defaults:
       run:
         working-directory: apps/backend
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
-      # prisma.config.ts reads DATABASE_URL at load time; generate never connects.
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      JWT_SECRET: ci-secret-not-used-outside-this-job
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -45,6 +59,8 @@ jobs:
           cache-dependency-path: apps/backend/package-lock.json
       - run: npm ci
       - run: npx prisma generate
+      - run: npx prisma migrate deploy
       - run: npm run lint
       - run: npm run build
       - run: npm test
+      - run: npm run test:e2e

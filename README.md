@@ -134,21 +134,24 @@ Copia `apps/backend/.env.example` a `.env` y ajusta los valores:
 # Backend
 cd apps/backend
 npm run test       # unitarios
+npm run test:e2e   # end to end, necesita PostgreSQL en marcha
 npm run test:cov   # cobertura
 npm run lint       # ESLint (también en CI)
 
 # Frontend
 cd apps/frontend
 npm test
+npm run lint       # ESLint + reglas de accesibilidad de plantillas
 ```
+
+Los tres pasan en CI en cada pull request. Los end to end se ejecutan contra un
+PostgreSQL real: en local el de `docker compose`, en CI un service container.
 
 ## Roadmap
 
 - [x] Lista de la compra con sugerencias a partir de la despensa
 - [ ] Generar la lista de la compra directamente desde el plan semanal
 - [ ] Control de macros nutricionales
-- [ ] Tests end to end: hoy no arrancan porque Jest compila a CommonJS y el cliente
-      Prisma generado es ESM (ver `apps/backend/CLAUDE.md`)
 
 ## Historial de cambios
 
