@@ -16,6 +16,8 @@ src/<feature>/
 
 - Global `ValidationPipe` runs with `whitelist + forbidNonWhitelisted + transform`:
   any request field not declared in a DTO is a 400. Update DTOs when adding fields.
+- Controllers read the authenticated user with `@CurrentUser() user: User`
+  (`src/auth/decorators/current-user.decorator.js`), never with `@Req() req: any`.
 - Ownership pattern: service methods receive `userId` from the JWT (via controller),
   `findOne` throws `NotFoundException` (missing) / `ForbiddenException` (not owner),
   and mutations call `findOne` first. Never trust ids from the body for ownership.
@@ -38,8 +40,11 @@ src/<feature>/
 
 ## Testing (Jest)
 
-- Unit: `npm test` (`*.spec.ts` next to sources). E2E: `npm run test:e2e`
-  (`test/jest-e2e.json`), runs against a real DB — assume docker-compose Postgres.
+- Unit: `npm test` (`*.spec.ts` next to sources). `npm run lint` reports, `npm run lint:fix`
+  fixes; CI runs the reporting one, so keep it at zero errors.
+- E2E (`npm run test:e2e`, `test/jest-e2e.json`) does NOT run today: ts-jest compiles it
+  to CommonJS and the generated Prisma client is ESM-only, so importing AppModule throws.
+  Fixing it means running Jest in ESM mode; until then, e2e is not in CI.
 - Mock `PrismaService` at the service boundary in unit tests; do not spin up the DB
   for unit specs.
 

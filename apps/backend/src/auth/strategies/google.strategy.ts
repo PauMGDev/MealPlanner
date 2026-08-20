@@ -13,21 +13,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: config.get<string>('GOOGLE_CLIENT_ID') || 'not-configured',
       clientSecret: config.get<string>('GOOGLE_CLIENT_SECRET') || 'not-configured',
-      callbackURL: config.get<string>('GOOGLE_CALLBACK_URL') || 'http://localhost:3000/api/auth/google/callback',
+      callbackURL:
+        config.get<string>('GOOGLE_CALLBACK_URL') ||
+        'http://localhost:3000/api/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
 
-  async validate(
-    _accessToken: string,
-    _refreshToken: string,
-    profile: Profile,
-  ) {
+  async validate(_accessToken: string, _refreshToken: string, profile: Profile) {
     const googleId = profile.id;
     const email = profile.emails?.[0]?.value;
     const name = profile.displayName;
 
-    let user = await this.users.findByGoogleId(googleId);
+    const user = await this.users.findByGoogleId(googleId);
     if (user) return user;
 
     if (email) {

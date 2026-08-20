@@ -21,10 +21,7 @@ describe('ShoppingListService', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ShoppingListService,
-        { provide: PrismaService, useValue: mockPrisma },
-      ],
+      providers: [ShoppingListService, { provide: PrismaService, useValue: mockPrisma }],
     }).compile();
 
     service = module.get<ShoppingListService>(ShoppingListService);
@@ -52,7 +49,10 @@ describe('ShoppingListService', () => {
     });
 
     it('throws ForbiddenException when the item belongs to another user', async () => {
-      mockPrisma.shoppingListItem.findUnique.mockResolvedValue({ id: 'item-1', userId: 'other-user' });
+      mockPrisma.shoppingListItem.findUnique.mockResolvedValue({
+        id: 'item-1',
+        userId: 'other-user',
+      });
 
       await expect(service.findOne('item-1', 'user-1')).rejects.toThrow(ForbiddenException);
     });
@@ -104,9 +104,14 @@ describe('ShoppingListService', () => {
     });
 
     it('throws ForbiddenException when updating another user item', async () => {
-      mockPrisma.shoppingListItem.findUnique.mockResolvedValue({ id: 'item-1', userId: 'other-user' });
+      mockPrisma.shoppingListItem.findUnique.mockResolvedValue({
+        id: 'item-1',
+        userId: 'other-user',
+      });
 
-      await expect(service.update('item-1', 'user-1', { checked: true })).rejects.toThrow(ForbiddenException);
+      await expect(service.update('item-1', 'user-1', { checked: true })).rejects.toThrow(
+        ForbiddenException,
+      );
       expect(mockPrisma.shoppingListItem.update).not.toHaveBeenCalled();
     });
   });

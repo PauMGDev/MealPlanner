@@ -49,7 +49,13 @@ export class MealPlansService {
 
     return this.prisma.meal.upsert({
       where: { userId_date_mealType: { userId, date, mealType: dto.mealType } },
-      create: { userId, date, mealType: dto.mealType, recipeId: dto.recipeId, weeklyPlanId: plan.id },
+      create: {
+        userId,
+        date,
+        mealType: dto.mealType,
+        recipeId: dto.recipeId,
+        weeklyPlanId: plan.id,
+      },
       update: { recipeId: dto.recipeId, weeklyPlanId: plan.id },
       include: mealInclude,
     });

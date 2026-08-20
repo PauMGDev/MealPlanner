@@ -1,9 +1,4 @@
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  ArrayUnique,
-  IsEnum,
-} from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsEnum } from 'class-validator';
 import { MealType } from '../../generated/prisma/enums.js';
 
 export class UpdateSettingsDto {

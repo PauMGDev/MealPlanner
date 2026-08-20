@@ -1,4 +1,4 @@
-﻿import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -32,4 +32,4 @@ async function bootstrap() {
 
   await app.listen(config.get<number>('PORT', 3000));
 }
-bootstrap();
+void bootstrap();
