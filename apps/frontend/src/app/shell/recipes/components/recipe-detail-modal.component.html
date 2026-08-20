@@ -11,7 +11,7 @@
 
     @if (planStep()) {
       <div class="min-h-0 flex-1 overflow-y-auto">
-        <app-add-to-plan [recipe]="recipe" (added)="onAddedToPlan()" (cancel)="closePlanStep()" />
+        <app-add-to-plan [recipe]="recipe" (added)="onAddedToPlan()" (cancelled)="closePlanStep()" />
       </div>
     } @else {
     <div class="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8">

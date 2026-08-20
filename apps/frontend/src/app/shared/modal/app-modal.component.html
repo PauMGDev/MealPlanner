@@ -1,4 +1,7 @@
 @if (isOpen) {
+  <!-- Closing by backdrop is a pointer shortcut. The keyboard path is Escape on
+       the panel below, so the backdrop is deliberately not a focusable widget. -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
   <div class="lp-modal-backdrop modal-backdrop-enter flex justify-center p-0 sm:p-4"
        [class]="backdropClasses"
        (click)="closed.emit()">

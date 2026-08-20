@@ -1,6 +1,11 @@
 <div class="mt-8 pt-6 border-t border-lp-line">
   <div class="flex items-center gap-2.5 mb-4 cursor-pointer select-none group/header"
-       (click)="toggle.emit('__depleted__')">
+       role="button"
+       tabindex="0"
+       [attr.aria-expanded]="!isCollapsed"
+       (click)="toggled.emit('__depleted__')"
+       (keydown.enter)="toggled.emit('__depleted__')"
+       (keydown.space)="$event.preventDefault(); toggled.emit('__depleted__')">
     <span class="w-2.5 h-2.5 rounded-[3px] bg-lp-warn/70 flex-shrink-0"></span>
     <h2 class="text-[13px] font-semibold text-lp-ink-soft
                group-hover/header:text-lp-ink transition-colors whitespace-nowrap flex-shrink-0">
@@ -20,15 +25,20 @@
     <div>
       <div class="flex flex-wrap gap-2">
         @for (item of group.items; track item.id) {
+          <!-- The chip holds its own delete button, so it is not a widget itself:
+               the name is the keyboard entry point and the chip stays clickable. -->
+          <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
           <div class="flex items-center gap-2 pl-3 pr-1.5 py-1.5 rounded-lg
                       bg-lp-tray
                       group/chip cursor-pointer
                       hover:bg-lp-hover
                       transition-all opacity-60 hover:opacity-90"
                (click)="rowClick.emit(item)">
-            <span class="text-sm text-lp-ink-soft group-hover/chip:text-lp-ink transition-colors whitespace-nowrap">
+            <button type="button"
+                    class="text-sm text-lp-ink-soft group-hover/chip:text-lp-ink transition-colors whitespace-nowrap"
+                    (click)="$event.stopPropagation(); rowClick.emit(item)">
               {{ item.name }}
-            </span>
+            </button>
             <span class="text-xs font-data tabular-nums text-lp-ink-faint">{{ item.unit }}</span>
             <button (click)="$event.stopPropagation(); delete.emit(item)"
                     title="Eliminar"

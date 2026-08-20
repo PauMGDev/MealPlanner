@@ -77,7 +77,7 @@
           <app-pantry-group
             [group]="group"
             [isCollapsed]="isGroupCollapsed(group.id)"
-            (toggle)="toggleGroup($event)"
+            (toggled)="toggleGroup($event)"
             (rowClick)="handleRowClick($event)"
             (setDepleted)="setDepleted($event)"
             (delete)="deleteItem($event)" />
@@ -106,7 +106,7 @@
       <app-pantry-depleted
         [group]="depleted"
         [isCollapsed]="isGroupCollapsed('__depleted__')"
-        (toggle)="toggleGroup($event)"
+        (toggled)="toggleGroup($event)"
         (rowClick)="handleRowClick($event)"
         (delete)="deleteItem($event)" />
     }

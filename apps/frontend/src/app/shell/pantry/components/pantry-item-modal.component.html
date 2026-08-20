@@ -16,10 +16,10 @@
     <form [formGroup]="form" (ngSubmit)="submit()">
 
       <div class="mb-4">
-        <label class="block text-xs font-semibold text-lp-ink-faint mb-2">
+        <label for="pi-name" class="block text-xs font-semibold text-lp-ink-faint mb-2">
           Ingrediente
         </label>
-        <input type="text"
+        <input id="pi-name" type="text"
                [value]="ingredientName()"
                (input)="onNameInput($any($event.target).value)"
                (focus)="!editMode && showDropdown.set(true)"
@@ -70,8 +70,8 @@
 
       <div class="flex gap-3 mb-4">
         <div class="flex-1">
-          <label class="block text-xs font-semibold text-lp-ink-faint mb-2">Cantidad</label>
-          <input formControlName="quantity" type="number" placeholder="0" min="0" step="any"
+          <label for="pi-quantity" class="block text-xs font-semibold text-lp-ink-faint mb-2">Cantidad</label>
+          <input id="pi-quantity" formControlName="quantity" type="number" placeholder="0" min="0" step="any"
                  class="w-full px-4 py-3 rounded-xl border border-lp-line
                         bg-lp-card text-lp-ink text-sm outline-none
                         transition-colors focus:border-lp-accent placeholder:text-lp-ink-faint" />
@@ -80,9 +80,9 @@
           }
         </div>
         <div class="w-32">
-          <label class="block text-xs font-semibold text-lp-ink-faint mb-2">Unidad</label>
+          <label for="pi-unit" class="block text-xs font-semibold text-lp-ink-faint mb-2">Unidad</label>
           <div class="relative">
-            <select formControlName="unit"
+            <select id="pi-unit" formControlName="unit"
                     class="appearance-none w-full pl-3 pr-8 py-3 rounded-xl border border-lp-line
                            bg-lp-card text-lp-ink text-sm outline-none transition-colors focus:border-lp-accent">
               <option value="" disabled>—</option>

@@ -14,7 +14,6 @@ import {
   computeWeekNeeds,
   findNextMeal,
   formatWeekRange,
-  getThisMonday,
   isToday,
   slotAvailability,
   toISODate,

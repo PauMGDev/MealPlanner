@@ -74,7 +74,7 @@
           [recipe]="recipe"
           [availability]="getAvailability(recipe.id)"
           [isExpanded]="expandedId() === recipe.id"
-          (select)="openDetail($event)"
+          (selected)="openDetail($event)"
           (edit)="openEditModal($event)"
           (delete)="deleteRecipe($event)"
           (toggleExpand)="toggleExpand($event)"

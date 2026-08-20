@@ -109,7 +109,12 @@ export class PantryComponent implements OnInit {
   isGroupCollapsed(id: string): boolean { return !this.isFiltering() && this.collapsedGroups().has(id); }
 
   toggleGroup(id: string): void {
-    this.collapsedGroups.update(s => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+    this.collapsedGroups.update(s => {
+      const n = new Set(s);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
   }
 
   clearFilters(): void { this.searchQuery.set(''); this.expiryFilter.set(null); this.categoryFilter.set(null); }
