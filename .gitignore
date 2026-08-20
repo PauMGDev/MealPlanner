@@ -20,3 +20,9 @@ Thumbs.db
 # Project-owned skills are versioned; the rest of .claude/skills are symlinks
 # into .agents/skills and stay local.
 !.claude/skills/mealmap-design-system/
+
+# Third-party design skills: reproducible from skills-lock.json, not versioned
+/.agents/skills/
+
+# Nested local harness repo (own git history)
+/mealplanner-harness/
