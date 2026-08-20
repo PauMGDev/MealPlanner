@@ -7,7 +7,7 @@ Portfolio project — code quality and reviewability matter as much as the featu
 
 ```
 apps/
-├── frontend/   → Angular 21 + Tailwind CSS 4 (Vercel)      → see apps/frontend/CLAUDE.md
+├── frontend/   → Angular 22 + Tailwind CSS 4 (Vercel)      → see apps/frontend/CLAUDE.md
 └── backend/    → NestJS 11 + Prisma 7 + PostgreSQL (Railway) → see apps/backend/CLAUDE.md
 .agents/skills/ → design skills (taste-skill family), used for landing/visual work only
 ```
