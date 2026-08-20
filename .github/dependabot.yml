@@ -4,13 +4,29 @@ updates:
     directory: /apps/frontend
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    # Majors (Angular, TypeScript...) need a manual migration, not a bot PR.
+    ignore:
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
+    groups:
+      frontend:
+        patterns: ["*"]
+
   - package-ecosystem: npm
     directory: /apps/backend
     schedule:
       interval: monthly
-    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
+    groups:
+      backend:
+        patterns: ["*"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
