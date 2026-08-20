@@ -1,7 +1,8 @@
 <!-- Not a role="button" wrapper: it holds three other controls, and a container
      widget swallowing their Enter and Space would break every one of them. The
      title is the keyboard entry point; the whole card stays clickable by mouse. -->
-<div class="lp-rcard" (click)="select.emit(recipe)">
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<div class="lp-rcard" (click)="selected.emit(recipe)">
 
   <div class="lp-rcard__media">
     @if (recipe.imageUrl) {
@@ -14,6 +15,7 @@
 
     <!-- Off the title row so it never competes with the name. Hidden until the
          card is hovered or something inside gets keyboard focus. -->
+    <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     <div class="lp-rcard__actions" (click)="$event.stopPropagation()">
       <button type="button" class="lp-overlay-btn" (click)="edit.emit(recipe)"
               [attr.aria-label]="'Editar ' + recipe.name">
@@ -28,7 +30,7 @@
 
   <div class="lp-rcard__body">
     <button type="button" class="lp-rcard__title"
-            (click)="$event.stopPropagation(); select.emit(recipe)">{{ recipe.name }}</button>
+            (click)="$event.stopPropagation(); selected.emit(recipe)">{{ recipe.name }}</button>
     <p class="lp-rcard__desc">{{ recipe.description }}</p>
 
     <div class="lp-rcard__chips">
@@ -52,6 +54,7 @@
     </button>
 
     @if (isExpanded) {
+      <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
       <div class="lp-rcard__detail" (click)="$event.stopPropagation()">
         @if (recipe.recipeIngredients.length === 0) {
           <p class="py-1 text-xs text-lp-ink-faint">Esta receta no tiene ingredientes.</p>

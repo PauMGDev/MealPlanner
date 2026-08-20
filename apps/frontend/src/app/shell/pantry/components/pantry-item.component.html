@@ -1,7 +1,11 @@
+<!-- The row holds its own action buttons, so it is not a widget itself: the name
+     is the keyboard entry point and the row stays clickable by mouse. -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
 <div class="lp-row lp-row--inset group/row cursor-pointer transition-colors hover:bg-lp-hover"
      (click)="rowClick.emit(item)">
 
-  <span class="lp-row__name" [title]="item.name">{{ item.name }}</span>
+  <button type="button" class="lp-row__name text-left" [title]="item.name"
+          (click)="$event.stopPropagation(); rowClick.emit(item)">{{ item.name }}</button>
 
   @if (!item.virtual && badge; as b) {
     <span class="flex-shrink-0 rounded-md px-1.5 py-0.5 text-xs font-medium" [class]="b.cls">
@@ -14,6 +18,7 @@
     <span class="text-xs font-data text-lp-ink-faint ml-0.5">{{ item.unit }}</span>
   </div>
 
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
   <div class="flex items-center gap-0.5 flex-shrink-0 opacity-0 group-hover/row:opacity-100 transition-opacity"
        (click)="$event.stopPropagation()">
     @if (!item.virtual && item.quantity > 0) {

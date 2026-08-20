@@ -53,6 +53,16 @@ src/app/
 - Fonts loaded from Google Fonts in index.html: Work Sans (display), Source Sans 3
   (body), JetBrains Mono (data), Plus Jakarta Sans, Caveat.
 
+## Lint
+
+- `npm run lint` runs ESLint with angular-eslint over TypeScript and templates, and
+  it gates CI. Template accessibility rules are on: a clickable element either is a
+  real control, or carries `role="button"`, `tabindex` and keyboard handlers.
+- The only disables in the codebase are inline, one line each, on containers whose
+  click is a pointer shortcut over an existing keyboard path (a modal backdrop with
+  Escape, a card whose title is a button) or that only stop propagation. Each one
+  states the reason above it; do not disable a rule without one.
+
 ## Testing (Vitest)
 
 - `npm test` runs `ng test` → Vitest. Jasmine API is FORBIDDEN (`jasmine.*` does not

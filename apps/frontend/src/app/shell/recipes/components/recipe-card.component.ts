@@ -13,7 +13,7 @@ export class RecipeCardComponent {
   @Input({ required: true }) availability!: RecipeAvailability;
   @Input() isExpanded = false;
 
-  @Output() select = new EventEmitter<Recipe>();
+  @Output() selected = new EventEmitter<Recipe>();
   @Output() edit = new EventEmitter<Recipe>();
   @Output() delete = new EventEmitter<string>();
   @Output() toggleExpand = new EventEmitter<string>();

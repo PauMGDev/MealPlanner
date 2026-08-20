@@ -53,7 +53,7 @@ export class AddToPlanComponent implements OnInit {
   /** Emitted once the meal is saved, so the modal can confirm and close. */
   @Output() added = new EventEmitter<void>();
   /** Back to the recipe without saving. */
-  @Output() cancel = new EventEmitter<void>();
+  @Output() cancelled = new EventEmitter<void>();
 
   private readonly mealPlans = inject(MealPlansService);
   private readonly planWeek = inject(PlanWeekService);
@@ -140,7 +140,7 @@ export class AddToPlanComponent implements OnInit {
   }
 
   goBack(): void {
-    this.cancel.emit();
+    this.cancelled.emit();
   }
 
   pick(slot: SlotOption): void {

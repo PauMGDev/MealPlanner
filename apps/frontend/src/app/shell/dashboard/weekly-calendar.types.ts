@@ -3,10 +3,10 @@ import type { PantryItem } from '../../core/services/pantry.service';
 import type { Recipe } from '../../core/services/recipes.service';
 import { computeAvailability } from '../recipes/recipes.types';
 
-export type MealRowDef = {
+export interface MealRowDef {
   type: MealType;
   label: string;
-};
+}
 
 /** Chronological order. It is the row order of the matrix and never varies. */
 export const MEAL_ROWS: MealRowDef[] = [

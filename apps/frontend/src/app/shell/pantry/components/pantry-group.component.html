@@ -1,6 +1,11 @@
 <section>
   <div class="flex items-center gap-2.5 mb-2.5 cursor-pointer select-none group/header"
-       (click)="toggle.emit(group.id)">
+       role="button"
+       tabindex="0"
+       [attr.aria-expanded]="!isCollapsed"
+       (click)="toggled.emit(group.id)"
+       (keydown.enter)="toggled.emit(group.id)"
+       (keydown.space)="$event.preventDefault(); toggled.emit(group.id)">
     <span class="w-2.5 h-2.5 rounded-[3px] flex-shrink-0 bg-lp-accent"></span>
     <h2 class="text-[13px] font-semibold text-lp-ink-soft
                group-hover/header:text-lp-ink transition-colors whitespace-nowrap flex-shrink-0">

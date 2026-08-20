@@ -36,6 +36,11 @@ export class RecipeDetailModalComponent {
     // A pending auto-close belongs to the recipe that was open, not this one.
     clearTimeout(this.successTimer);
   }
+
+  get recipe(): Recipe | null {
+    return this.current();
+  }
+
   @Input() availability: RecipeAvailability | null = null;
 
   @Output() closed = new EventEmitter<void>();
@@ -59,10 +64,6 @@ export class RecipeDetailModalComponent {
       clearTimeout(this.successTimer);
       clearTimeout(this.focusTimer);
     });
-  }
-
-  get recipe(): Recipe | null {
-    return this.current();
   }
 
   get headClass(): string {

@@ -14,7 +14,7 @@ export class PantryGroupComponent {
   @Input({ required: true }) group!: PantryGroup;
   @Input() isCollapsed = false;
 
-  @Output() toggle = new EventEmitter<string>();
+  @Output() toggled = new EventEmitter<string>();
   @Output() rowClick = new EventEmitter<DisplayItem>();
   @Output() setDepleted = new EventEmitter<DisplayItem>();
   @Output() delete = new EventEmitter<DisplayItem>();
