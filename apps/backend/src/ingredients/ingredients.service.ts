@@ -22,7 +22,9 @@ export class IngredientsService {
     try {
       return await this.prisma.ingredient.delete({ where: { id } });
     } catch {
-      throw new ConflictException('No se puede eliminar este ingrediente porque está siendo usado en una receta.');
+      throw new ConflictException(
+        'No se puede eliminar este ingrediente porque está siendo usado en una receta.',
+      );
     }
   }
 
@@ -39,7 +41,7 @@ export class IngredientsService {
       LIMIT 15
     `;
 
-    return rows.map(r => ({
+    return rows.map((r) => ({
       id: r.id,
       name: r.name,
       unit: r.unit,
@@ -73,7 +75,7 @@ export class IngredientsService {
       if (similar.length > 0) {
         throw new ConflictException({
           message: 'Existen ingredientes similares. Usa force:true para crear igualmente.',
-          suggestions: similar.map(r => ({
+          suggestions: similar.map((r) => ({
             id: r.id,
             name: r.name,
             unit: r.unit,

@@ -37,16 +37,16 @@ export class RecipesService {
     if (recipe.userId !== userId) throw new ForbiddenException();
 
     // Cross-reference with user's pantry for availability
-    const ingredientIds = recipe.recipeIngredients.map(ri => ri.ingredientId);
+    const ingredientIds = recipe.recipeIngredients.map((ri) => ri.ingredientId);
     const pantryItems = await this.prisma.pantryItem.findMany({
       where: { userId, ingredientId: { in: ingredientIds } },
       select: { ingredientId: true, quantity: true, unit: true },
     });
-    const pantryMap = new Map(pantryItems.map(p => [p.ingredientId, p]));
+    const pantryMap = new Map(pantryItems.map((p) => [p.ingredientId, p]));
 
     return {
       ...recipe,
-      recipeIngredients: recipe.recipeIngredients.map(ri => ({
+      recipeIngredients: recipe.recipeIngredients.map((ri) => ({
         ...ri,
         pantry: pantryMap.get(ri.ingredientId) ?? null,
       })),

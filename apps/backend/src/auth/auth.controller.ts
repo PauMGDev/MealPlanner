@@ -1,22 +1,13 @@
-﻿import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import type { User } from '../generated/prisma/client.js';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard.js';
+import { CurrentUser } from './decorators/current-user.decorator.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 
 @ApiTags('auth')
@@ -50,18 +41,17 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleOAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback' })
-  googleCallback(@Req() req: any, @Res() res: any) {
-    const user = req.user as User;
+  googleCallback(@CurrentUser() user: User, @Res() res: Response) {
     const token = this.auth.generateToken(user);
     const frontendUrl = this.config.getOrThrow<string>('FRONTEND_URL');
-    return (res as Response).redirect(`${frontendUrl}/auth/callback?token=${token}`);
+    return res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get current authenticated user' })
-  me(@Req() req: any) {
-    const { passwordHash, ...user } = req.user as User;
+  me(@CurrentUser() currentUser: User) {
+    const { passwordHash, ...user } = currentUser;
     return user;
   }
 }

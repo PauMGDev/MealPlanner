@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsInt,
-  IsOptional,
-  IsPositive,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsPositive, IsString, MinLength } from 'class-validator';
 
 export class CreateRecipeDto {
   @IsString()

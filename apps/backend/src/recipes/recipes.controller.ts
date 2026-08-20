@@ -1,16 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { User } from '../generated/prisma/client.js';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { AddRecipeIngredientDto } from './dto/add-recipe-ingredient.dto.js';
 import { CreateRecipeDto } from './dto/create-recipe.dto.js';
@@ -26,32 +17,32 @@ export class RecipesController {
 
   @Get()
   @ApiOperation({ summary: 'List my recipes with their ingredients' })
-  findAll(@Req() req: any) {
-    return this.recipes.findAll((req.user as User).id);
+  findAll(@CurrentUser() user: User) {
+    return this.recipes.findAll(user.id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a recipe with ingredients and pantry availability' })
-  findOne(@Param('id') id: string, @Req() req: any) {
-    return this.recipes.findOne(id, (req.user as User).id);
+  findOne(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.recipes.findOne(id, user.id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a recipe' })
-  create(@Body() dto: CreateRecipeDto, @Req() req: any) {
-    return this.recipes.create((req.user as User).id, dto);
+  create(@Body() dto: CreateRecipeDto, @CurrentUser() user: User) {
+    return this.recipes.create(user.id, dto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a recipe' })
-  update(@Param('id') id: string, @Body() dto: UpdateRecipeDto, @Req() req: any) {
-    return this.recipes.update(id, (req.user as User).id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateRecipeDto, @CurrentUser() user: User) {
+    return this.recipes.update(id, user.id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a recipe' })
-  remove(@Param('id') id: string, @Req() req: any) {
-    return this.recipes.remove(id, (req.user as User).id);
+  remove(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.recipes.remove(id, user.id);
   }
 
   @Post(':id/ingredients')
@@ -59,9 +50,9 @@ export class RecipesController {
   addIngredient(
     @Param('id') id: string,
     @Body() dto: AddRecipeIngredientDto,
-    @Req() req: any,
+    @CurrentUser() user: User,
   ) {
-    return this.recipes.addIngredient(id, (req.user as User).id, dto);
+    return this.recipes.addIngredient(id, user.id, dto);
   }
 
   @Delete(':id/ingredients/:ingredientId')
@@ -69,8 +60,8 @@ export class RecipesController {
   removeIngredient(
     @Param('id') id: string,
     @Param('ingredientId') ingredientId: string,
-    @Req() req: any,
+    @CurrentUser() user: User,
   ) {
-    return this.recipes.removeIngredient(id, (req.user as User).id, ingredientId);
+    return this.recipes.removeIngredient(id, user.id, ingredientId);
   }
 }

@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateShoppingListItemDto } from './dto/create-shopping-list-item.dto.js';
 import { UpdateShoppingListItemDto } from './dto/update-shopping-list-item.dto.js';
@@ -11,9 +7,7 @@ const include = { ingredient: true } as const;
 
 function currentWeekStart(): Date {
   const now = new Date();
-  const d = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
-  );
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const day = d.getUTCDay();
   const diff = day === 0 ? -6 : 1 - day;
   d.setUTCDate(d.getUTCDate() + diff);
@@ -80,9 +74,7 @@ export class ShoppingListService {
       }),
     ]);
 
-    const pantryQty = new Map(
-      pantryItems.map((p) => [p.ingredientId, p.quantity]),
-    );
+    const pantryQty = new Map(pantryItems.map((p) => [p.ingredientId, p.quantity]));
     const onListIds = new Set(listItems.map((i) => i.ingredientId));
 
     return ingredientIds
